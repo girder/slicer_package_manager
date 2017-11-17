@@ -1,0 +1,7 @@
+.sem-extensions-container
+  .sem-extensions-header
+    each extension in extensions
+      .sem-extension-container
+        li.sem-extension
+          | name : #{extension.name}
+          | description : #{extension.description}
