@@ -1,0 +1,22 @@
+# Build outputs
+build/
+docs/_build
+docs/_output
+girder-*.tar.gz
+node_modules/
+*.egg-info
+
+# Toolchain generated
+__pycache__
+.eslintcache
+/npm-debug.log
+.vagrant
+*.py[cod]
+**/*.retry
+
+# IDE / OS generated
+.DS_Store
+.idea/
+.PyCharm50/
+.*.swo
+.*.swp
