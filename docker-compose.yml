@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo:3.2
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/slicer_extension_manager/db:/data/db
+
+  girder:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongo
+    volumes:
+      - ~/slicer_extension_manager/assetstore:/data
+    links:
+      - mongo
+    command: --database mongodb://mongo:27017/girder -H 0.0.0.0
+
+  config:
+    build: ./provisioning
+    depends_on:
+      - mongo
+      - girder
+    environment:
+      - 'GIRDER_HOST=girder'
+      - 'GIRDER_PORT=8080'
+      - 'GIRDER_ADMIN_NAME=admin'
+      - 'GIRDER_ADMIN_PASS=adminadmin'
