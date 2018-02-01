@@ -1,0 +1,72 @@
+---
+
+- hosts: local
+  connection: local
+  become: false
+  gather_facts: false
+  tasks:
+  - name: Ensure Privileged User
+    girder:
+      host: "{{ ghost }}"
+      port: "{{ gport }}"
+      scheme: "http"
+      user:
+        login: "{{ admin_name }}"
+        password: "{{ admin_pass }}"
+        firstName: Girder
+        lastName: Admin
+        email: "admin@girder.girder"
+        admin: true
+      state: present
+
+  - name: Record Privileged User Token
+    girder:
+      host: "{{ ghost }}"
+      port: "{{ gport }}"
+      scheme: "http"
+      username: "{{ admin_name }}"
+      password: "{{ admin_pass }}"
+      get:
+        path: "user/me"
+    register: admin
+
+  - name: Ensure Default Assetstore
+    girder:
+      host: "{{ ghost }}"
+      port: "{{ gport }}"
+      scheme: "http"
+      token: "{{ admin['token'] }}"
+      assetstore:
+        name: "Local"
+        type: "filesystem"
+        root: "/data/"
+        current: true
+      state: present
+
+  - name: Activate Girder Plugins
+    girder:
+      host: "{{ ghost }}"
+      port: "{{ gport }}"
+      scheme: "http"
+      token: "{{ admin['token'] }}"
+      plugins:
+        - slicer-extension-manager
+      state: present
+
+  - name: Restart Girder Server
+    girder:
+      host: "{{ ghost }}"
+      port: "{{ gport }}"
+      scheme: "http"
+      token: "{{ admin['token'] }}"
+      put:
+        path: "system/restart"
+
+  - name: Build Girder web client
+    girder:
+      host: "{{ ghost }}"
+      port: "{{ gport }}"
+      scheme: "http"
+      token: "{{ admin['token'] }}"
+      post:
+        path: "system/web_build"
