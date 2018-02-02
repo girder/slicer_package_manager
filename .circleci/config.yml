@@ -45,23 +45,23 @@ jobs:
           working_directory: girder
 
       - checkout:
-          path: girder/plugins/slicer-extension-manager
+          path: girder/plugins/slicer_extension_manager
 
       - run:
-          name: Install slicer-extension-manager
-          command: girder-install plugin girder/plugins/slicer-extension-manager
+          name: Install slicer_extension_manager
+          command: girder-install plugin girder/plugins/slicer_extension_manager
 
       - restore_cache:
-          key: npm-{{ arch }}-{{ checksum "girder/package.json" }}-{{ checksum "girder/plugins/slicer-extension-manager/plugin.json" }}
+          key: npm-{{ arch }}-{{ checksum "girder/package.json" }}-{{ checksum "girder/plugins/slicer_extension_manager/plugin.json" }}
 
       - run:
           name: Build Girder web client
-          command: girder-install web --dev --plugins=slicer-extension-manager
+          command: girder-install web --dev --plugins=slicer_extension_manager
           environment:
             - npm_config_cache: /home/circleci/project/npm_cache
       - save_cache:
           paths: npm_cache
-          key: npm-{{ arch }}-{{ checksum "girder/package.json" }}-{{ checksum "girder/plugins/slicer-extension-manager/plugin.json" }}
+          key: npm-{{ arch }}-{{ checksum "girder/package.json" }}-{{ checksum "girder/plugins/slicer_extension_manager/plugin.json" }}
 
       - run:
           name: Create Girder build directory
@@ -69,7 +69,7 @@ jobs:
       - run:
           name: Run CMake
           command: |
-            cmake -DPYTHON_COVERAGE:BOOL=ON -DCOVERAGE_MINIMUM_PASS:STRING=40 -DPYTHON_VERSION:STRING=2.7 -DRUN_CORE_TESTS:BOOL=OFF -DTEST_PLUGINS:STRING="slicer-extension-manager" $CIRCLE_WORKING_DIRECTORY/girder
+            cmake -DPYTHON_COVERAGE:BOOL=ON -DCOVERAGE_MINIMUM_PASS:STRING=40 -DPYTHON_VERSION:STRING=2.7 -DRUN_CORE_TESTS:BOOL=OFF -DTEST_PLUGINS:STRING="slicer_extension_manager" $CIRCLE_WORKING_DIRECTORY/girder
             make
           working_directory: girder_build
 

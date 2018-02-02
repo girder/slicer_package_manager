@@ -18,7 +18,7 @@
 add_standard_plugin_tests(NO_CLIENT_TESTS)
 
 add_python_test(
-  PLUGIN slicer-extension-manager
+  PLUGIN slicer_extension_manager
   EXTERNAL_DATA
-  plugins/slicer-extension-manager/extension.tar.gz
+  plugins/slicer_extension_manager/extension.tar.gz
 )

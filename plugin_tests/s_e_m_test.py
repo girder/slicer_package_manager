@@ -13,7 +13,7 @@ from tests import base
 
 
 def setUpModule():
-    base.enabledPlugins.append('slicer-extension-manager')
+    base.enabledPlugins.append('slicer_extension_manager')
     base.startServer()
 
 
@@ -31,7 +31,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         self._extensionNameTemplate = '{baseName}_{arch}_{os}_{revision}'
 
         self.dataDir = os.path.join(
-            os.environ['GIRDER_TEST_DATA_PREFIX'], 'plugins', 'slicer-extension-manager')
+            os.environ['GIRDER_TEST_DATA_PREFIX'], 'plugins', 'slicer_extension_manager')
 
         self._user = User().createUser('usr0', 'passwd', 'tst', 'usr', 'u@u.com')
         self._collection = Collection().createCollection(

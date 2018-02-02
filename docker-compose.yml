@@ -6,7 +6,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ~/tmp/slicer-extension-manager/db:/data/db
+      - ~/tmp/slicer_extension_manager/db:/data/db
 
   girder:
     build: .
@@ -15,7 +15,7 @@ services:
     depends_on:
       - mongo
     volumes:
-      - ~/tmp/slicer-extension-manager/assetstore:/data
+      - ~/tmp/slicer_extension_manager/assetstore:/data
     links:
       - mongo
     command: --database mongodb://mongo:27017/girder -H 0.0.0.0
