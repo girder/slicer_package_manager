@@ -77,3 +77,54 @@ jobs:
           name: Run CTest
           command: ctest -V -R slicer_extension_manager
           working_directory: girder_build
+
+      - setup_remote_docker
+
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            sudo mv /tmp/docker/* /usr/bin
+
+      - run:
+          name: Install Docker Compose
+          command: |
+            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/bin
+
+      - run:
+          name: Build the image and run the docker container
+          command: |
+            cd girder/plugins/slicer_extension_manager
+            docker-compose up -d
+
+      - run:
+          name: Loop until the Girder server is ready to be used
+          command: |
+            echo "SLEEPING"
+            exit=0
+            num=0
+            while [ $exit -ne 1 ]; do
+              sleep 120
+              if docker exec slicerextensionmanager_girder_1 curl -X GET --header 'Accept: application/json' \
+              --header 'Girder-Token: xHoENAkEUNo8Ye0N33Kccm9ihdEQlJv8AkLmagAEsGNxXPoixXUTu2XrWsPAltkz' \
+              'http://0.0.0.0:8080/api/v1/system/check?mode=basic'; then
+                exit=1
+              fi;
+              num=$(($num + 120))
+              if (($num > 600)); then
+                echo "TIMEOUT"
+                exit 1
+              fi;
+             done
+             echo "SERVER READY"
+
+      - run:
+          name: Stop the docker container
+          command: |
+            cd girder/plugins/slicer_extension_manager
+            docker-compose stop
