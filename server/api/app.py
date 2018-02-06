@@ -54,7 +54,7 @@ class App(Resource):
         self._model = Folder()
 
         self.route('POST', (), self.initApp)
-        self.route('GET', (), self.getApp)
+        self.route('GET', (), self.listApp)
         self.route('DELETE', (':app_id',), self.deleteApp)
         self.route('POST', (':app_id', 'release'), self.createNewRelease)
         self.route('GET', (':app_id', 'release'), self.getAllReleases)
@@ -142,15 +142,44 @@ class App(Resource):
         )
 
     @autoDescribeRoute(
-        Description('Get an existing application.')
+        Description('List existing application.')
         .responseClass('Folder')
-        .param('id', 'The ID of the application.')
-        .errorResponse('ID was invalid.')
+        .param('id', 'The ID of the application.', required=False)
+        .param('collection_id', 'The ID of the collection.', required=False)
+        .param('name', 'The name of the application.', required=False)
+        .param('text', 'Provide text search of the application.', required=False)
+        .param('limit', 'Result set size limit.', required=False)
+        .param('offset', 'Offset into result set.', required=False)
+        .param('sort', 'Field to sort the result set by.', required=False)
+        .errorResponse()
         .errorResponse('Read permission denied on the application.', 403)
     )
     @access.user(scope=TokenScope.DATA_READ)
-    def getApp(self, id):
-        return self._model.load(id, user=self.getCurrentUser())
+    def listApp(self, id, collection_id, name, text, limit, offset, sort):
+        user = self.getCurrentUser()
+
+        if ObjectId.is_valid(id):
+            return self._model.load(id, user=user)
+        else:
+            if collection_id:
+                parent = Collection().load(
+                    collection_id, user=user, level=AccessType.READ, exc=True)
+            else:
+                parent = Collection().findOne(
+                    query={'name': 'Applications'}, user=user, offset=offset)
+            if parent:
+                filters = {}
+                if text:
+                    filters['$text'] = {
+                        '$search': text
+                    }
+                if name:
+                    filters['name'] = name
+
+                return list(self._model.childFolders(
+                    parentType='collection', parent=parent, user=user,
+                    offset=offset, limit=limit, sort=sort, filters=filters))
+            return []
 
     @access.user(scope=TokenScope.DATA_WRITE)
     @autoDescribeRoute(
