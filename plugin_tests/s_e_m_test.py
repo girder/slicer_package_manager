@@ -28,7 +28,7 @@ class SlicerExtensionManagerTest(base.TestCase):
 
         self.maxDiff = None
         self._MAX_CHUNK_SIZE = 1024 * 1024 * 64
-        self._extensionNameTemplate = '{baseName}_{arch}_{os}_{revision}'
+        self._extensionNameTemplate = '{app_revision}_{os}_{arch}_{baseName}_{revision}'
 
         self.dataDir = os.path.join(
             os.environ['GIRDER_TEST_DATA_PREFIX'], 'plugins', 'slicer_extension_manager')
@@ -67,7 +67,7 @@ class SlicerExtensionManagerTest(base.TestCase):
 
         self._extensions = {
             'extension1': {
-                'name': 'slicerExt_i386_linux_35333',
+                'name': '12345_linux_i386_slicerExt_35333',
                 'meta': {
                     'os': 'linux',
                     'arch': 'i386',
@@ -82,7 +82,7 @@ class SlicerExtensionManagerTest(base.TestCase):
                 }
             },
             'extension2': {
-                'name': 'slicerExt1_i386_win_54342',
+                'name': '112233_win_i386_slicerExt1_54342',
                 'meta': {
                     'os': 'win',
                     'arch': 'i386',
@@ -97,7 +97,7 @@ class SlicerExtensionManagerTest(base.TestCase):
                 }
             },
             'extension3': {
-                'name': 'slicerExt2_amd64_linux_542',
+                'name': '112233_linux_amd64_slicerExt2_542',
                 'meta': {
                     'os': 'linux',
                     'arch': 'amd64',
@@ -195,18 +195,30 @@ class SlicerExtensionManagerTest(base.TestCase):
             self._extensionNameTemplate,
             collName='Collection_for_app')
 
-    def testGetApp(self):
+    def testlistApp(self):
+        # Get application with application ID
         resp = self.request(
             path='/app',
             method='GET',
             user=self._user,
-            params={'id': self._app['_id']}
+            params={'app_id': self._app['_id']}
         )
         self.assertStatusOk(resp)
         self.assertEqual(resp.json['name'], self._app['name'])
         self.assertEqual(resp.json['description'], self._app['description'])
         self.assertEqual(
             resp.json['meta']['extensionNameTemplate'], self._extensionNameTemplate)
+
+        # List all applications from 'Applications' collection (Default)
+        resp = self.request(
+            path='/app',
+            method='GET',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json, [])
+
+        # TODO: Add test with exact name match & text search
 
     def testDeleteApp(self):
         # Create the application without any collection,
@@ -221,7 +233,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             path='/app',
             method='GET',
             user=self._user,
-            params={'id': app['_id']}
+            params={'app_id': app['_id']}
         )
         self.assertStatusOk(resp)
         self.assertEqual(resp.json['name'], app['name'])
@@ -241,7 +253,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             path='/app',
             method='GET',
             user=self._user,
-            params={'id': app['_id']}
+            params={'app_id': app['_id']}
         )
         self.assertStatusOk(resp)
         self.assertEqual(resp.json, None)
@@ -411,7 +423,7 @@ class SlicerExtensionManagerTest(base.TestCase):
                 'parentType': 'item',
                 'parentId': item['_id'],
                 'name': fileName,
-                'size': os.path.getsize(file),
+                'size': size,
                 'mimeType': 'application/octet-stream'
             })
         self.assertStatusOk(resp)
@@ -443,7 +455,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             self.assertHasKeys(uploadedFile, ['itemId'])
             self.assertEqual(uploadedFile['assetstoreId'], str(self.assetstore['_id']))
             self.assertEqual(uploadedFile['name'], filePath)
-            self.assertEqual(uploadedFile['size'], os.path.getsize(file))
+            self.assertEqual(uploadedFile['size'], size)
         return uploadedFile
 
     def _createOrUpdateExtension(self, params):
@@ -500,7 +512,7 @@ class SlicerExtensionManagerTest(base.TestCase):
 
     def testUpdateExtensions(self):
         extension = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
-        self.assertEqual(extension['name'], 'slicerExt1_i386_win_54342')
+        self.assertEqual(extension['name'], self._extensions['extension2']['name'])
         self.assertEqual(ObjectId(extension['folderId']), self._nightly['_id'])
         # Update the same extension
         newParams = self._extensions['extension2']['meta'].copy()
@@ -511,7 +523,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             'description': 'Extension for Slicer 4 new version 2'
         })
         updatedExtension = self._createOrUpdateExtension(newParams)
-        self.assertEqual(updatedExtension['name'], 'slicerExt1_i386_win_54342')
+        self.assertEqual(updatedExtension['name'], self._extensions['extension2']['name'])
         self.assertEqual(ObjectId(updatedExtension['folderId']), self._nightly['_id'])
         self.assertNotEqual(updatedExtension['meta'], extension['meta'])
 
