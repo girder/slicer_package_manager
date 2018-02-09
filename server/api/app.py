@@ -33,8 +33,6 @@ from girder.utility.progress import ProgressContext
 from ..models.extension import Extension as ExtensionModel
 from .. import constants
 
-# TODO: Add some comment and docs
-
 
 def _deleteFolder(folder, progress, user):
     with ProgressContext(progress, user=user,
@@ -89,8 +87,10 @@ class App(Resource):
         """
         Create the directory for start a new application. By default, without specifying
         a 'collection_id', it will create a new collection name either 'collection_name'
-        if provided, or 'Applications'.
-        Return the new application (as a folder) that always contain a subfolder named 'nightly'.
+        if provided, or 'Applications'. If the collection 'Applications already exist it will
+        get it.
+        Return the new application (as a folder) that always contain a default
+        sub-folder named 'nightly'.
         """
         creator = self.getCurrentUser()
         # Load or create the collection that contain the application
@@ -126,7 +126,7 @@ class App(Resource):
             parentType='Collection',
             public=public,
             creator=creator)
-        # Create the 'nightly' release will be the default folder when uploading a package
+        # Create the 'nightly' release which will be the default folder when uploading an extension
         self._model.createFolder(
             parent=app,
             name=constants.NIGHTLY_RELEASE_NAME,
@@ -135,31 +135,32 @@ class App(Resource):
             public=public,
             creator=creator)
         # Set a default template name for extensions in the application,
-        # this can be changed in anytimeB and will adapt all names of the extensions
+        # this can be changed in anytime.
         return self._model.setMetadata(
             app,
-            {'extensionNameTemplate': '{baseName}_{arch}_{os}_{revision}'}
+            {'extensionNameTemplate': '{app_revision}_{os}_{arch}_{baseName}_{revision}'}
         )
 
     @autoDescribeRoute(
         Description('List existing application.')
-        .responseClass('Folder')
-        .param('id', 'The ID of the application.', required=False)
+        .responseClass('Folder', array=True)
+        .param('app_id', 'The ID of the application.', required=False)
         .param('collection_id', 'The ID of the collection.', required=False)
         .param('name', 'The name of the application.', required=False)
         .param('text', 'Provide text search of the application.', required=False)
-        .param('limit', 'Result set size limit.', required=False)
-        .param('offset', 'Offset into result set.', required=False)
-        .param('sort', 'Field to sort the result set by.', required=False)
+        .pagingParams(defaultSort='name')
         .errorResponse()
         .errorResponse('Read permission denied on the application.', 403)
     )
     @access.user(scope=TokenScope.DATA_READ)
-    def listApp(self, id, collection_id, name, text, limit, offset, sort):
+    def listApp(self, app_id, collection_id, name, text, limit, offset, sort):
+        """
+        List existing applications base on some parameters (Id, parent collection, name...)
+        """
         user = self.getCurrentUser()
 
-        if ObjectId.is_valid(id):
-            return self._model.load(id, user=user)
+        if ObjectId.is_valid(app_id):
+            return self._model.load(app_id, user=user)
         else:
             if collection_id:
                 parent = Collection().load(
@@ -228,12 +229,7 @@ class App(Resource):
         Description('Get all the releases from an application.')
         .responseClass('Folder')
         .param('app_id', 'The application\'s ID.')
-        .param('limit', 'Limit result count. Must be a positive integer.',
-               dataType='integer', default=0, required=False)
-        .param('offset', 'offset result count. Must be a positive integer.',
-               dataType='integer', default=0, required=False)
-        .param('sort', 'What parameter to sort results by.',
-               required=False)
+        .pagingParams(defaultSort='name')
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
@@ -309,6 +305,7 @@ class App(Resource):
         Description('List or search available extensions.')
         .responseClass('Extension')
         .param('app_id', 'The ID of the application.')
+        .param('release_id', 'The release id.', required=False)
         .param('extension_id', 'The extension id.', required=False)
         .param('os', 'The target operating system of the package.',
                required=False, enum=['linux', 'win', 'macosx'])
@@ -316,17 +313,12 @@ class App(Resource):
                required=False, enum=['i386', 'amd64'])
         .param('app_revision', 'The revision of the package.', required=False)
         .param('search', 'Text matched against extension name or description.', required=False)
-        .param('limit', 'Limit result count. Must be a positive integer.',
-               dataType='integer', default=0, required=False)
-        .param('offset', 'offset result count. Must be a positive integer.',
-               dataType='integer', default=0, required=False)
-        .param('sort', 'What parameter to sort results by.',
-               required=False, enum=['revision', 'packagetype', 'submissiontype', 'arch', 'os'])
+        .pagingParams(defaultSort='created')
         .errorResponse()
     )
     @access.cookie
     @access.public
-    def getExtensions(self, app_id, extension_id, os, arch, app_revision,
+    def getExtensions(self, app_id, release_id, extension_id, os, arch, app_revision,
                       search, limit, offset, sort):
         """
         Return a generator which contain the different extensions present in the DB.
@@ -339,7 +331,9 @@ class App(Resource):
                 {'meta.revision': {'$exists': True}}]
         }
         if ObjectId.is_valid(extension_id):
-            filters['_id'] = extension_id
+            filters['_id'] = ObjectId(extension_id)
+        if ObjectId.is_valid(release_id):
+            filters['folderId'] = ObjectId(release_id)
         if os:
             filters['meta.os'] = os
         if arch:
@@ -348,7 +342,6 @@ class App(Resource):
             filters['meta.revision'] = app_revision
         if search:
             # Provide a full text search on baseName
-            # TODO: prefix search or substring search
             filters['meta.baseName'] = search
 
         return list(ExtensionModel().find(
@@ -404,8 +397,8 @@ class App(Resource):
         :param repository_url: The Url of the repository.
         :param revision: The revision of the extension.
         :param app_revision: The revision of the application.
-        :param packagetype:
-        :param codebase:
+        :param packagetype: Type of the extension.
+        :param codebase: The codebase baseName.
         :param description: The description of the extension.
         :return: The status of the upload.
         """
@@ -486,7 +479,6 @@ class App(Resource):
         else:
             raise Exception("More than 1 binary file in the extension.")
 
-        # TODO: Is app_revision really an identifier metadata ?
         old_meta = {
             'baseName': extension['meta']['baseName'],
             'os': extension['meta']['os'],
