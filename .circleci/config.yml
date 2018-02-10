@@ -78,6 +78,27 @@ jobs:
           command: ctest -V -R slicer_extension_manager
           working_directory: girder_build
 
+      - run:
+          name: Install python_client
+          command: |
+            pip install -e .
+          working_directory: girder/clients/python
+
+      - run:
+          name: Install slicer_extension_manager_client
+          command: |
+            pip install -e .
+          working_directory: girder/plugins/slicer_extension_manager/web_python_client
+
+      - run:
+          name: Use of the slicer_extension_manager_client
+          command: |
+            girder-server &
+            sleep 10
+            python config.py
+            slicer_extension_manager_client --username admin --password adminadmin app list
+          working_directory: girder/plugins/slicer_extension_manager/web_python_client
+
       - setup_remote_docker
 
       - run:
@@ -127,4 +148,5 @@ jobs:
           name: Stop the docker container
           command: |
             cd girder/plugins/slicer_extension_manager
+
             docker-compose stop
