@@ -69,7 +69,8 @@ jobs:
       - run:
           name: Run CMake
           command: |
-            cmake -DPYTHON_COVERAGE:BOOL=ON -DCOVERAGE_MINIMUM_PASS:STRING=40 -DPYTHON_VERSION:STRING=2.7 -DRUN_CORE_TESTS:BOOL=OFF -DTEST_PLUGINS:STRING="slicer_extension_manager" $CIRCLE_WORKING_DIRECTORY/girder
+            cmake -DPYTHON_COVERAGE:BOOL=ON -DCOVERAGE_MINIMUM_PASS:STRING=40 -DPYTHON_VERSION:STRING=2.7 \
+            -DRUN_CORE_TESTS:BOOL=OFF -DTEST_PLUGINS:STRING="slicer_extension_manager" $CIRCLE_WORKING_DIRECTORY/girder
             make
           working_directory: girder_build
 
@@ -77,6 +78,46 @@ jobs:
           name: Run CTest
           command: ctest -V -R slicer_extension_manager
           working_directory: girder_build
+
+      - run:
+          name: Install python_client
+          command: pip install -e .
+          working_directory: girder/clients/python
+
+      - run:
+          name: Install slicer_extension_manager_client
+          command: pip install -e .
+          working_directory: girder/plugins/slicer_extension_manager/web_python_client
+
+      - run:
+          name: Start & configure the server and run python client Tests
+          command: |
+            girder-server &
+            echo "SLEEPING"
+            exit=0
+            num=0
+            while [ $exit -ne 1 ]; do
+              sleep 10
+              if curl -X GET --header 'Accept: application/json' \
+              --header 'Girder-Token: xHoENAkEUNo8Ye0N33Kccm9ihdEQlJv8AkLmagAEsGNxXPoixXUTu2XrWsPAltkz' \
+              'http://127.0.0.1:8080/api/v1/system/check?mode=basic'; then
+                exit=1
+              fi;
+              num=$(($num + 10))
+              if (($num > 100)); then
+                echo "TIMEOUT"
+                exit 1
+              fi;
+            done
+            echo "SERVER READY"
+            python config.py
+            sleep 50
+
+            slicer_extension_manager_client --username admin --password adminadmin app create App1
+            slicer_extension_manager_client --username admin --password adminadmin app create App2 \
+            --desc 'This is a description for App2'
+            slicer_extension_manager_client --username admin --password adminadmin app list
+          working_directory: girder/plugins/slicer_extension_manager/web_python_client
 
       - setup_remote_docker
 
@@ -98,9 +139,8 @@ jobs:
 
       - run:
           name: Build the image and run the docker container
-          command: |
-            cd girder/plugins/slicer_extension_manager
-            docker-compose up -d
+          command: docker-compose up -d
+          working_directory: girder/plugins/slicer_extension_manager
 
       - run:
           name: Loop until the Girder server is ready to be used
@@ -127,4 +167,5 @@ jobs:
           name: Stop the docker container
           command: |
             cd girder/plugins/slicer_extension_manager
+
             docker-compose stop
