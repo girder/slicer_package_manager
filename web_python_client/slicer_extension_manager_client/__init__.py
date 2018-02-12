@@ -266,6 +266,6 @@ class SlicerExtensionClient(GirderClient):
             'release_id': release_id,
             'limit': limit,
             'sort': 'created',
-            'sortDir': 'wefe'
+            'sortDir': -1
         })
         return extensions

@@ -94,14 +94,6 @@ class _Group(click.Group):
 
 _CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-# _ERROR_MESSAGE = {
-#     Constant.ERROR_ALREADY_EXIST: '',
-#     Constant.ERROR_APP_NOT_EXIST: '',
-#     Constant.ERROR_RELEASE_NOT_EXIST: '',
-#     Constant.ERROR_EXT_NOT_EXIST: '',
-#     Constant.ERROR_EXT_NO_FILE: ''
-# }
-
 
 @click.group(context_settings=_CONTEXT_SETTINGS)
 @click.option('--api-url', default=None,
