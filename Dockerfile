@@ -21,6 +21,6 @@ COPY web_client /girder/plugins/slicer_extension_manager/web_client/
 COPY web_external /girder/plugins/slicer_extension_manager/web_external/
 COPY plugin.cmake /girder/plugins/slicer_extension_manager/
 COPY plugin.json /girder/plugins/slicer_extension_manager/
-COPY README.md /girder/plugins/slicer_extension_manager/
+COPY README.rst /girder/plugins/slicer_extension_manager/
 
 RUN girder-install web --dev --plugins slicer_extension_manager
