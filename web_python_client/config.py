@@ -43,4 +43,3 @@ if __name__ == "__main__":
 
     # Restart the server
     gc.put('system/restart')
-
