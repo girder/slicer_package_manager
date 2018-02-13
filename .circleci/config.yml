@@ -113,11 +113,9 @@ jobs:
             python config.py
             sleep 50
 
-            slicer_extension_manager_client --username admin --password adminadmin app create App1
-            slicer_extension_manager_client --username admin --password adminadmin app create App2 \
-            --desc 'This is a description for App2'
-            slicer_extension_manager_client --username admin --password adminadmin app list
-          working_directory: girder/plugins/slicer_extension_manager/web_python_client
+            . slicer_extension_manager_client_test.sh
+
+          working_directory: girder/plugins/slicer_extension_manager/plugin_tests/python_client_tests
 
       - setup_remote_docker
 

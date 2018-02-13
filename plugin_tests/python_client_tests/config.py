@@ -36,6 +36,13 @@ if __name__ == "__main__":
     )
     gc.authenticate(username=login, password=password)
 
+    # Create an assetstore
+    gc.post('assetstore', parameters={
+        'name': 'TestAssetstore',
+        'type': 0,
+        'root': '/home/circleci/project/assetstore'
+    })
+
     # Enable the 'slicer_extension_manager' plugin
     gc.put('system/plugins', parameters={
         "plugins": '["slicer_extension_manager"]'
