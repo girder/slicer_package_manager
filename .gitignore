@@ -20,3 +20,6 @@ __pycache__
 .PyCharm50/
 .*.swo
 .*.swp
+
+# Dev tools
+docs/*.sh
