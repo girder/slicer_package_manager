@@ -60,6 +60,7 @@ class App(Resource):
         self.route('DELETE', (':app_id', 'release', ':release_id_or_name'),
                    self.deleteReleaseByIdOrName)
         self.route('GET', (':app_id', 'extension'), self.getExtensions)
+        self.route('GET', (':app_id', 'extension', ':extension_name'), self.getExtensionByName)
         self.route('POST', (':app_id', 'extension'), self.createOrUpdateExtension)
         self.route('DELETE', (':app_id', 'extension', ':ext_id'), self.deleteExtension)
 
@@ -349,6 +350,36 @@ class App(Resource):
             limit=limit,
             offset=offset,
             sort=sort))
+
+    @autoDescribeRoute(
+        Description('Get a particular extension by name from an application.')
+        .responseClass('Item')
+        .param('app_id', 'The application\'s ID.')
+        .param('extension_name', 'The extension\'s name.')
+        .errorResponse('ID or name was invalid.')
+        .errorResponse('Read permission denied on the application.', 403)
+    )
+    @access.user(scope=TokenScope.DATA_READ)
+    def getExtensionByName(self, app_id, extension_name):
+        """
+        Return the extension item
+        """
+        user = self.getCurrentUser()
+        application = self._model.load(app_id, user=user)
+
+        release_folder = list(self._model.childFolders(
+            application,
+            'Folder'))
+        if not release_folder:
+            raise Exception('The application has no release')
+        for release in release_folder:
+            extensions = list(self._model.childItems(
+                release,
+                filters={'lowerName': extension_name.lower()}
+            ))
+            if extensions:
+                return extensions[0]
+        return None
 
     @autoDescribeRoute(  # noqa: C901
         Description('Create or Update an extension package.')
