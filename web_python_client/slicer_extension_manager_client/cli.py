@@ -397,16 +397,25 @@ def _cli_downloadExtension(sc, *args, **kwargs):
               cls=_AdvancedOption
               )
 @click.option('--release', default=Constant.DEFAULT_RELEASE,
-              help='The revision of the application',
+              help='List all extension within the release',
               cls=_AdvancedOption
               )
 @click.option('--limit', default=Constant.DEFAULT_LIMIT,
-              help='The revision of the application',
+              help='The limit number of listed extensions ',
               cls=_AdvancedOption
               )
 @click.option('--all', 'all', flag_value='all',
               default=False,
-              help='The revision of the application',
+              help='List all the extension of the application',
+              cls=_AdvancedOption
+              )
+@click.option('--fullname', default=None,
+              help='Get an extension by fullname',
+              cls=_AdvancedOption
+              )
+@click.option('--id', 'id', flag_value='id',
+              default=False,
+              help='Get only the ID of the extension',
               cls=_AdvancedOption
               )
 @click.pass_obj
@@ -419,9 +428,14 @@ def _cli_listExtension(sc, *args, **kwargs):
         print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['app_name'])
     elif extensions == Constant.ERROR_RELEASE_NOT_EXIST:
         print('ERROR: The release \'%s\' doesn\'t exist' % kwargs['release'])
+    elif extensions == Constant.ERROR_EXT_NOT_EXIST:
+        print('ERROR: The extension \'%s\' doesn\'t exist' % kwargs['fullname'])
     else:
+        if kwargs['id'] and kwargs['fullname']:
+            print extensions['_id']
         print('%-25s\t%-30s\t\t%-50s' % ('EXTENSION ID', 'NAME', 'DESCRIPTION'))
         print('%-25s\t%-30s\t\t%-50s' % ('-' * 25, '-' * 30, '-' * 50))
         for extension in extensions:
             print('%-25s\t%-30s\t\t%-50s' % (extension['_id'], extension['name'], extension['description'][0:50]))
-        return extensions
+
+# TODO: Test the new fullname & id options

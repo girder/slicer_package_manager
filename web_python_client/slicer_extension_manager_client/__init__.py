@@ -231,7 +231,7 @@ class SlicerExtensionClient(GirderClient):
         return ext
 
     def listExtension(self, app_name, os, arch, app_revision, release=Constant.DEFAULT_RELEASE,
-                      limit=Constant.DEFAULT_LIMIT, all=False):
+                      limit=Constant.DEFAULT_LIMIT, all=False, fullname=None, id=False):
         """
         List all the extension for a specific release and filter them with some option (os, arch, ...).
         By default the extensions within 'Nightly' release are listed. It's also possible to specify the '--all'
@@ -249,6 +249,14 @@ class SlicerExtensionClient(GirderClient):
         if not apps:
             return Constant.ERROR_APP_NOT_EXIST
         app = apps[0]
+
+        if fullname:
+            extension = self.get('app/%s/extension/%s' % (app['_id'], fullname))
+            if not extension:
+                return Constant.ERROR_EXT_NOT_EXIST
+            if id:
+                return extension['_id']
+            return extension
 
         if all:
             release_id = None
