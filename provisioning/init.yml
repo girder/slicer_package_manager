@@ -50,7 +50,7 @@
       scheme: "http"
       token: "{{ admin['token'] }}"
       plugins:
-        - slicer-extension-manager
+        - slicer_extension_manager
       state: present
 
   - name: Restart Girder Server

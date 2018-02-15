@@ -32,7 +32,7 @@ class Webroot(WebrootBase):
         if not templatePath:
             templatePath = os.path.join(
                 getPluginDir(),
-                'slicer-extension-manager',
+                'slicer_extension_manager',
                 'server',
                 'webroot.mako')
         super(Webroot, self).__init__(templatePath)
