@@ -17,6 +17,7 @@ and manage release of you application.
    prerequisites
    installation
    python_client
+   server
    authors
 
 
