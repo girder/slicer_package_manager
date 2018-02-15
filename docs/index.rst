@@ -16,8 +16,9 @@ and manage release of you application.
 
    prerequisites
    installation
-   python_client
    server
+   python_client
+   web_python_client
    authors
 
 
