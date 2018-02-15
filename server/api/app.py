@@ -16,7 +16,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ##############################################################################
-
+"""
+The internal API of Slicer Extension Manager Girder plugin. Use these endpoints to
+create new applications, new releases, and upload or download extensions or packages
+"""
 from bson.objectid import ObjectId
 
 from girder import events
@@ -87,11 +90,19 @@ class App(Resource):
                 collection_description, public):
         """
         Create the directory for start a new application. By default, without specifying
-        a 'collection_id', it will create a new collection name either 'collection_name'
-        if provided, or 'Applications'. If the collection 'Applications already exist it will
+        a ``collection_id``, it will create a new collection name either ``collection_name``
+        if provided, or **'Applications'**. If the collection 'Applications already exist it will
         get it.
         Return the new application (as a folder) that always contain a default
         sub-folder named 'nightly'.
+
+        :param name: Name of the new application
+        :param app_description: Description of the new application
+        :param collection_id: Id of the collection within create the application
+        :param collection_name: Name of the collection which will be created
+        :param collection_description: Description of the new collection
+        :param public: Whether the new collection should be publicly visible
+        :return: The new application folder
         """
         creator = self.getCurrentUser()
         # Load or create the collection that contain the application
@@ -156,7 +167,13 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_READ)
     def listApp(self, app_id, collection_id, name, text, limit, offset, sort):
         """
-        List existing applications base on some parameters (Id, parent collection, name...)
+        List existing applications base on some optional parameters:
+
+        :param app_id: Application ID
+        :param collection_id: Collection ID
+        :param name: Name of the application
+        :param text: Provide text search on the name of the application
+        :return: List of applications
         """
         user = self.getCurrentUser()
 
@@ -193,6 +210,12 @@ class App(Resource):
         .errorResponse('Admin access was denied for the application.', 403)
     )
     def deleteApp(self, folder, progress):
+        """
+        Delete the application by ID.
+
+        :param id: Id of the application
+        :return: Confirmation message with the deleted application name
+        """
         return _deleteFolder(folder, progress, self.getCurrentUser())
 
     @autoDescribeRoute(
@@ -210,7 +233,17 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_WRITE)
     def createNewRelease(self, name, app_id, app_revision, description, public):
         """
-        Create a new release with the 'name' within the application.
+        Create a new release with the ``name`` within the application. The ``app_revision``
+        will permit to automatically choose this release when uploading an extension
+        with a matching `app_revision`` metadata.
+
+        :param name: Name of the new release
+        :param app_id: Application ID
+        :param app_revision: Revision of the application corresponding to this release
+        :param description: Description of the new release
+        :param public: Whether the release should be publicly visible
+
+        :return: The new release folder
         """
         creator = self.getCurrentUser()
         application = self._model.load(app_id, user=creator)
@@ -237,7 +270,10 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_READ)
     def getAllReleases(self, app_id, limit, offset, sort):
         """
-        Return a generator which contain all the release of an application
+        Get a list of all the release of an application.
+
+        :param app_id: Application ID
+        :return: List of all release within the application
         """
         user = self.getCurrentUser()
         application = self._model.load(app_id, user=user)
@@ -261,7 +297,11 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_READ)
     def getReleaseByIdOrName(self, app_id, release_id_or_name):
         """
-        Return the release folder
+        Get the release folder by ID or by name.
+
+        :param app_id: Application ID
+        :param release_id_or_name: Could be either the release ID or the release name
+        :return: The release folder
         """
         user = self.getCurrentUser()
         application = self._model.load(app_id, user=user)
@@ -287,6 +327,14 @@ class App(Resource):
         .errorResponse('Admin access was denied for the release.', 403)
     )
     def deleteReleaseByIdOrName(self, folder, release_id_or_name, progress):
+        """
+        Delete a release by ID or name.
+
+        :param app_id: Application ID
+        :param release_id_or_name: Could be either the release ID or the release name
+        :param progress: Whether to record progress on this task
+        :return: Confirmation message with the deleted release name
+        """
         user = self.getCurrentUser()
 
         if ObjectId.is_valid(release_id_or_name):
@@ -322,7 +370,16 @@ class App(Resource):
     def getExtensions(self, app_id, release_id, extension_id, os, arch, app_revision,
                       search, limit, offset, sort):
         """
-        Return a generator which contain the different extensions present in the DB.
+        Get a list of extension which is filtered by some optional parameters:
+
+        :param app_id: Application ID
+        :param release_id: Release ID
+        :param extension_id: Extension ID
+        :param os: The operation system used for the extension.
+        :param arch: The architecture compatible with the extension.
+        :param app_revision: The revision of the application
+        :param search: Text search on the name of the extension
+        :return: The list of extensions
         """
         filters = {
             '$and': [
@@ -362,7 +419,11 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_READ)
     def getExtensionByName(self, app_id, extension_name):
         """
-        Return the extension item
+        Get the extension item by name.
+
+        :param app_id: Application ID
+        :param extension_name: The extension name
+        :return: The extension item
         """
         user = self.getCurrentUser()
         application = self._model.load(app_id, user=user)
@@ -419,7 +480,8 @@ class App(Resource):
                                 screenshots, contributors):
         """
         Upload an extension package in the database, in a specific release with providing
-        'release_id'. Or by default in the 'Nightly' folder.
+        ``release_id``. Or by default in the **'Nightly'** folder.
+
         :param app_id: The ID of the application.
         :param os: The operation system used for the extension.
         :param arch: The architecture compatible with the extension.
@@ -541,5 +603,12 @@ class App(Resource):
         .errorResponse('Admin access was denied for the extension.', 403)
     )
     def deleteExtension(self, app_id, item):
+        """
+        Delete the extension by ID.
+
+        :param app_id: Application ID
+        :param ext_id: Extension ID
+        :return: Confirmation message with the name of the deleted extension
+        """
         Item().remove(item)
         return {'message': 'Deleted extension %s.' % item['name']}

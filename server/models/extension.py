@@ -27,6 +27,11 @@ from girder.models.model_base import ValidationException
 
 
 class Extension(Item):
+    """
+    The ``Extension`` class derive from the ``Item`` model in Girder and it uses to embedded
+    extension binary files.
+    """
+
     def initialize(self):
         self.name = 'item'
 
@@ -39,7 +44,10 @@ class Extension(Item):
 
     def get(self, release, limit=0, offset=0, sort=None, filters=None, **kwargs):
         """
-        Return extensions available for a release.
+        Get all the extensions available for a release.
+
+        :param release: The release folder
+        :return: Generator containing all the child items of the release.
         """
         return Folder().childItems(
             release,
@@ -51,7 +59,13 @@ class Extension(Item):
 
     def createExtension(self, name, creator, folder, params):
         """
-        Create and save in the DB a fresh new extension (derivative from an item with metadata).
+        Create and save in the DB a new extension.
+
+        :param name: Name of the new extension
+        :param creator: The creator user
+        :param folder: The release folder within the extension will be created.
+        :param params: All the metadata to set on the new extension
+        :return: The new extension item
         """
         item = self.createItem(
             name,
@@ -62,6 +76,12 @@ class Extension(Item):
         return self.setMetadata(item, params)
 
     def validate(self, doc):
+        """
+        Validate the extension instance.
+
+        :param doc: The extension instance
+        :return: The extension instance once validated
+        """
         # Call Item validate method
         doc = super(Extension, self).validate(doc)
 
