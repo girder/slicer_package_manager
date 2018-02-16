@@ -39,9 +39,12 @@ id1=$(python extractID.py _output1.txt)
 id2=$(python extractID.py _output2.txt)
 id3=$(python extractID.py _output3.txt)
 
-$cmd $auth extension download "$id1" --dir_path ./dwn
-$cmd $auth extension download "$id2" --dir_path ./dwn
-$cmd $auth extension download "$id3" --dir_path ./dwn
+$cmd $auth extension download $app1Name "$id1" --dir_path ./dwn
+$cmd $auth extension download $app1Name "$id2" --dir_path ./dwn
+$cmd $auth extension download $app1Name "$id3" --dir_path ./dwn
+
+# Download extension by NAME --> TODO
+
 
 # Check downloaded files
 cat dwn/*ext1* >> contents_d.txt
@@ -59,6 +62,9 @@ fi
 echo "TEST OK"
 rm -rf dwn
 rm *.txt
+
+# Delete extension by ID --> TODO
+
 # Delete all the applications
 $cmd $auth app delete $app1Name
 $cmd $auth app delete $app2Name
