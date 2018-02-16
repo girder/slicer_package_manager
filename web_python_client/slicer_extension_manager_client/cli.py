@@ -346,11 +346,11 @@ def _getOs():
               help='Type of the package (Installer, data...)',
               cls=_AdvancedOption
               )
-@click.option('--codebase', default='No codebase provided',
+@click.option('--codebase', default='',
               help='The codebase baseName',
               cls=_AdvancedOption
               )
-@click.option('--desc', default='No description provided',
+@click.option('--desc', default='',
               help='Description of the extension',
               cls=_AdvancedOption
               )
@@ -368,7 +368,8 @@ def _cli_uploadExtension(sc, *args, **kwargs):
 
 
 @extension.command('download')
-@click.argument('ext_id')
+@click.argument('app_name')
+@click.argument('id_or_name')
 @click.option('--dir_path', default=Constant.DEFAULT_DOWNLOAD_PATH,
               help='Path to the directory where will be downloaded the extenion',
               cls=_AdvancedOption
@@ -381,9 +382,9 @@ def _cli_downloadExtension(sc, *args, **kwargs):
     print('Start download...')
     ext = sc.downloadExtension(*args, **kwargs)
     if ext == Constant.ERROR_EXT_NOT_EXIST:
-        print('ERROR: The extension which correspond to (\'%s\') doesn\'t exist' % kwargs['ext_id'])
+        print('ERROR: The extension which correspond to (\'%s\') doesn\'t exist' % kwargs['id_or_name'])
     elif ext == Constant.ERROR_EXT_NO_FILE:
-        print('ERROR: The extension which correspond to (\'%s\') has no binary file' % kwargs['ext_id'])
+        print('ERROR: The extension which correspond to (\'%s\') has no binary file' % kwargs['id_or_name'])
     else:
         print('%s (%s)\t%s\t[%s]' % (ext['name'], ext['_id'], 'DOWNLOADED', kwargs['dir_path']))
 
@@ -413,11 +414,6 @@ def _cli_downloadExtension(sc, *args, **kwargs):
               help='Get an extension by fullname',
               cls=_AdvancedOption
               )
-@click.option('--id', 'id', flag_value='id',
-              default=False,
-              help='Get only the ID of the extension',
-              cls=_AdvancedOption
-              )
 @click.pass_obj
 def _cli_listExtension(sc, *args, **kwargs):
     """
@@ -431,11 +427,27 @@ def _cli_listExtension(sc, *args, **kwargs):
     elif extensions == Constant.ERROR_EXT_NOT_EXIST:
         print('ERROR: The extension \'%s\' doesn\'t exist' % kwargs['fullname'])
     else:
-        if kwargs['id'] and kwargs['fullname']:
-            print extensions['_id']
         print('%-25s\t%-30s\t\t%-50s' % ('EXTENSION ID', 'NAME', 'DESCRIPTION'))
         print('%-25s\t%-30s\t\t%-50s' % ('-' * 25, '-' * 30, '-' * 50))
         for extension in extensions:
             print('%-25s\t%-30s\t\t%-50s' % (extension['_id'], extension['name'], extension['description'][0:50]))
 
-# TODO: Test the new fullname & id options
+
+@extension.command('delete')
+@click.argument('app_name')
+@click.argument('id_or_name')
+@click.pass_obj
+def _cli_deleteExtension(sc, *args, **kwargs):
+    """
+    Delete a release
+    """
+    ext = sc.deleteExtension(*args, **kwargs)
+    if ext == Constant.ERROR_APP_NOT_EXIST:
+        print('ERROR: The Application \'%s\' doesn\'t exist' % kwargs['app_name'])
+    elif ext == Constant.ERROR_EXT_NOT_EXIST:
+        print('ERROR: The Extension \'%s\' doesn\'t exist' % kwargs['ID_or_Name'])
+    else:
+        print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'DELETED'))
+
+
+# TODO: Test the new fullname
