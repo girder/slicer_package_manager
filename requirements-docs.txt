@@ -1,0 +1,4 @@
+girder
+girder_client
+sphinx
+sphinx_rtd_theme
