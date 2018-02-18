@@ -38,7 +38,7 @@ There are few solutions to authenticate on your Girder instance when using the c
     *The API-KEY is given as an exemple, follow the documentation on* api-key_ *to create one.*
 
 Then you can start using the API that allow you to easily create applications, manage release,
-upload and download extension, see :doc:`web_python_client.shell` documentation for more details.
+upload and download extension, see :doc:`python_client_commands` documentation for more details.
 
 .. _api-key: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
 .. _documentation: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys

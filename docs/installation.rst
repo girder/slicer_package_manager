@@ -26,11 +26,11 @@ Run via Docker
 
 If you do not have all required system packages installed let's read the :doc:`prerequisites`.
 
-Then to build and start the `Girder` and `mongo` containers::
+Then to run the server just use the following command::
 
     $ docker-compose up -d
 
-The application should then be running at http://localhost:8080/ and be already configured:
+The Girder application should then be running at http://localhost:8080/ and be already setup:
 
 * Creation of an **Admin user** (*username: admin*, *password: adminadmin*)
-* Creation of an **Assetstore** (*/slicer_extension_manager/assetstore*)
+* Creation of an **Assetstore** (in *~/slicer_extension_manager/assetstore*)

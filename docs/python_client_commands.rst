@@ -1,4 +1,4 @@
-.. _web_python_client.shell:
+.. _web_python_client_commands:
 
 Shell Commands
 ==============
