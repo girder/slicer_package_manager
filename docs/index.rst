@@ -46,8 +46,9 @@ Table of Contents
    :maxdepth: 2
    :caption: User Documentation:
 
+   user_guide
    python_client
-   web_python_client
+   python_client_commands
    authors
 
 .. toctree::
@@ -55,6 +56,7 @@ Table of Contents
    :caption: Developer Documentation:
 
    server
+   web_python_client
 
 Indices and tables
 ==================

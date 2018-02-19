@@ -32,5 +32,7 @@ Then to run the server just use the following command::
 
 The Girder application should then be running at http://localhost:8080/ and be already setup:
 
-* Creation of an **Admin user** (*username: admin*, *password: adminadmin*)
-* Creation of an **Assetstore** (in *~/slicer_extension_manager/assetstore*)
+* Creation of an **Admin User** (username: *admin*, password: *adminadmin*)
+* Creation of a local **Assetstore** (in *~/slicer_extension_manager/assetstore*), let's read the Filesystem_ documentation for more detail about it
+
+.. _Filesystem: http://girder.readthedocs.io/en/latest/user-guide.html#assetstores

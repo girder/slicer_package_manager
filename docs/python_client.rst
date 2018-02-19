@@ -34,11 +34,15 @@ There are few solutions to authenticate on your Girder instance when using the c
 
     $ slicer_extension_manager_client --api-key EKTb15LjqD4Q7jJuAVPuUSuW8N7s3dmuAekpRGLD
 
-.. note::
+.. warning::
     *The API-KEY is given as an exemple, follow the documentation on* api-key_ *to create one.*
 
 Then you can start using the API that allow you to easily create applications, manage release,
 upload and download extension, see :doc:`python_client_commands` documentation for more details.
+
+.. note::
+    Once you've created an API-KEY, you can easily create an alias with both the ``slicer_extension_manager_client``
+    command and the API-KEY to use the client more efficiency.
 
 .. _api-key: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
 .. _documentation: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
