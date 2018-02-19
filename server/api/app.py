@@ -150,7 +150,7 @@ class App(Resource):
         # this can be changed in anytime.
         return self._model.setMetadata(
             app,
-            {'extensionNameTemplate': '{app_revision}_{os}_{arch}_{baseName}_{revision}'}
+            {'extensionNameTemplate': constants.EXTENSION_TEMPLATE_NAME}
         )
 
     @autoDescribeRoute(
@@ -167,7 +167,9 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_READ)
     def listApp(self, app_id, collection_id, name, text, limit, offset, sort):
         """
-        List existing applications base on some optional parameters:
+        List existing applications base on some optional parameters.
+        For searching application which aren't in the default collection (Applications),
+        the parameter ``collection_id`` need to be provided.
 
         :param app_id: Application ID
         :param collection_id: Collection ID
