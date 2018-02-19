@@ -1,5 +1,5 @@
-server.api package
-==================
+server\.api package
+===================
 
 .. automodule:: server.api
     :members:
@@ -9,8 +9,8 @@ server.api package
 Submodules
 ----------
 
-server.api.app module
----------------------
+server\.api\.app module
+-----------------------
 
 .. automodule:: server.api.app
     :members:

@@ -1,5 +1,6 @@
-server package
-==============
+==========
+Server API
+==========
 
 .. automodule:: server
     :members:
@@ -17,8 +18,8 @@ Subpackages
 Submodules
 ----------
 
-server.constants module
------------------------
+server\.constants module
+------------------------
 
 .. automodule:: server.constants
     :members:
