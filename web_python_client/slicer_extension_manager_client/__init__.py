@@ -40,7 +40,7 @@ class Constant:
 
     # Default
     # TODO: Find a good default path
-    DEFAULT_DOWNLOAD_PATH = '/Users/pierre.assemat/slicer-extension-manager/extensions'
+    DEFAULT_DOWNLOAD_PATH = '~/slicer_extension_manager/extensions'
     DEFAULT_RELEASE = 'Nightly'
     DEFAULT_LIMIT = 50
 
