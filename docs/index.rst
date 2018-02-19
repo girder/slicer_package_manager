@@ -55,6 +55,7 @@ Table of Contents
    :maxdepth: 1
    :caption: Developer Documentation:
 
+   developer_guide
    server
    web_python_client
 
