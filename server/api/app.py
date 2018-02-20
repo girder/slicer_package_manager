@@ -481,8 +481,9 @@ class App(Resource):
                                 release, icon_url, development_status, category, enabled, homepage,
                                 screenshots, contributors):
         """
-        Upload an extension package in the database, in a specific release with providing
-        ``release_id``. Or by default in the **'Nightly'** folder.
+        Create an extension item in a specific release with providing ``release_id`` or in
+        the **'Nightly'** folder by default.
+        It's also possible to update an existing extension if
 
         :param app_id: The ID of the application.
         :param os: The operation system used for the extension.
@@ -550,7 +551,10 @@ class App(Resource):
 
         name = application['meta']['extensionNameTemplate'].format(**params)
         filters = {
-            'name': name
+            'baseName': baseName,
+            'os': os,
+            'arch': arch,
+            'app_revision': app_revision
         }
         # Only one extensions should be in this list
         extensions = list(ExtensionModel().get(release_folder, filters=filters))
@@ -578,14 +582,14 @@ class App(Resource):
             'baseName': extension['meta']['baseName'],
             'os': extension['meta']['os'],
             'arch': extension['meta']['arch'],
-            'revision': extension['meta']['revision'],
+            #'revision': extension['meta']['revision'],
             'app_revision': extension['meta']['app_revision']
         }
         identifier_meta = {
             'baseName': baseName,
             'os': os,
             'arch': arch,
-            'revision': revision,
+            #'revision': revision,
             'app_revision': app_revision
         }
         if identifier_meta == old_meta and len(extensions):
