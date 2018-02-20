@@ -47,8 +47,7 @@ Table of Contents
    :caption: User Documentation:
 
    user_guide
-   python_client
-   python_client_commands
+   commands_shell
    authors
 
 .. toctree::
@@ -57,7 +56,7 @@ Table of Contents
 
    developer_guide
    server
-   web_python_client
+   python_client
 
 Indices and tables
 ==================

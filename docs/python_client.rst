@@ -1,48 +1,11 @@
-.. _python_client:
+=================
+Python Client API
+=================
 
-=============
-Python Client
-=============
+Slicer Extension Manager
+------------------------
 
-Installation
-------------
-
-To install the latest version of the ``slicer_extension_manager_client``::
-
-    $ cd web_python_client
-
-then::
-
-    $ pip install .
-
-or::
-
-    $ pip install -e .
-
-for development
-
-Use
----
-
-There are few solutions to authenticate on your Girder instance when using the client:
-
-* Using your login and your password::
-
-    $ slicer_extension_manager_client --username admin --password adminadmin
-
-* Generating an API-KEY see the documentation_ for more details::
-
-    $ slicer_extension_manager_client --api-key EKTb15LjqD4Q7jJuAVPuUSuW8N7s3dmuAekpRGLD
-
-.. warning::
-    *The API-KEY is given as an exemple, follow the documentation on* api-key_ *to create one.*
-
-Then you can start using the API that allow you to easily create applications, manage release,
-upload and download extension, see :doc:`python_client_commands` documentation for more details.
-
-.. note::
-    Once you've created an API-KEY, you can easily create an alias with both the ``slicer_extension_manager_client``
-    command and the API-KEY to use the client more efficiency.
-
-.. _api-key: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
-.. _documentation: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
+.. automodule:: slicer_extension_manager_client.__init__
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,7 +1,56 @@
-.. _web_python_client_commands:
+.. _commands_shell:
 
-Shell Commands
 ==============
+Commands shell
+==============
+
+Installation
+------------
+
+To install the latest version of the ``slicer_extension_manager_client``::
+
+    $ cd web_python_client
+
+then::
+
+    $ pip install .
+
+or::
+
+    $ pip install -e .
+
+for development
+
+Use
+---
+
+There are few solutions to authenticate on your Girder instance when using the client:
+
+* Using your login and your password::
+
+    $ slicer_extension_manager_client --username admin --password adminadmin
+
+* Generating an API-KEY see the documentation_ for more details::
+
+    $ slicer_extension_manager_client --api-key EKTb15LjqD4Q7jJuAVPuUSuW8N7s3dmuAekpRGLD
+
+.. warning::
+    *The API-KEY is given as an exemple, follow the documentation on* api-key_ *to create one.*
+
+Then you can start using the API that allow you to easily create applications, manage release,
+upload and download extension, see :ref:`slicer_extension_manager_client` documentation for more details.
+
+.. note::
+    Once you've created an API-KEY, you can easily create an alias with both the ``slicer_extension_manager_client``
+    command and the API-KEY to use the client more efficiency.
+
+.. _api-key: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
+.. _documentation: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
+
+.. _slicer_extension_manager_client:
+
+slicer_extension_manager_client
+-------------------------------
 
 The command ``slicer_extension_manager_client`` allow to use a simplified API to interact with the Python Client API.
 There are 3 different command that can be used to manage models:
@@ -11,7 +60,7 @@ There are 3 different command that can be used to manage models:
 * Extension
 
 To use this client you will need to authenticate with an admin user on the Girder instance.
-Let's read the :doc:`python_client` documentation first.
+Let's read the :doc:`commands_shell` documentation first.
 
 Application
 -----------
@@ -195,3 +244,4 @@ Arguments:
 
 * ``APP_NAME`` - The name of the application
 * ``ID_OR_NAME`` - The ID or name of the extension which will be deleted
+
