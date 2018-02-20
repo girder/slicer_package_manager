@@ -39,8 +39,8 @@ class Constant:
     ERROR_EXT_NO_FILE = 5
 
     # Default
-    # TODO: Find a good default path
-    DEFAULT_DOWNLOAD_PATH = '~/slicer_extension_manager/extensions'
+    _home = OS.path.expanduser("~")
+    DEFAULT_DOWNLOAD_PATH = OS.path.join(_home, 'slicer_extension_manager/extensions')
     DEFAULT_RELEASE = 'Nightly'
     DEFAULT_LIMIT = 50
 
@@ -260,6 +260,7 @@ class SlicerExtensionClient(GirderClient):
         By default the extensions within ``Nightly`` release are listed.
         It's also possible to specify the ``--all`` option to list all the extensions from all
         the release of an application.
+        To use the ``--id`` functionality you must provide a valid fullname of the extension.
 
         :param app_name: Name of the application
         :param os: The target operating system of the package
@@ -283,7 +284,7 @@ class SlicerExtensionClient(GirderClient):
                 return Constant.ERROR_EXT_NOT_EXIST
             if id:
                 return extension['_id']
-            return extension
+            return [extension]
 
         if all:
             release_id = None
