@@ -31,14 +31,14 @@ jobs:
             git -C girder checkout $GIRDER_VERSION
 
       - run:
-          name: Create and activate virtualenv
+          name: Create Girder virtual environment
           command: |
-            virtualenv venv
-            echo "source $CIRCLE_WORKING_DIRECTORY/venv/bin/activate" >> $BASH_ENV
+            virtualenv girder_venv
 
       - run:
           name: Install Girder
           command: |
+            source $CIRCLE_WORKING_DIRECTORY/girder_venv/bin/activate
             pip install -e .
             pip install -r ./requirements-dev.txt
           # pytest_girder requires that install be run from this directory
@@ -49,14 +49,18 @@ jobs:
 
       - run:
           name: Install slicer_extension_manager
-          command: girder-install plugin girder/plugins/slicer_extension_manager
+          command: |
+            source $CIRCLE_WORKING_DIRECTORY/girder_venv/bin/activate
+            girder-install plugin girder/plugins/slicer_extension_manager
 
       - restore_cache:
           key: npm-{{ arch }}-{{ checksum "girder/package.json" }}-{{ checksum "girder/plugins/slicer_extension_manager/plugin.json" }}
 
       - run:
           name: Build Girder web client
-          command: girder-install web --dev --plugins=slicer_extension_manager
+          command: |
+            source $CIRCLE_WORKING_DIRECTORY/girder_venv/bin/activate
+            girder-install web --dev --plugins=slicer_extension_manager
           environment:
             - npm_config_cache: /home/circleci/project/npm_cache
       - save_cache:
@@ -80,18 +84,21 @@ jobs:
           working_directory: girder_build
 
       - run:
-          name: Install python_client
-          command: pip install -e .
-          working_directory: girder/clients/python
+          name: Create python_client virtual environment
+          command: |
+            virtualenv python_client_venv
 
       - run:
           name: Install slicer_extension_manager_client
-          command: pip install -e .
+          command: |
+            source $CIRCLE_WORKING_DIRECTORY/python_client_venv/bin/activate
+            pip install -e .
           working_directory: girder/plugins/slicer_extension_manager/web_python_client
 
       - run:
           name: Start & configure the server and run python client Tests
           command: |
+            source $CIRCLE_WORKING_DIRECTORY/girder_venv/bin/activate
             girder-server &
             echo "SLEEPING"
             exit=0
@@ -113,6 +120,7 @@ jobs:
             python config.py
             sleep 50
 
+            source $CIRCLE_WORKING_DIRECTORY/python_client_venv/bin/activate
             . slicer_extension_manager_client_test.sh
 
           working_directory: girder/plugins/slicer_extension_manager/plugin_tests/python_client_tests
