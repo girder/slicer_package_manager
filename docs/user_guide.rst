@@ -22,12 +22,12 @@ There are 3 different ways to use the Slicer Extension Manager:
     If you don't want to use neither the Shell or python script, this UI is made for you. Let see the [documentation] to
     know how to use it.
 
-* By using the :doc:`web_python_client` within Python script:
+* By using the :doc:`python_client` within Python script:
 
     Using the Python Client API allow you to write complete script for create application,
     automatically upload extensions...
 
-* By using the :doc:`python_client_commands`:
+* By using the :doc:`commands_shell`:
 
     This is the more easy way to use the basic feature of the Slicer Extension Manager. These commands allow you to
     easily create or list applications and release, and also list, upload or download extensions.
