@@ -26,6 +26,5 @@ for development.
 Miscellaneous
 --------------------------------------
 
-The documentation is in working progress. And will be accessible at
-http://girder.readthedocs.org/en/latest/slicer-extension-python-client.html.
+The documentation is accessible at http://girder.readthedocs.org/en/latest/slicer-extension-python-client.html.
 
