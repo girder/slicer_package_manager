@@ -21,10 +21,7 @@ from setuptools import setup, find_packages
 
 install_reqs = [
     'click>=6.7',
-    'diskcache',
-    'requests>=2.4.2',
-    'requests_toolbelt',
-    'six',
+    'girder_client',
     'pytest-vcr',
     'tabulate'
 ]
