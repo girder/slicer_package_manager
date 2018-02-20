@@ -25,26 +25,32 @@ echo 'Content of the extension 3' > file3.txt
 
 cat file*.txt > contents.txt
 
+app_rev3="0001"
+os3="macosx"
+arch3="amd64"
+rev3="0.0.1"
+
 $cmd $auth extension upload $app1Name ./file1.txt --os win --arch i386 --name ext1 --app_revision 0000 --desc "Description for ex1" > _output1.txt
 $cmd $auth extension upload $app1Name ./file2.txt --os linux --arch i386 --name ext2 --app_revision 0000 --desc "Description for ex2" > _output2.txt
-$cmd $auth extension upload $app1Name ./file3.txt --arch amd64 --name ext3 --app_revision 0001 --desc "Description for ex3" > _output3.txt
+$cmd $auth extension upload $app1Name ./file3.txt --os $os3 --arch $arch3 --name ext3 --app_revision $app_rev3 --revision $rev3 --desc "Description for ex3" > _output3.txt
 
 $cmd $auth extension list $app1Name
 $cmd $auth extension list $app1Name --release $releaseName
 $cmd $auth extension list $app1Name --all
 
 # Download extensions
-# TODO: Use the new option to get only the ID from the client
+# TODO: Use the new option to get only the ID from the client (MAYBE)
+# By ID
 id1=$(python extractID.py _output1.txt)
 id2=$(python extractID.py _output2.txt)
-id3=$(python extractID.py _output3.txt)
 
 $cmd $auth extension download $app1Name "$id1" --dir_path ./dwn
 $cmd $auth extension download $app1Name "$id2" --dir_path ./dwn
-$cmd $auth extension download $app1Name "$id3" --dir_path ./dwn
 
-# Download extension by NAME --> TODO
+# By NAME
+name3="${app_rev3}_${os3}_${arch3}_ext3_${rev3}"
 
+$cmd $auth extension download $app1Name $name3 --dir_path ./dwn
 
 # Check downloaded files
 cat dwn/*ext1* >> contents_d.txt
@@ -63,7 +69,13 @@ echo "TEST OK"
 rm -rf dwn
 rm *.txt
 
-# Delete extension by ID --> TODO
+# Delete extension by ID
+$cmd $auth extension delete $app1Name $id1
+
+# Delete extension by full NAME
+$cmd $auth extension delete $app1Name $name3
+
+$cmd $auth extension list $app1Name --all
 
 # Delete all the applications
 $cmd $auth app delete $app1Name
