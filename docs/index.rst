@@ -6,9 +6,9 @@
 Welcome to Slicer Extension Manager's documentation!
 ====================================================
 
-The **Slicer Extension Manager** is a Girder plugin that allow you to manage Slicer extension within Girder.
-It provide a simple API to Upload and Download extensions or packages, create new applications,
-and manage release of your applications.
+The **Slicer Extension Manager** is a Girder plugin that allows you to manage Slicer extensions within Girder.
+It provides a simple API to Upload and Download extensions or packages, create new applications,
+and manage releases of your applications.
 
 What is Girder?
 ---------------
@@ -47,8 +47,7 @@ Table of Contents
    :caption: User Documentation:
 
    user_guide
-   python_client
-   python_client_commands
+   commands_shell
    authors
 
 .. toctree::
@@ -57,7 +56,7 @@ Table of Contents
 
    developer_guide
    server
-   web_python_client
+   python_client
 
 Indices and tables
 ==================

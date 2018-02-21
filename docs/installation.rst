@@ -30,6 +30,16 @@ Then to run the server just use the following command::
 
     $ docker-compose up -d
 
+.. note::
+
+    The ``-d`` option is running the container in deamon mode. Remove it to display the logs on the running containers.
+
+    To rebuild the container after changing the source code use the ``--build`` option when you run the command.
+
+.. warning::
+
+    *Run the containers can take few moments, the application will not be ready instantly.*
+
 The Girder application should then be running at http://localhost:8080/ and be already setup:
 
 * Creation of an **Admin User** (username: *admin*, password: *adminadmin*)
