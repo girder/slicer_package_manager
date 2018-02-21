@@ -34,11 +34,15 @@ There are few solutions to authenticate on your Girder instance when using the c
 
     $ slicer_extension_manager_client --api-key EKTb15LjqD4Q7jJuAVPuUSuW8N7s3dmuAekpRGLD
 
-.. warning::
-    *The API-KEY is given as an exemple, follow the documentation on* api-key_ *to create one.*
+or by using the ``GIRDER_API_KEY`` environment variable::
 
-Then you can start using the API that allow you to easily create applications, manage release,
-upload and download extension, see :ref:`slicer_extension_manager_client` documentation for more details.
+    $ export GIRDER_API_KEY=EKTb15LjqD4Q7jJuAVPuUSuW8N7s3dmuAekpRGLD
+
+.. warning::
+    *The API-KEY is given as an example, follow the documentation on* api-key_ *to create one.*
+
+Then you can start using the API that allow you to easily create applications, manage releases,
+upload and download extensions, see :ref:`slicer_extension_manager_client` documentation for more details.
 
 .. note::
     Once you've created an API-KEY, you can easily create an alias with both the ``slicer_extension_manager_client``
@@ -49,11 +53,11 @@ upload and download extension, see :ref:`slicer_extension_manager_client` docume
 
 .. _slicer_extension_manager_client:
 
-slicer_extension_manager_client
+Slicer Extension Manager Client
 -------------------------------
 
-The command ``slicer_extension_manager_client`` allow to use a simplified API to interact with the Python Client API.
-There are 3 different command that can be used to manage models:
+The command ``slicer_extension_manager_client`` allows to use a simplified API to interact with the Python Client API.
+There are 3 different commands that can be used to manage models:
 
 * Application
 * Release
@@ -106,7 +110,7 @@ Arguments:
 Release
 -------
 
-Use ``slicer_extension_manager_client release`` to manage release: create, list and delete them.
+Use ``slicer_extension_manager_client release`` to manage releases: create, list and delete them.
 
 Create a new release
 ^^^^^^^^^^^^^^^^^^^^
@@ -152,7 +156,7 @@ Arguments:
 Extension
 ---------
 
-Use ``slicer_extension_manager_client extension`` to Upload, Download or just list extensions
+Use ``slicer_extension_manager_client extension`` to upload, download or just list extensions
 
 Upload a new extension
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -161,7 +165,7 @@ Give the ``FILE_PATH`` argument to be able to upload an extension. The extension
 be added to the release which has the same revision than the ``--app_revision`` value. If any release correspond to the
 given revision, the extension will be uploaded in the `Nightly` folder, by default.
 
-The final name of the extension will depend of the extensionTemplate name set as metadata on the application folder.
+The final name of the extension will depend of the ``extensionNameTemplate`` set as metadata on the application folder.
 The default name is ``{app_revision}_{os}_{arch}_{baseName}_{revision}``. It can be change at any time on the
 application setting page.
 
@@ -190,10 +194,10 @@ Options:
 List extensions
 ^^^^^^^^^^^^^^^
 
-Use the options to filter the extensions to list. By default, the command will list all the extension from the
-'Nightly' release. It is possible to use the ``--release`` to list the extension from a particular release. Or use
-the flag ``--all`` to list all the extension present in the application. It is also possible to get only one extension
-by providing the ``--fullname`` extension
+Use options to filter the listed extensions. By default, the command will list all the extension from the
+'Nightly' release. It is possible to use the ``--release`` option to list the extension from a particular release.
+Or use the flag ``--all`` to list all the extension present in the application. It is also possible to get only
+one extension by providing the ``--fullname`` option of an extension.
 
 ::
 
