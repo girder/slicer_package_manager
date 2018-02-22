@@ -16,7 +16,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ###############################################################################
-import os as OS
+import os
 from bson.objectid import ObjectId
 
 from girder_client import GirderClient
@@ -44,8 +44,8 @@ class Constant:
     EXTENSION_NOW_UP_TO_DATE = 31
 
     # Default
-    _home = OS.path.expanduser("~")
-    DEFAULT_DOWNLOAD_PATH = OS.path.join(_home, 'slicer_extension_manager/extensions')
+    _home = os.path.expanduser("~")
+    DEFAULT_DOWNLOAD_PATH = os.path.join(_home, 'slicer_extension_manager/extensions')
     DEFAULT_RELEASE = 'Nightly'
     DEFAULT_LIMIT = 50
 
@@ -176,7 +176,7 @@ class SlicerExtensionClient(GirderClient):
         self.delete('/app/%s/release/%s' % (app['_id'], name))
         return release
 
-    def uploadExtension(self, filepath, app_name, os, arch, name, repo_type, repo_url, revision,
+    def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url, revision,
                         app_revision, packagetype, codebase, desc):
         """
         Upload an extension by providing a path to the file. It can also be used to update an
@@ -185,7 +185,7 @@ class SlicerExtensionClient(GirderClient):
 
         :param filepath: The path to the file
         :param app_name: The name of the application
-        :param os: The target operating system of the package
+        :param ext_os: The target operating system of the package
         :param arch: The os chip architecture
         :param name: The baseName of the extension
         :param repo_type: Type of the repository
@@ -206,11 +206,16 @@ class SlicerExtensionClient(GirderClient):
         app = apps[0]
 
         # Get potential existing extension
-        extensions = self.listExtension(app_name, name=name, os=os, arch=arch, app_revision=app_revision)
+        extensions = self.listExtension(
+            app_name,
+            name=name,
+            ext_os=ext_os,
+            arch=arch,
+            app_revision=app_revision)
         if not extensions:
             # Create the extension into Girder hierarchy
             extension = self.post('/app/%s/extension' % app['_id'], parameters={
-                'os': os,
+                'os': ext_os,
                 'arch': arch,
                 'baseName': name,
                 'repository_type': repo_type,
@@ -250,7 +255,7 @@ class SlicerExtensionClient(GirderClient):
 
                 # Update the extension into Girder hierarchy
                 extension = self.post('/app/%s/extension' % app['_id'], parameters={
-                    'os': os,
+                    'os': ext_os,
                     'arch': arch,
                     'baseName': name,
                     'repository_type': repo_type,
@@ -268,7 +273,7 @@ class SlicerExtensionClient(GirderClient):
                     self.delete('/file/%s' % oldFile['_id'])
                     # Change the name
                     self.put('/file/%s' % newFile['_id'], parameters={
-                        'name': OS.path.basename(filepath)
+                        'name': os.path.basename(filepath)
                     })
                     return Constant.EXTENSION_NOW_UP_TO_DATE
                 else:
@@ -279,6 +284,7 @@ class SlicerExtensionClient(GirderClient):
     def downloadExtension(self, app_name, id_or_name, dir_path=Constant.DEFAULT_DOWNLOAD_PATH):
         """
         Download an extension by ID and store it in the given option ``dir_path``.
+        When we use the extension id in ``id_or_name``, the parameter ``app_name`` is ignored.
 
         :param app_name: Name of the application
         :param id_or_name: ID or name of the extension
@@ -302,12 +308,11 @@ class SlicerExtensionClient(GirderClient):
         file = files[0]
         self.downloadFile(
             file['_id'],
-            OS.path.join(dir_path, '%s.%s' % (ext['name'], file['name'].split('.')[1])))
+            os.path.join(dir_path, '%s.%s' % (ext['name'], file['name'].split('.')[1])))
         return ext
 
-    def listExtension(self, app_name, name=None, os=None, arch=None, app_revision=None,
-                      release=Constant.DEFAULT_RELEASE, limit=Constant.DEFAULT_LIMIT, all=False,
-                      fullname=None, id=False):
+    def listExtension(self, app_name, name=None, ext_os=None, arch=None, app_revision=None,
+                      release=Constant.DEFAULT_RELEASE, limit=Constant.DEFAULT_LIMIT, all=False):
         """
         List all the extension for a specific release and filter them with some option
         (os, arch, ...). By default the extensions within ``Nightly`` release are listed.
@@ -317,13 +322,12 @@ class SlicerExtensionClient(GirderClient):
 
         :param app_name: Name of the application
         :param name: Base name of the extension
-        :param os: The target operating system of the package
+        :param ext_os: The target operating system of the package
         :param arch: The os chip architecture
         :param app_revision: Revision of the application
         :param release: Name of the release
         :param limit: Limit of the number of extensions listed
         :param all: Boolean that allow to list extensions from all the release
-        :param fullname: The full name of the extension
         :param id: Boolean to return only the extension ID
         :return: A list of extensions filtered by optional parameters
         """
@@ -331,14 +335,6 @@ class SlicerExtensionClient(GirderClient):
         if not apps:
             return Constant.ERROR_APP_NOT_EXIST
         app = apps[0]
-
-        if fullname:
-            extension = self.get('app/%s/extension/%s' % (app['_id'], fullname))
-            if not extension:
-                return Constant.ERROR_EXT_NOT_EXIST
-            if id:
-                return extension['_id']
-            return [extension]
 
         if all:
             release_id = None
@@ -350,7 +346,7 @@ class SlicerExtensionClient(GirderClient):
                 return Constant.ERROR_RELEASE_NOT_EXIST
 
         extensions = self.get('/app/%s/extension' % app['_id'], parameters={
-            'os': os,
+            'os': ext_os,
             'arch': arch,
             'baseName': name,
             'app_revision': app_revision,

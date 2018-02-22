@@ -314,7 +314,7 @@ def _getOs():
 @extension.command('upload')
 @click.argument('app_name')
 @click.argument('filepath')
-@click.option('--os', default=_getOs(),
+@click.option('--ext_os', default=_getOs(),
               help='The target operating system of the package',
               cls=_AdvancedOption
               )
@@ -400,7 +400,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 @click.option('--name', default=None,
               help='The baseName of the extension',
               cls=_AdvancedOption)
-@click.option('--os', type=click.Choice(['win', 'linux', 'macosx']))
+@click.option('--ext_os', type=click.Choice(['win', 'linux', 'macosx']))
 @click.option('--arch', type=click.Choice(['amd64', 'i386']))
 @click.option('--app_revision', default=None,
               help='The revision of the application',
@@ -417,10 +417,6 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 @click.option('--all', 'all', flag_value='all',
               default=False,
               help='List all the extension of the application',
-              cls=_AdvancedOption
-              )
-@click.option('--fullname', default=None,
-              help='Get an extension by fullname',
               cls=_AdvancedOption
               )
 @click.pass_obj
