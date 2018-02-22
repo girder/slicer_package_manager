@@ -87,7 +87,7 @@ jobs:
       - run:
           name: Install slicer_extension_manager_client
           command: pip install -e .
-          working_directory: girder/plugins/slicer_extension_manager/web_python_client
+          working_directory: girder/plugins/slicer_extension_manager/python_client
 
       - run:
           name: Start & configure the server and run python client Tests

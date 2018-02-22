@@ -13,7 +13,7 @@ docs-only:
 	rm -f docs/server.models.rst
 	rm -rf docs/_build/
 	sphinx-apidoc -o docs/ --module-first server
-	sphinx-apidoc -o docs/ --module-first web_python_client/slicer_extension_manager_client/
+	sphinx-apidoc -o docs/ --module-first python_client/slicer_extension_manager_client/
 	rm -f docs/modules.rst
 	rm -f docs/setup.rst
 	rm -f docs/slicer_extension_manager_client.rst

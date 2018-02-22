@@ -363,6 +363,12 @@ def _cli_uploadExtension(sc, *args, **kwargs):
     ext = sc.uploadExtension(*args, **kwargs)
     if ext == Constant.ERROR_APP_NOT_EXIST:
         print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['app_name'])
+    elif ext == Constant.ERROR_EXT_NOT_EXIST:
+        print('ERROR: The extension which correspond to (\'%s\') doesn\'t exist' % kwargs['name'])
+    elif ext == Constant.EXTENSION_AREADY_UP_TO_DATE:
+        print('Extension "%s" is already up-to-date\t(Extension Item updated)' % kwargs['name'])
+    elif ext == Constant.EXTENSION_NOW_UP_TO_DATE:
+        print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The extension is now up-to-date'))
     else:
         print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'UPLOADED'))
 
@@ -391,6 +397,9 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 
 @extension.command('list')
 @click.argument('app_name')
+@click.option('--baseName', default=None,
+              help='The revision of the application',
+              cls=_AdvancedOption)
 @click.option('--os', type=click.Choice(['win', 'linux', 'macosx']))
 @click.option('--arch', type=click.Choice(['amd64', 'i386']))
 @click.option('--app_revision', default=None,

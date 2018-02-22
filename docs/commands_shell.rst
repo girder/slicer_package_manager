@@ -9,7 +9,7 @@ Installation
 
 To install the latest version of the ``slicer_extension_manager_client``::
 
-    $ cd web_python_client
+    $ cd python_client
 
 then::
 

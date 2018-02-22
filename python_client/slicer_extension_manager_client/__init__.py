@@ -37,6 +37,11 @@ class Constant:
     ERROR_RELEASE_NOT_EXIST = 3
     ERROR_EXT_NOT_EXIST = 4
     ERROR_EXT_NO_FILE = 5
+    ERROR_EXT_UPLOAD = 6
+
+    # Success
+    EXTENSION_AREADY_UP_TO_DATE = 30
+    EXTENSION_NOW_UP_TO_DATE = 31
 
     # Default
     _home = OS.path.expanduser("~")
@@ -171,56 +176,103 @@ class SlicerExtensionClient(GirderClient):
         self.delete('/app/%s/release/%s' % (app['_id'], name))
         return release
 
-    def uploadExtension(self, filepath, app_name, os, arch, name, repo_type, repo_url, revision, app_revision,
-                        packagetype, codebase, desc):
+    def uploadExtension(self, filepath, app_name, os, arch, name, repo_type, repo_url, revision,
+                        app_revision, packagetype, codebase, desc):
         """
-        Upload an extension by providing a path to the file.
+        Upload an extension by providing a path to the file. It can also be used to update an
+        existing one, in this case the upload is done only if the extension has a different revision
+        than the old one.
 
         :param filepath: The path to the file
         :param app_name: The name of the application
         :param os: The target operating system of the package
         :param arch: The os chip architecture
         :param name: The basename of the extension
-        :param repo_type:
-        :param repo_url:
+        :param repo_type: Type of the repository
+        :param repo_url: Url of the repository
         :param revision: The revision of the extension
         :param app_revision: The revision of the application supported by the extension
-        :param packagetype:
-        :param codebase:
+        :param packagetype: Type of the package
+        :param codebase: Codebase of the extension name
         :param desc: The description of the extension
         :return: The uploaded extension
         """
+        def _displayProgress(*args, **kwargs):
+            pass
+
         apps = self.listApp(app_name)
         if not apps:
             return Constant.ERROR_APP_NOT_EXIST
         app = apps[0]
 
-        # Create the extension into Girder hierarchy
-        extension = self.post('/app/%s/extension' % app['_id'], parameters={
-            'os': os,
-            'arch': arch,
-            'baseName': name,
-            'repository_type': repo_type,
-            'repository_url': repo_url,
-            'revision': revision,
-            'app_revision': app_revision,
-            'packagetype': packagetype,
-            'codebase': codebase,
-            'description': desc
-        })
+        # Get potential existing extension
+        extensions = self.listExtension(app_name, baseName=name, os=os, arch=arch, app_revision=app_revision)
+        if not extensions:
+            # Create the extension into Girder hierarchy
+            extension = self.post('/app/%s/extension' % app['_id'], parameters={
+                'os': os,
+                'arch': arch,
+                'baseName': name,
+                'repository_type': repo_type,
+                'repository_url': repo_url,
+                'revision': revision,
+                'app_revision': app_revision,
+                'packagetype': packagetype,
+                'codebase': codebase,
+                'description': desc
+            })
 
-        # Upload the extension
-        def _displayProgress(*args, **kwargs):
-            pass
+            # Upload the extension
+            self.uploadFileToItem(
+                extension['_id'],
+                filepath,
+                reference='',
+                mimeType='application/octet-stream',
+                progressCallback=_displayProgress)
+        else:
+            # Compare the revision
+            extension = extensions[0]
+            if revision == extension['meta']['revision']:
+                return Constant.EXTENSION_AREADY_UP_TO_DATE
+            else:
+                files = list(self.listFile(extension['_id']))
+                if files:
+                    oldFile = files[0]
 
-        filename = OS.path.basename(filepath)  # extract full name of file
-        self.uploadFileToItem(
-            extension['_id'],
-            filepath,
-            reference='',
-            mimeType='application/octet-stream',
-            filename=filename,
-            progressCallback=_displayProgress)
+                # Upload the extension
+                newFile = self.uploadFileToItem(
+                    extension['_id'],
+                    filepath,
+                    reference='',
+                    filename='new_file',
+                    mimeType='application/octet-stream',
+                    progressCallback=_displayProgress)
+
+                # Update the extension into Girder hierarchy
+                extension = self.post('/app/%s/extension' % app['_id'], parameters={
+                    'os': os,
+                    'arch': arch,
+                    'baseName': name,
+                    'repository_type': repo_type,
+                    'repository_url': repo_url,
+                    'revision': revision,
+                    'app_revision': app_revision,
+                    'packagetype': packagetype,
+                    'codebase': codebase,
+                    'description': desc
+                })
+
+                files = list(self.listFile(extension['_id']))
+                if len(files) == 2:
+                    # Remove the oldFIle
+                    self.delete('/file/%s' % oldFile['_id'])
+                    # Change the name
+                    self.put('/file/%s' % newFile['_id'], parameters={
+                        'name': OS.path.basename(filepath)
+                    })
+                    return Constant.EXTENSION_NOW_UP_TO_DATE
+                else:
+                    return Constant.ERROR_EXT_UPLOAD
 
         return extension
 
@@ -253,16 +305,18 @@ class SlicerExtensionClient(GirderClient):
             OS.path.join(dir_path, '%s.%s' % (ext['name'], file['name'].split('.')[1])))
         return ext
 
-    def listExtension(self, app_name, os, arch, app_revision, release=Constant.DEFAULT_RELEASE,
-                      limit=Constant.DEFAULT_LIMIT, all=False, fullname=None, id=False):
+    def listExtension(self, app_name, baseName=None, os=None, arch=None, app_revision=None,
+                      release=Constant.DEFAULT_RELEASE, limit=Constant.DEFAULT_LIMIT, all=False,
+                      fullname=None, id=False):
         """
-        List all the extension for a specific release and filter them with some option (os, arch, ...).
-        By default the extensions within ``Nightly`` release are listed.
+        List all the extension for a specific release and filter them with some option
+        (os, arch, ...). By default the extensions within ``Nightly`` release are listed.
         It's also possible to specify the ``--all`` option to list all the extensions from all
         the release of an application.
         To use the ``--id`` functionality you must provide a valid fullname of the extension.
 
         :param app_name: Name of the application
+        :param baseName: Base name of the extension
         :param os: The target operating system of the package
         :param arch: The os chip architecture
         :param app_revision: Revision of the application
@@ -298,6 +352,7 @@ class SlicerExtensionClient(GirderClient):
         extensions = self.get('/app/%s/extension' % app['_id'], parameters={
             'os': os,
             'arch': arch,
+            'baseName': baseName,
             'app_revision': app_revision,
             'release_id': release_id,
             'limit': limit,
