@@ -11,7 +11,7 @@ To install with pip::
 To install from the latest source, first obtain the source code::
 
     $ git clone https://github.com/girder/slicer_extension_manager.git
-    $ cd slicer_extension_manager/web_python_client
+    $ cd slicer_extension_manager/python_client
 
 Then install with::
 
