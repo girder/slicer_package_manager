@@ -221,7 +221,6 @@ class SlicerExtensionManagerTest(base.TestCase):
                 'collection_id': self._collection['_id'],
                 'name': self._app['name']}
         )
-        print(resp.json)
         self.assertStatusOk(resp)
         self.assertEqual(resp.json[0]['name'], self._app['name'])
         self.assertEqual(resp.json[0]['description'], self._app['description'])
@@ -499,7 +498,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
         self.assertEqual(ObjectId(extension2['folderId']), self._nightly['_id'])
 
-        # Create a third extension
+        # Create a third extension in the "nightly" release
         extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
         self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
         self.assertEqual(ObjectId(extension3['folderId']), self._nightly['_id'])
@@ -513,6 +512,11 @@ class SlicerExtensionManagerTest(base.TestCase):
             shaUploadedFile = sha512.hexdigest()
         uploadedFile = self._uploadExternalData(extension3, filePath)
 
+        # Try to create the same extension should just get the same one
+        extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
+        self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
+        self.assertEqual(ObjectId(extension3['folderId']), self._nightly['_id'])
+
         # Download the extension
         sha512 = hashlib.sha512()
         sha512.update(self._downloadFile(uploadedFile['_id']))
@@ -524,18 +528,42 @@ class SlicerExtensionManagerTest(base.TestCase):
         extension = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
         self.assertEqual(extension['name'], self._extensions['extension2']['name'])
         self.assertEqual(ObjectId(extension['folderId']), self._nightly['_id'])
+
+        # Upload an extension file
+        sha512 = hashlib.sha512()
+        filePath = 'extension.tar.gz'
+        file = os.path.join(self.dataDir, filePath)
+        with open(file, 'rb') as fp:
+            sha512.update(fp.read())
+            shaUploadedFile = sha512.hexdigest()
+        uploadedFile = self._uploadExternalData(extension, filePath)
+
         # Update the same extension
         newParams = self._extensions['extension2']['meta'].copy()
         newParams.update({
+            'revision': '0000',
             'repository_type': 'gitlab',
             'packagetype': 'zip',
             'codebase': 'SL434334',
             'description': 'Extension for Slicer 4 new version 2'
         })
         updatedExtension = self._createOrUpdateExtension(newParams)
-        self.assertEqual(updatedExtension['name'], self._extensions['extension2']['name'])
+        self.assertEqual(updatedExtension['name'], constants.EXTENSION_TEMPLATE_NAME.format(**{
+            'app_revision': '112233',
+            'baseName': 'slicerExt1',
+            'os': 'win',
+            'arch': 'i386',
+            'revision': '0000'
+        }))
         self.assertEqual(ObjectId(updatedExtension['folderId']), self._nightly['_id'])
         self.assertNotEqual(updatedExtension['meta'], extension['meta'])
+
+        # Download the extension
+        sha512 = hashlib.sha512()
+        sha512.update(self._downloadFile(uploadedFile['_id']))
+        shaDownloadedFile = sha512.hexdigest()
+
+        self.assertEqual(shaUploadedFile, shaDownloadedFile)
 
     def testGetExtensions(self):
         # Create a new extension in the release "self._release"
