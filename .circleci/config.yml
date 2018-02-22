@@ -73,6 +73,7 @@ jobs:
       - run:
           name: Run CMake
           command: |
+            source $CIRCLE_WORKING_DIRECTORY/girder_venv/bin/activate
             cmake -DPYTHON_COVERAGE:BOOL=ON -DCOVERAGE_MINIMUM_PASS:STRING=40 -DPYTHON_VERSION:STRING=2.7 \
             -DRUN_CORE_TESTS:BOOL=OFF -DTEST_PLUGINS:STRING="slicer_extension_manager" $CIRCLE_WORKING_DIRECTORY/girder
             make
@@ -80,7 +81,9 @@ jobs:
 
       - run:
           name: Run CTest
-          command: ctest -V -R slicer_extension_manager
+          command: |
+            source $CIRCLE_WORKING_DIRECTORY/girder_venv/bin/activate
+            ctest -V -R slicer_extension_manager
           working_directory: girder_build
 
       - run:
