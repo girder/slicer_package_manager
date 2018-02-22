@@ -22,12 +22,10 @@ create new applications, new releases, and upload or download extensions or pack
 """
 from bson.objectid import ObjectId
 
-from girder import events
 from girder.api import access
 from girder.constants import TokenScope, AccessType
 from girder.api.describe import Description, autoDescribeRoute
 from girder.api.rest import Resource
-from girder.models.file import File
 from girder.models.item import Item
 from girder.models.folder import Folder
 from girder.models.collection import Collection
@@ -363,14 +361,14 @@ class App(Resource):
         .param('arch', 'The os chip architecture.',
                required=False, enum=['i386', 'amd64'])
         .param('app_revision', 'The revision of the package.', required=False)
-        .param('search', 'Text matched against extension name or description.', required=False)
+        .param('baseName', 'The baseName of the extension', required=False)
         .pagingParams(defaultSort='created')
         .errorResponse()
     )
     @access.cookie
     @access.public
     def getExtensions(self, app_id, release_id, extension_id, os, arch, app_revision,
-                      search, limit, offset, sort):
+                      baseName, limit, offset, sort):
         """
         Get a list of extension which is filtered by some optional parameters:
 
@@ -380,7 +378,7 @@ class App(Resource):
         :param os: The operation system used for the extension.
         :param arch: The architecture compatible with the extension.
         :param app_revision: The revision of the application
-        :param search: Text search on the name of the extension
+        :param baseName: The baseName of the extension
         :return: The list of extensions
         """
         filters = {
@@ -399,10 +397,10 @@ class App(Resource):
         if arch:
             filters['meta.arch'] = arch
         if app_revision:
-            filters['meta.revision'] = app_revision
-        if search:
-            # Provide a full text search on baseName
-            filters['meta.baseName'] = search
+            filters['meta.app_revision'] = app_revision
+        if baseName:
+            # Provide a exact match base on baseName
+            filters['meta.baseName'] = baseName
 
         return list(ExtensionModel().find(
             query=filters,
@@ -483,7 +481,8 @@ class App(Resource):
         """
         Create an extension item in a specific release with providing ``release_id`` or in
         the **'Nightly'** folder by default.
-        It's also possible to update an existing extension if
+        It's also possible to update an existing extension. In this case, it will update the name
+        and the metadata of the extension.
 
         :param app_id: The ID of the application.
         :param os: The operation system used for the extension.
@@ -505,9 +504,10 @@ class App(Resource):
         releases = self._model.childFolders(application, 'Folder', user=creator)
         for folder in releases:
             if 'meta' in folder:
-                if folder['meta']['revision'] == app_revision:
-                    release_folder = folder
-                    break
+                if 'revision' in folder['meta']:
+                    if folder['meta']['revision'] == app_revision:
+                        release_folder = folder
+                        break
         if not release_folder:
             # Only the nightly folder in the list
             release_folder = list(self._model.childFolders(
@@ -551,51 +551,31 @@ class App(Resource):
 
         name = application['meta']['extensionNameTemplate'].format(**params)
         filters = {
-            'baseName': baseName,
-            'os': os,
-            'arch': arch,
-            'app_revision': app_revision
+            'meta.baseName': baseName,
+            'meta.os': os,
+            'meta.arch': arch,
+            'meta.app_revision': app_revision
         }
         # Only one extensions should be in this list
         extensions = list(ExtensionModel().get(release_folder, filters=filters))
         if not len(extensions):
             # The extension doesn't exist yet:
             extension = ExtensionModel().createExtension(name, creator, release_folder, params)
+
         elif len(extensions) == 1:
+            # The extension already exist
             extension = extensions[0]
+            # Check the file inside the extension Item
+            files = Item().childFiles(extension)
+            if not files.count():
+                # Extension empty
+                raise Exception("Extension existing without any binary file.")
+
+            # Update the extension
+            extension['name'] = name
+            extension = ExtensionModel().setMetadata(extension, params)
         else:
             raise Exception('Too many extensions found for the same name :"%s"' % name)
-
-        # Check the file inside the extension Item
-        files = Item().childFiles(extension)
-        if files.count() == 1:
-            old_file = files.next()
-            # catch the event of upload success and remove the file
-            events.bind('model.file.finalizeUpload.after', 'application', File().remove(old_file))
-        elif not files.count():
-            # Extension new or empty
-            pass
-        else:
-            raise Exception("More than 1 binary file in the extension.")
-
-        old_meta = {
-            'baseName': extension['meta']['baseName'],
-            'os': extension['meta']['os'],
-            'arch': extension['meta']['arch'],
-            #'revision': extension['meta']['revision'],
-            'app_revision': extension['meta']['app_revision']
-        }
-        identifier_meta = {
-            'baseName': baseName,
-            'os': os,
-            'arch': arch,
-            #'revision': revision,
-            'app_revision': app_revision
-        }
-        if identifier_meta == old_meta and len(extensions):
-            # The revision is the same than these before, no need to upload
-            extension = ExtensionModel().setMetadata(extension, params)
-            events.unbind('model.file.finalizeUpload.after', 'application')
 
         # Ready to upload the binary file
         return extension
