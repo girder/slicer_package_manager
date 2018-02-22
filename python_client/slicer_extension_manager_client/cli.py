@@ -323,7 +323,7 @@ def _getOs():
               cls=_AdvancedOption
               )
 @click.option('--name', prompt=True,
-              help='Basename of the extension',
+              help='The baseName of the extension',
               cls=_AdvancedOption
               )
 @click.option('--repo_type', default='',
@@ -397,8 +397,8 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 
 @extension.command('list')
 @click.argument('app_name')
-@click.option('--baseName', default=None,
-              help='The revision of the application',
+@click.option('--name', default=None,
+              help='The baseName of the extension',
               cls=_AdvancedOption)
 @click.option('--os', type=click.Choice(['win', 'linux', 'macosx']))
 @click.option('--arch', type=click.Choice(['amd64', 'i386']))

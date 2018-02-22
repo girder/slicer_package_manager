@@ -187,7 +187,7 @@ class SlicerExtensionClient(GirderClient):
         :param app_name: The name of the application
         :param os: The target operating system of the package
         :param arch: The os chip architecture
-        :param name: The basename of the extension
+        :param name: The baseName of the extension
         :param repo_type: Type of the repository
         :param repo_url: Url of the repository
         :param revision: The revision of the extension
@@ -206,7 +206,7 @@ class SlicerExtensionClient(GirderClient):
         app = apps[0]
 
         # Get potential existing extension
-        extensions = self.listExtension(app_name, baseName=name, os=os, arch=arch, app_revision=app_revision)
+        extensions = self.listExtension(app_name, name=name, os=os, arch=arch, app_revision=app_revision)
         if not extensions:
             # Create the extension into Girder hierarchy
             extension = self.post('/app/%s/extension' % app['_id'], parameters={
@@ -305,7 +305,7 @@ class SlicerExtensionClient(GirderClient):
             OS.path.join(dir_path, '%s.%s' % (ext['name'], file['name'].split('.')[1])))
         return ext
 
-    def listExtension(self, app_name, baseName=None, os=None, arch=None, app_revision=None,
+    def listExtension(self, app_name, name=None, os=None, arch=None, app_revision=None,
                       release=Constant.DEFAULT_RELEASE, limit=Constant.DEFAULT_LIMIT, all=False,
                       fullname=None, id=False):
         """
@@ -316,7 +316,7 @@ class SlicerExtensionClient(GirderClient):
         To use the ``--id`` functionality you must provide a valid fullname of the extension.
 
         :param app_name: Name of the application
-        :param baseName: Base name of the extension
+        :param name: Base name of the extension
         :param os: The target operating system of the package
         :param arch: The os chip architecture
         :param app_revision: Revision of the application
@@ -352,7 +352,7 @@ class SlicerExtensionClient(GirderClient):
         extensions = self.get('/app/%s/extension' % app['_id'], parameters={
             'os': os,
             'arch': arch,
-            'baseName': baseName,
+            'baseName': name,
             'app_revision': app_revision,
             'release_id': release_id,
             'limit': limit,
