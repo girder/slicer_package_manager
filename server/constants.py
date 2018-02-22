@@ -22,4 +22,4 @@ Constants should be defined here.
 """
 
 NIGHTLY_RELEASE_NAME = 'nightly'
-EXTENSION_TEMPLATE_NAME = '{app_revision}_{os}_{arch}_{baseName}_{revision}'
+EXTENSION_TEMPLATE_NAME = '{baseName}_{os}_{arch}_{revision}'
