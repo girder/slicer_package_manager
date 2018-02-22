@@ -351,7 +351,9 @@ class App(Resource):
         return _deleteFolder(release, progress, self.getCurrentUser())
 
     @autoDescribeRoute(
-        Description('List or search available extensions.')
+        Description('List or search available extensions. If the "release_id" '
+                    'provided correspond to the "Nightly" release, then you must provide the '
+                    'app_revision to use this parameters. If not, it will just be ignored.')
         .responseClass('Extension')
         .param('app_id', 'The ID of the application.')
         .param('release_id', 'The release id.', required=False)
@@ -362,7 +364,7 @@ class App(Resource):
                required=False, enum=['i386', 'amd64'])
         .param('app_revision', 'The revision of the package.', required=False)
         .param('baseName', 'The baseName of the extension', required=False)
-        .pagingParams(defaultSort='created')
+        .pagingParams(defaultSort='updated')
         .errorResponse()
     )
     @access.cookie
@@ -370,7 +372,9 @@ class App(Resource):
     def getExtensions(self, app_id, release_id, extension_id, os, arch, app_revision,
                       baseName, limit, offset, sort):
         """
-        Get a list of extension which is filtered by some optional parameters:
+        Get a list of extension which is filtered by some optional parameters. If the ``release_id``
+        provided correspond to the Nightly release, then you must provide the app_revision to use
+        this parameters. If not, it will just be ignored.
 
         :param app_id: Application ID
         :param release_id: Release ID
@@ -381,17 +385,16 @@ class App(Resource):
         :param baseName: The baseName of the extension
         :return: The list of extensions
         """
+        user = self.getCurrentUser()
         filters = {
             '$and': [
                 {'meta.app_id': {'$eq': app_id}},
                 {'meta.os': {'$exists': True}},
                 {'meta.arch': {'$exists': True}},
-                {'meta.revision': {'$exists': True}}]
+                {'meta.app_revision': {'$exists': True}}]
         }
         if ObjectId.is_valid(extension_id):
             filters['_id'] = ObjectId(extension_id)
-        if ObjectId.is_valid(release_id):
-            filters['folderId'] = ObjectId(release_id)
         if os:
             filters['meta.os'] = os
         if arch:
@@ -401,6 +404,35 @@ class App(Resource):
         if baseName:
             # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
+        if ObjectId.is_valid(release_id):
+            release = self._model.load(release_id, user=user)
+            if release['name'] == constants.NIGHTLY_RELEASE_NAME:
+                if app_revision:
+                    revisions = list(self._model.childFolders(
+                        release,
+                        'Folder',
+                        filters={'name': app_revision}))
+                    if revisions:
+                        filters['folderId'] = ObjectId(revisions[0]['_id'])
+                else:
+                    revisions = self._model.childFolders(
+                        release,
+                        'Folder')
+                    extensions = []
+                    limit_tmp = limit
+                    for revision in revisions:
+                        filters['folderId'] = ObjectId(revision['_id'])
+                        extensions += list(ExtensionModel().find(
+                            query=filters,
+                            limit=limit_tmp,
+                            offset=offset,
+                            sort=sort))
+                        limit_tmp = limit - len(extensions)
+                        if limit_tmp <= 0:
+                            break
+                    return extensions
+            else:
+                filters['folderId'] = ObjectId(release_id)
 
         return list(ExtensionModel().find(
             query=filters,
@@ -433,11 +465,24 @@ class App(Resource):
             'Folder'))
         if not release_folder:
             raise Exception('The application has no release')
+        extensions = None
         for release in release_folder:
-            extensions = list(self._model.childItems(
-                release,
-                filters={'lowerName': extension_name.lower()}
-            ))
+            if release['name'] == constants.NIGHTLY_RELEASE_NAME:
+                revisions_folders = self._model.childFolders(
+                    release,
+                    'Folder')
+                for revision in revisions_folders:
+                    extensions = list(self._model.childItems(
+                        revision,
+                        filters={'lowerName': extension_name.lower()}
+                    ))
+                    if extensions:
+                        break
+            else:
+                extensions = list(self._model.childItems(
+                    release,
+                    filters={'lowerName': extension_name.lower()}
+                ))
             if extensions:
                 return extensions[0]
         return None
@@ -519,6 +564,21 @@ class App(Resource):
                 raise Exception('The %s folder not found.' % constants.NIGHTLY_RELEASE_NAME)
             release_folder = release_folder[0]
 
+            revision_folder = list(self._model.childFolders(
+                release_folder,
+                'Folder',
+                user=creator,
+                filters={'name': app_revision}))
+            if revision_folder:
+                revision_folder = revision_folder[0]
+            else:
+                revision_folder = self._model.createFolder(
+                    parent=release_folder,
+                    name=app_revision,
+                    parentType='Folder',
+                    public=release_folder['public'],
+                    creator=creator)
+            release_folder = revision_folder
         params = {
             'app_id': app_id,
             'baseName': baseName,
