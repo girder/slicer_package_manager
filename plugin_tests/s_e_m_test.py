@@ -499,12 +499,10 @@ class SlicerExtensionManagerTest(base.TestCase):
         # Create an other extension in the "nightly" release
         extension2 = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
         self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
-        self.assertEqual(ObjectId(extension2['folderId']), self._nightly['_id'])
 
         # Create a third extension in the "nightly" release
         extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
         self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
-        self.assertEqual(ObjectId(extension3['folderId']), self._nightly['_id'])
 
         # Upload an extension file
         sha512 = hashlib.sha512()
@@ -518,7 +516,6 @@ class SlicerExtensionManagerTest(base.TestCase):
         # Try to create the same extension should just get the same one
         extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
         self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
-        self.assertEqual(ObjectId(extension3['folderId']), self._nightly['_id'])
 
         # Download the extension
         sha512 = hashlib.sha512()
@@ -530,7 +527,6 @@ class SlicerExtensionManagerTest(base.TestCase):
     def testUpdateExtensions(self):
         extension = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
         self.assertEqual(extension['name'], self._extensions['extension2']['name'])
-        self.assertEqual(ObjectId(extension['folderId']), self._nightly['_id'])
 
         # Upload an extension file
         sha512 = hashlib.sha512()
@@ -558,7 +554,6 @@ class SlicerExtensionManagerTest(base.TestCase):
             'arch': 'i386',
             'revision': '0000'
         }))
-        self.assertEqual(ObjectId(updatedExtension['folderId']), self._nightly['_id'])
         self.assertNotEqual(updatedExtension['meta'], extension['meta'])
 
         # Download the extension
@@ -577,12 +572,10 @@ class SlicerExtensionManagerTest(base.TestCase):
         # Create an other extension in the "nightly" release
         extension2 = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
         self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
-        self.assertEqual(ObjectId(extension2['folderId']), self._nightly['_id'])
 
         # Create a third extension
         extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
         self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
-        self.assertEqual(ObjectId(extension3['folderId']), self._nightly['_id'])
 
         # Get all the extension of the application
         resp = self.request(
