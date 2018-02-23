@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DEBUG=0
+
 cmd=slicer_extension_manager_client
 auth='--username admin --password adminadmin'
 
@@ -15,6 +17,19 @@ app_rev3="0001"
 os3="macosx"
 arch3="amd64"
 rev3="0.0.1"
+
+echo
+echo "########### CLEAN UP ###########"
+echo
+### Delete all the applications ###
+$cmd $auth app delete $app1Name
+echo
+$cmd $auth app delete $app2Name
+echo
+
+# List all the applications
+$cmd $auth app list
+
 
 ### Create 2 Applications ###
 echo
@@ -94,6 +109,10 @@ if [ $? != 0 ]; then
     echo "DIFFERENT"
     rm -rf dwn
     rm *.txt
+    echo
+    echo
+    echo "---------------------- TEST COMPLETE : FAILURE ----------------------"
+    echo
     exit 1
 fi
 echo "TEST OK"
@@ -106,27 +125,32 @@ rm *.txt
 
 # Different revision
 
+if ! $DEBUG; then
+    ### Delete extensions ###
+    echo
+    echo "########### CLEAN UP ###########"
+    echo
+    # By ID
+    echo "Delete by ID"
+    $cmd $auth extension delete $app1Name $id1
+    echo
+    # By full NAME
+    echo "Delete by NAME"
+    $cmd $auth extension delete $app1Name $name3
+    echo
+    # List extension to make sure the delete is working
+    $cmd $auth extension list $app1Name --all
+    echo
+    ### Delete all the applications ###
+    $cmd $auth app delete $app1Name
+    echo
+    $cmd $auth app delete $app2Name
+    echo
 
-### Delete extensions ###
+    # List all the applications
+    $cmd $auth app list
+    echo
+fi
 echo
-echo "########### CLEAN UP ###########"
+echo "---------------------- TEST COMPLETE : SUCCESS ----------------------"
 echo
-# By ID
-echo "Delete by ID"
-$cmd $auth extension delete $app1Name $id1
-echo
-# By full NAME
-echo "Delete by NAME"
-$cmd $auth extension delete $app1Name $name3
-echo
-# List extension to make sure the delete is working
-$cmd $auth extension list $app1Name --all
-echo
-### Delete all the applications ###
-$cmd $auth app delete $app1Name
-echo
-$cmd $auth app delete $app2Name
-echo
-
-# List all the applications
-$cmd $auth app list
