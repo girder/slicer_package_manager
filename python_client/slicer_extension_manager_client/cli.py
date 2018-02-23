@@ -228,7 +228,7 @@ def _cli_deleteApp(sc, *args, **kwargs):
     Delete an application
     """
     application = sc.deleteApp(*args, **kwargs)
-    if not application:
+    if application == Constant.ERROR_APP_NOT_EXIST:
         print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['name'])
     else:
         print('%s (%s)\t%s' % (application['name'], application['_id'], 'DELETED'))
@@ -276,7 +276,7 @@ def _cli_listRelease(sc, *args, **kwargs):
         print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
         print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
         for release in releases:
-            if 'meta' in release:
+            if 'meta' in release and 'revision' in release['meta']:
                 revision = release['meta']['revision']
             else:
                 revision = ''

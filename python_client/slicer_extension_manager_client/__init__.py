@@ -156,6 +156,8 @@ class SlicerExtensionClient(GirderClient):
             releases = self.get('/app/%s/release/%s' % (app['_id'], name))
         else:
             releases = self.get('/app/%s/release' % app['_id'])
+            nightly_release = self.get('/app/%s/release/nightly' % app['_id'])
+            releases += nightly_release
         return releases
 
     def deleteRelease(self, app_name, name):
