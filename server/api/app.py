@@ -57,6 +57,7 @@ class App(Resource):
         self.route('DELETE', (':app_id',), self.deleteApp)
         self.route('POST', (':app_id', 'release'), self.createNewRelease)
         self.route('GET', (':app_id', 'release'), self.getAllReleases)
+        self.route('GET', (':app_id', 'release', 'nightly'), self.getAllNightlyReleases)
         self.route('GET', (':app_id', 'release', ':release_id_or_name'), self.getReleaseByIdOrName)
         self.route('DELETE', (':app_id', 'release', ':release_id_or_name'),
                    self.deleteReleaseByIdOrName)
@@ -277,9 +278,56 @@ class App(Resource):
         """
         user = self.getCurrentUser()
         application = self._model.load(app_id, user=user)
-        # It returns the nightly release too
+
+        filters = {
+            'name': {'$ne': constants.NIGHTLY_RELEASE_NAME}
+        }
         return list(self._model.childFolders(
             application,
+            'Folder',
+            user=user,
+            limit=limit,
+            offset=offset,
+            sort=sort,
+            filters=filters))
+
+    @autoDescribeRoute(
+        Description('Get all the Nightly releases from an application.')
+        .responseClass('Folder')
+        .param('app_id', 'The application\'s ID.')
+        .pagingParams(defaultSort='updated')
+        .errorResponse('ID was invalid.')
+        .errorResponse('Read permission denied on the application.', 403)
+    )
+    @access.user(scope=TokenScope.DATA_READ)
+    def getAllNightlyReleases(self, app_id, limit, offset, sort):
+        """
+        Get a list of all the Nightly release of an application.
+
+        :param app_id: Application ID
+        :return: List of all release within the application
+        """
+        user = self.getCurrentUser()
+        application = self._model.load(app_id, user=user)
+
+        filters = {
+            'name': constants.NIGHTLY_RELEASE_NAME
+        }
+        release = list(self._model.childFolders(
+            application,
+            'Folder',
+            user=user,
+            limit=limit,
+            offset=offset,
+            sort=sort,
+            filters=filters))
+        if not release:
+            raise Exception('There is no %s release in this application.'
+                            % constants.NIGHTLY_RELEASE_NAME)
+        release = release[0]
+
+        return list(self._model.childFolders(
+            release,
             'Folder',
             user=user,
             limit=limit,
@@ -351,9 +399,10 @@ class App(Resource):
         return _deleteFolder(release, progress, self.getCurrentUser())
 
     @autoDescribeRoute(
-        Description('List or search available extensions. If the "release_id" '
-                    'provided correspond to the "Nightly" release, then you must provide the '
-                    'app_revision to use this parameters. If not, it will just be ignored.')
+        Description('List or search available extensions.')
+        .notes('If the "release_id" provided correspond to the "Nightly" release,'
+               ' then you must provide the app_revision to use this parameters. '
+               'If not, it will just be ignored.')
         .responseClass('Extension')
         .param('app_id', 'The ID of the application.')
         .param('release_id', 'The release id.', required=False)
