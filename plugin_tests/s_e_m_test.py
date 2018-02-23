@@ -66,7 +66,6 @@ class SlicerExtensionManagerTest(base.TestCase):
 
         self._extensions = {
             'extension1': {
-                'name': '12345_linux_i386_slicerExt_35333',
                 'meta': {
                     'os': 'linux',
                     'arch': 'i386',
@@ -81,7 +80,6 @@ class SlicerExtensionManagerTest(base.TestCase):
                 }
             },
             'extension2': {
-                'name': '112233_win_i386_slicerExt1_54342',
                 'meta': {
                     'os': 'win',
                     'arch': 'i386',
@@ -96,7 +94,6 @@ class SlicerExtensionManagerTest(base.TestCase):
                 }
             },
             'extension3': {
-                'name': '112233_linux_amd64_slicerExt2_542',
                 'meta': {
                     'os': 'linux',
                     'arch': 'amd64',
@@ -111,6 +108,12 @@ class SlicerExtensionManagerTest(base.TestCase):
                 }
             }
         }
+        self._extensions['extension1']['name'] = constants.EXTENSION_TEMPLATE_NAME.format(
+            **self._extensions['extension1']['meta'])
+        self._extensions['extension2']['name'] = constants.EXTENSION_TEMPLATE_NAME.format(
+            **self._extensions['extension2']['meta'])
+        self._extensions['extension3']['name'] = constants.EXTENSION_TEMPLATE_NAME.format(
+            **self._extensions['extension3']['meta'])
 
     def _createApplicationCheck(self, appName, appDescription, collId=None,
                                 collName=None, collDescription=''):
