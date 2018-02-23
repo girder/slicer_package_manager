@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 
-DEBUG=0
+DEBUG=true
 
 cmd=slicer_extension_manager_client
 auth='--username admin --password adminadmin'
 
 app1Name="App1"
-app2Name="App2"
 releaseName="Release1"
 
 ext1Name="ext1"
 ext2Name="ext2"
 ext3Name="ext3"
+ext4Name="ext4"
+ext5Name="ext5"
 
 app_rev3="0001"
 os3="macosx"
@@ -21,26 +22,23 @@ rev3="0.0.1"
 echo
 echo "########### CLEAN UP ###########"
 echo
-### Delete all the applications ###
+### Delete the application ###
 $cmd $auth app delete $app1Name
 echo
-$cmd $auth app delete $app2Name
-echo
 
-# List all the applications
+# List application
 $cmd $auth app list
 
 
-### Create 2 Applications ###
+### Create Application ###
 echo
-echo "########### CREATE APPLICATIONS ###########"
+echo "########### CREATE APPLICATION ###########"
 echo
 $cmd $auth app create $app1Name --desc "This is a description for $app1Name"
-$cmd $auth app create $app2Name --desc "This is a description for $app2Name"
 echo
 $cmd $auth app list
 
-### Create 1 release in 'App1' ###
+### Create release in 'App1' ###
 echo
 echo "########### CREATE RELEASE ###########"
 echo
@@ -56,6 +54,9 @@ echo
 echo 'Content of the extension 1' > file1.txt
 echo 'Content of the extension 2' > file2.txt
 echo 'Content of the extension 3' > file3.txt
+echo 'Content of the extension 4' > file4.txt
+echo 'Content of the extension 5' > file5.txt
+
 
 cat file*.txt > contents.txt
 
@@ -64,7 +65,11 @@ $cmd $auth extension upload $app1Name ./file1.txt --ext_os win --arch i386 --nam
 echo UPLOAD $ext2Name
 $cmd $auth extension upload $app1Name ./file2.txt --ext_os linux --arch i386 --name $ext2Name --app_revision 0002 --desc "Description for ex2" > _output2.txt
 echo UPLOAD $ext3Name
-$cmd $auth extension upload $app1Name ./file3.txt --ext_os $os3 --arch $arch3 --name $ext3Name --app_revision $app_rev3 --revision $rev3 --desc "Description for ex3" > _output3.txt
+$cmd $auth extension upload $app1Name ./file3.txt --ext_os $os3 --arch $arch3 --name $ext3Name --app_revision $app_rev3 --revision $rev3 > _output3.txt
+echo UPLOAD $ext4Name
+$cmd $auth extension upload $app1Name ./file4.txt --ext_os linux --arch amd64 --name $ext4Name --app_revision 0000 > _output4.txt
+echo UPLOAD $ext5Name
+$cmd $auth extension upload $app1Name ./file5.txt --ext_os macosx --arch amd64 --name $ext5Name --app_revision 0000 > _output5.txt
 
 # List extensions from 'App1'
 echo
@@ -86,9 +91,13 @@ echo
 echo "By ID"
 id1=$(python extractID.py _output1.txt)
 id2=$(python extractID.py _output2.txt)
+id4=$(python extractID.py _output4.txt)
+id5=$(python extractID.py _output5.txt)
 
 $cmd $auth extension download $app1Name "$id1" --dir_path ./dwn
 $cmd $auth extension download $app1Name "$id2" --dir_path ./dwn
+$cmd $auth extension download $app1Name "$id4" --dir_path ./dwn
+$cmd $auth extension download $app1Name "$id5" --dir_path ./dwn
 
 echo
 echo "By NAME"
@@ -102,6 +111,8 @@ echo
 cat dwn/*ext1* >> contents_d.txt
 cat dwn/*ext2* >> contents_d.txt
 cat dwn/*ext3* >> contents_d.txt
+cat dwn/*ext4* >> contents_d.txt
+cat dwn/*ext5* >> contents_d.txt
 
 diff contents.txt contents_d.txt
 
@@ -141,13 +152,11 @@ if ! $DEBUG; then
     # List extension to make sure the delete is working
     $cmd $auth extension list $app1Name --all
     echo
-    ### Delete all the applications ###
+    ### Delete the application ###
     $cmd $auth app delete $app1Name
     echo
-    $cmd $auth app delete $app2Name
-    echo
 
-    # List all the applications
+    # List the application
     $cmd $auth app list
     echo
 fi
