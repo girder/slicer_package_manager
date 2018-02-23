@@ -287,12 +287,14 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertEqual(resp.json['meta']['revision'], '12345')
 
     def testGetAllRelease(self):
+        self.testNewRelease()
+
         resp = self.request(
             path='/app/%s/release' % self._app['_id'],
             method='GET',
             user=self._user
         )
-        # Check if it has return all the releases 'release' & 'nightly'
+        # Check if it has return all the releases
         self.assertStatusOk(resp)
         self.assertEqual(len(resp.json), 2)
 
