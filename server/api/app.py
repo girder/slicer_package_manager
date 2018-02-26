@@ -63,6 +63,7 @@ class App(Resource):
                    self.deleteReleaseByIdOrName)
         self.route('GET', (':app_id', 'extension'), self.getExtensions)
         self.route('GET', (':app_id', 'extension', ':extension_name'), self.getExtensionByName)
+        self.route('GET', (':app_id', 'extension', 'download_stat'), self.getDownloadStat)
         self.route('POST', (':app_id', 'extension'), self.createOrUpdateExtension)
         self.route('DELETE', (':app_id', 'extension', ':ext_id'), self.deleteExtension)
 
@@ -707,3 +708,40 @@ class App(Resource):
         """
         Item().remove(item)
         return {'message': 'Deleted extension %s.' % item['name']}
+
+    @autoDescribeRoute(
+        Description('Get the download count for an extensions.')
+        .param('app_id', 'The ID of the application.')
+        .param('baseName', 'The baseName of the extension')
+        .param('os', 'The target operating system of the package.',
+               enum=['linux', 'win', 'macosx'])
+        .param('arch', 'The os chip architecture.')
+        .errorResponse()
+    )
+    @access.cookie
+    @access.public
+    def getDownloadStat(self, app_id, baseName, os, arch):
+        """
+        Get the number of download of a particular extension. The extension is will be identified
+        by some of its metadata: ``baseName``, ``os`` and ``arch``.
+
+        :param app_id: Application ID
+        :param baseName: The base name of the extension.
+        :param os: The operation system used for the extension.
+        :param arch: The architecture compatible with the extension.
+        :return: The download count of an extension
+        """
+        user = self.getCurrentUser()
+        application = self._model.load(app_id, user=user)
+        releases = self._model.childFolders(application, 'Folder', user=user)
+
+        downloadCount = 0
+
+        for release in releases:
+            if 'meta' in release and 'downloadExtensions' in release['meta']:
+                downloadStats = release['meta']['downloadExtensions']
+                if baseName in downloadStats:
+                    if os in downloadStats[baseName]:
+                        if arch in downloadStats[baseName][os]:
+                            downloadCount += release['meta']['downloadExtensions'][baseName][os][arch]
+        return downloadCount
