@@ -63,6 +63,7 @@ class App(Resource):
                    self.deleteReleaseByIdOrName)
         self.route('GET', (':app_id', 'extension'), self.getExtensions)
         self.route('GET', (':app_id', 'extension', ':extension_name'), self.getExtensionByName)
+        self.route('GET', (':app_id', 'extension', 'downloadStats'), self.getDownloadStats)
         self.route('POST', (':app_id', 'extension'), self.createOrUpdateExtension)
         self.route('DELETE', (':app_id', 'extension', ':ext_id'), self.deleteExtension)
 
@@ -707,3 +708,45 @@ class App(Resource):
         """
         Item().remove(item)
         return {'message': 'Deleted extension %s.' % item['name']}
+
+    @autoDescribeRoute(
+        Description('Get download stats of extensions within an application.')
+        .param('app_id', 'The ID of the application.')
+        .errorResponse()
+    )
+    @access.cookie
+    @access.public
+    def getDownloadStats(self, app_id):
+        """
+        Get all the download count of all extension from an application. This document follow
+        the data structure:
+        `` {"baseName": { "revision": { "os": {"arch": downloadCount}}}} ``
+
+        :param app_id: Application ID
+        :return: The JSON document of all the download statistics of extension from
+        the application
+        """
+        user = self.getCurrentUser()
+        application = self._model.load(app_id, user=user)
+        releases = self._model.childFolders(application, 'Folder', user=user)
+
+        downloadStats = {}
+
+        for release in releases:
+            if 'meta' in release and 'downloadExtensions' in release['meta']:
+                rawDownloadStats = release['meta']['downloadExtensions']
+                if release['name'] == constants.NIGHTLY_RELEASE_NAME:
+                    for (revision, extensionStat) in rawDownloadStats.items():
+                        for (baseName, data) in extensionStat.items():
+                            try:
+                                downloadStats[baseName].update({revision: data})
+                            except KeyError:
+                                downloadStats[baseName] = {revision: data}
+                else:
+                    for (baseName, data) in rawDownloadStats.items():
+                        try:
+                            downloadStats[baseName].update({release['meta']['revision']: data})
+                        except KeyError:
+                            downloadStats[baseName] = {release['meta']['revision']: data}
+
+        return downloadStats
