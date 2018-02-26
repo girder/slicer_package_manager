@@ -73,4 +73,12 @@ def load(info):
     # Download statistics
     events.bind('model.file.download.complete', 'slicer_extension_manager', _onDownloadFileComplete)
 
+    # Mongo indexes
+    Item().ensureIndex('meta.baseName')
+    Item().ensureIndex('meta.os')
+    Item().ensureIndex('meta.arch')
+    Item().ensureIndex('meta.app_revision')
+    Item().ensureIndex('updated')
+    Folder().ensureIndex('meta.downloadExtensions')
+
     registerPluginWebroot(Webroot(), info['name'])
