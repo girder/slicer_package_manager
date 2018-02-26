@@ -23,7 +23,7 @@ create new applications, new releases, and upload or download extensions or pack
 from bson.objectid import ObjectId
 
 from girder.api import access
-from girder.constants import TokenScope, AccessType
+from girder.constants import TokenScope, AccessType, SortDir
 from girder.api.describe import Description, autoDescribeRoute
 from girder.api.rest import Resource
 from girder.models.item import Item
@@ -413,7 +413,7 @@ class App(Resource):
                required=False, enum=['i386', 'amd64'])
         .param('app_revision', 'The revision of the package.', required=False)
         .param('baseName', 'The baseName of the extension', required=False)
-        .pagingParams(defaultSort='updated')
+        .pagingParams(defaultSort='updated', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
     )
     @access.cookie
