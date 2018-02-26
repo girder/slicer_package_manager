@@ -160,6 +160,16 @@ class SlicerExtensionClient(GirderClient):
             releases += nightly_release
         return releases
 
+    def getRelease(self, app_name, offset=0):
+        apps = self.listApp(app_name)
+        if not apps:
+            return Constant.ERROR_APP_NOT_EXIST
+        app = apps[0]
+        return self.get(
+            '/app/%s/release/nightly' % app['_id'],
+            parameters={'offset': offset}
+        )
+
     def deleteRelease(self, app_name, name):
         """
         Delete a release within an application.

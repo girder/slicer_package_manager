@@ -284,6 +284,31 @@ def _cli_listRelease(sc, *args, **kwargs):
                 release['_id'], release['name'], revision, release['description'][0:50]))
 
 
+@release.command('get')
+@click.argument('app_name')
+@click.option('--offset', default=0,
+              help='Offset of the list',
+              cls=_AdvancedOption)
+@click.pass_obj
+def _cli_getRelease(sc, *args, **kwargs):
+    """
+    List all the revision of the default preview within an application
+    """
+    releases = sc.getRelease(*args, **kwargs)
+    if releases == Constant.ERROR_APP_NOT_EXIST:
+        print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['app_name'])
+    else:
+        print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
+        print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
+        for release in releases:
+            if 'meta' in release and 'revision' in release['meta']:
+                revision = release['meta']['revision']
+            else:
+                revision = ''
+            print('%-25s\t%-20s\t%-15s\t%-50s' % (
+                release['_id'], release['name'], revision, release['description'][0:50]))
+
+
 @release.command('delete')
 @click.argument('app_name')
 @click.argument('name')
