@@ -90,3 +90,21 @@ Schema of concepts
 ------------------
 
 .. image:: images/slicer_extension_manager_models.JPG
+
+
+Download Statistics
+-------------------
+
+Each time an extension is downloaded (using the Client or the UI), a metadata is incremented on the release folder.
+This allow to referenced all downloaded extension even after their deletion.
+
+The download count is stored in the metadata following this rule::
+
+    $ {
+        'downloadExtensions': {
+            baseName: {
+                os: {
+                    arch: downloadCount
+                }
+            }
+        }
