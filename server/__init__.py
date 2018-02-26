@@ -56,7 +56,8 @@ def _onDownloadFileComplete(event):
     if release['name'] == constants.NIGHTLY_RELEASE_NAME:
         Folder().increment(
             query={'_id': release['_id']},
-            field='meta.downloadExtensions.%s.%s.%s' % (meta['baseName'], meta['os'], meta['arch']),
+            field='meta.downloadExtensions.%s.%s.%s.%s' % (
+                meta['app_revision'], meta['baseName'], meta['os'], meta['arch']),
             amount=1)
     else:
         Folder().increment(
