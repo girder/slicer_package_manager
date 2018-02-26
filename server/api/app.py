@@ -265,7 +265,7 @@ class App(Resource):
         Description('Get all the releases from an application.')
         .responseClass('Folder')
         .param('app_id', 'The application\'s ID.')
-        .pagingParams(defaultSort='name')
+        .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
@@ -296,7 +296,7 @@ class App(Resource):
         Description('Get all the Nightly releases from an application.')
         .responseClass('Folder')
         .param('app_id', 'The application\'s ID.')
-        .pagingParams(defaultSort='updated')
+        .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
@@ -318,9 +318,6 @@ class App(Resource):
             application,
             'Folder',
             user=user,
-            limit=limit,
-            offset=offset,
-            sort=sort,
             filters=filters))
         if not release:
             raise Exception('There is no %s release in this application.'
@@ -414,7 +411,7 @@ class App(Resource):
                required=False, enum=['i386', 'amd64'])
         .param('app_revision', 'The revision of the package.', required=False)
         .param('baseName', 'The baseName of the extension', required=False)
-        .pagingParams(defaultSort='updated', defaultSortDir=SortDir.DESCENDING)
+        .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
     )
     @access.cookie
