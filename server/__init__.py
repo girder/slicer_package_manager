@@ -26,7 +26,7 @@ from girder.models.folder import Folder
 from girder.utility.plugin_utilities import getPluginDir, registerPluginWebroot
 from girder.utility.webroot import WebrootBase
 from .api.app import App
-import constants
+from . import constants
 
 
 class Webroot(WebrootBase):
