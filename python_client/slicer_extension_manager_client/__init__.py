@@ -340,7 +340,6 @@ class SlicerExtensionClient(GirderClient):
         :param release: Name of the release
         :param limit: Limit of the number of extensions listed
         :param all: Boolean that allow to list extensions from all the release
-        :param id: Boolean to return only the extension ID
         :return: A list of extensions filtered by optional parameters
         """
         apps = self.listApp(app_name)
