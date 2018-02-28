@@ -43,7 +43,7 @@ def _deleteFolder(folder, progress, user):
         if progress:
             ctx.update(total=Folder().subtreeCount(folder))
         Folder().remove(folder, progress=ctx)
-    return {'message': 'Deleted folder %s.' % folder['name']}
+    return folder
 
 
 class App(Resource):
@@ -56,7 +56,7 @@ class App(Resource):
         self.route('GET', (), self.listApp)
         self.route('DELETE', (':app_id',), self.deleteApp)
         self.route('POST', (':app_id', 'release'), self.createNewRelease)
-        self.route('GET', (':app_id', 'release'), self.getAllReleases)
+        self.route('GET', (':app_id', 'release'), self.getAllStableReleases)
         self.route('GET', (':app_id', 'release', 'nightly'), self.getAllNightlyReleases)
         self.route('GET', (':app_id', 'release', ':release_id_or_name'), self.getReleaseByIdOrName)
         self.route('DELETE', (':app_id', 'release', ':release_id_or_name'),
@@ -270,9 +270,9 @@ class App(Resource):
         .errorResponse('Read permission denied on the application.', 403)
     )
     @access.user(scope=TokenScope.DATA_READ)
-    def getAllReleases(self, app_id, limit, offset, sort):
+    def getAllStableReleases(self, app_id, limit, offset, sort):
         """
-        Get a list of all the release of an application.
+        Get a list of all the stable release of an application.
 
         :param app_id: Application ID
         :return: List of all release within the application
@@ -391,8 +391,22 @@ class App(Resource):
                 'Folder',
                 filters={'lowerName': release_id_or_name.lower()}))
             if not release_folder:
-                raise Exception("Couldn't find release %s" % release_id_or_name)
-            release = release_folder[0]
+                release_folder = list(self._model.childFolders(
+                    folder,
+                    'Folder',
+                    filters={'lowerName': constants.NIGHTLY_RELEASE_NAME.lower()}))
+                if not release_folder:
+                    raise Exception("Couldn't find release %s" % release_id_or_name)
+                revision_folder = list(self._model.childFolders(
+                    release_folder[0],
+                    'Folder',
+                    filters={'lowerName': release_id_or_name.lower()}
+                ))
+                if not revision_folder:
+                    raise Exception("Couldn't find release %s" % release_id_or_name)
+                release = revision_folder[0]
+            else:
+                release = release_folder[0]
 
         return _deleteFolder(release, progress, self.getCurrentUser())
 
@@ -615,7 +629,7 @@ class App(Resource):
                 release_folder,
                 'Folder',
                 user=creator,
-                filters={'name': app_revision}))
+                filters={'meta.revision': app_revision}))
             if revision_folder:
                 revision_folder = revision_folder[0]
             else:
@@ -625,6 +639,9 @@ class App(Resource):
                     parentType='Folder',
                     public=release_folder['public'],
                     creator=creator)
+                revision_folder = self._model.setMetadata(
+                    revision_folder,
+                    {'revision': app_revision})
             release_folder = revision_folder
         params = {
             'app_id': app_id,
@@ -704,7 +721,7 @@ class App(Resource):
         :return: Confirmation message with the name of the deleted extension
         """
         Item().remove(item)
-        return {'message': 'Deleted extension %s.' % item['name']}
+        return item
 
     @autoDescribeRoute(
         Description('Get download stats of extensions within an application.')

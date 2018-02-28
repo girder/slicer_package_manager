@@ -20,5 +20,11 @@ add_standard_plugin_tests(NO_CLIENT_TESTS)
 add_python_test(
   PLUGIN slicer_extension_manager
   EXTERNAL_DATA
-  plugins/slicer_extension_manager/extension.tar.gz
+  # Data are downloaded from https://data.kitware.com/#user/59c409558d777f7d33e9d5c1/folder/59c409558d777f7d33e9d5c2
+  # The Public folder of 'pierreassemat'
+  plugins/slicer_extension_manager/extension1.tar.gz
+  plugins/slicer_extension_manager/extension2.tar.gz
+  plugins/slicer_extension_manager/extension3.tar.gz
+  plugins/slicer_extension_manager/extension4.tar.gz
+  plugins/slicer_extension_manager/extension5.tar.gz
 )
