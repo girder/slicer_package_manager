@@ -5,6 +5,7 @@ import six
 
 from girder.models.collection import Collection
 from girder.models.folder import Folder
+from girder.models.file import File
 from girder.models.user import User
 
 from server import constants
@@ -55,25 +56,34 @@ class SlicerExtensionManagerTest(base.TestCase):
             parentType='Folder',
             public=True,
             creator=self._user)
+        self._nightlyRevision = Folder().createFolder(
+            parent=self._nightly,
+            name='0000',
+            parentType='Folder',
+            public=True,
+            creator=self._user)
+        self._nightlyRevision = Folder().setMetadata(
+            self._nightlyRevision,
+            {'revision': '0000'}
+        )
         self._release = Folder().createFolder(
             parent=self._app,
-            name='release',
+            name='release1',
             description='release description',
             parentType='Folder',
             public=True,
             creator=self._user)
-        self._release = Folder().setMetadata(self._release, {'revision': '12345'})
-
+        self._release = Folder().setMetadata(self._release, {'revision': '0005'})
         self._extensions = {
             'extension1': {
                 'meta': {
                     'os': 'linux',
                     'arch': 'i386',
-                    'baseName': 'slicerExt',
+                    'baseName': 'Ext1',
                     'repository_type': 'git',
                     'repository_url': 'http://slicer.com/extension/Ext',
                     'revision': '35333',
-                    'app_revision': '12345',
+                    'app_revision': '0005',
                     'packagetype': 'installer',
                     'codebase': 'SL4',
                     'description': 'Extension for Slicer 4'
@@ -83,11 +93,11 @@ class SlicerExtensionManagerTest(base.TestCase):
                 'meta': {
                     'os': 'win',
                     'arch': 'i386',
-                    'baseName': 'slicerExt1',
+                    'baseName': 'Ext2',
                     'repository_type': 'git',
                     'repository_url': 'http://slicer.com/extension/Ext',
                     'revision': '54342',
-                    'app_revision': '112233',
+                    'app_revision': '0000',
                     'packagetype': 'installer',
                     'codebase': 'SL4',
                     'description': 'Extension for Slicer 4 new version'
@@ -97,11 +107,39 @@ class SlicerExtensionManagerTest(base.TestCase):
                 'meta': {
                     'os': 'linux',
                     'arch': 'amd64',
-                    'baseName': 'slicerExt2',
+                    'baseName': 'Ext3',
                     'repository_type': 'gitlab',
                     'repository_url': 'http://slicer.com/extension/Ext',
                     'revision': '542',
-                    'app_revision': '112233',
+                    'app_revision': '0001',
+                    'packagetype': 'zip',
+                    'codebase': 'SL434334',
+                    'description': 'Extension for Slicer 4 new version'
+                }
+            },
+            'extension4': {
+                'meta': {
+                    'os': 'macosx',
+                    'arch': 'amd64',
+                    'baseName': 'Ext3',
+                    'repository_type': 'gitlab',
+                    'repository_url': 'http://slicer.com/extension/Ext',
+                    'revision': '542',
+                    'app_revision': '0001',
+                    'packagetype': 'zip',
+                    'codebase': 'SL434334',
+                    'description': 'Extension for Slicer 4 new version'
+                }
+            },
+            'extension5': {
+                'meta': {
+                    'os': 'macosx',
+                    'arch': 'i386',
+                    'baseName': 'Ext3',
+                    'repository_type': 'gitlab',
+                    'repository_url': 'http://slicer.com/extension/Ext',
+                    'revision': '542',
+                    'app_revision': '0001',
                     'packagetype': 'zip',
                     'codebase': 'SL434334',
                     'description': 'Extension for Slicer 4 new version'
@@ -114,6 +152,10 @@ class SlicerExtensionManagerTest(base.TestCase):
             **self._extensions['extension2']['meta'])
         self._extensions['extension3']['name'] = constants.EXTENSION_TEMPLATE_NAME.format(
             **self._extensions['extension3']['meta'])
+        self._extensions['extension4']['name'] = constants.EXTENSION_TEMPLATE_NAME.format(
+            **self._extensions['extension4']['meta'])
+        self._extensions['extension5']['name'] = constants.EXTENSION_TEMPLATE_NAME.format(
+            **self._extensions['extension5']['meta'])
 
     def _createApplicationCheck(self, appName, appDescription, collId=None,
                                 collName=None, collDescription=''):
@@ -146,14 +188,12 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertEqual(resp.json['description'], appDescription)
         self.assertEqual(
             resp.json['meta']['extensionNameTemplate'], constants.EXTENSION_TEMPLATE_NAME)
-
-        # Check if it has created the collection
+        # Check if it has created/load the collection
         collection = Collection().load(resp.json['parentId'], user=self._user)
         self.assertEqual(collection['name'], collName)
         if collDescription:
             self.assertEqual(collection['description'], collDescription)
-
-        # Check if it has created "the nightly" release
+        # Check if it has created the default release "nightly"
         parent = Folder().load(resp.json['_id'], user=self._user)
         nightly = list(Folder().childFolders(parent, 'Folder', user=self._user))
         self.assertEqual(len(nightly), 1)
@@ -168,24 +208,20 @@ class SlicerExtensionManagerTest(base.TestCase):
             'App_test',
             'Application without specifying any collection',
             collDescription='Automatic creation of the collection Applications')
-
         # Without any collection this should load the 'Applications' collection
         self._createApplicationCheck(
             'App_test1',
             'Application without specifying any collection')
-
         # With a collection ID this should load the collection
         self._createApplicationCheck(
             'App_test2',
             'Application with a collection ID',
             collId=self._collection['_id'])
-
         # With a collection name that match an existing collection name
         self._createApplicationCheck(
             'App_test3',
             'Application with a collection name',
             collName=self._collection['name'])
-
         # With a collection name that does not exist yet
         self._createApplicationCheck(
             'App_test4',
@@ -193,6 +229,15 @@ class SlicerExtensionManagerTest(base.TestCase):
             collName='Collection_for_app')
 
     def testlistApp(self):
+        # Create applications in the 'Applications' collection
+        app1 = self._createApplicationCheck(
+            'App_test1',
+            'Application without specifying any collection',
+            collDescription='Automatic creation of the collection Applications')
+        app2 = self._createApplicationCheck(
+            'App_test2',
+            'Application without specifying any collection',
+            collDescription='Automatic creation of the collection Applications')
         # Get application with application ID
         resp = self.request(
             path='/app',
@@ -201,11 +246,11 @@ class SlicerExtensionManagerTest(base.TestCase):
             params={'app_id': self._app['_id']}
         )
         self.assertStatusOk(resp)
+        self.assertEqual(ObjectId(resp.json['_id']), self._app['_id'])
         self.assertEqual(resp.json['name'], self._app['name'])
         self.assertEqual(resp.json['description'], self._app['description'])
         self.assertEqual(
             resp.json['meta']['extensionNameTemplate'], constants.EXTENSION_TEMPLATE_NAME)
-
         # List all applications from 'Applications' collection (Default)
         resp = self.request(
             path='/app',
@@ -213,8 +258,9 @@ class SlicerExtensionManagerTest(base.TestCase):
             user=self._user
         )
         self.assertStatusOk(resp)
-        self.assertEqual(resp.json, [])
-
+        self.assertEqual(len(resp.json), 2)
+        self.assertEqual(resp.json[0]['_id'], app1['_id'])
+        self.assertEqual(resp.json[1]['_id'], app2['_id'])
         # Get application with exact name
         resp = self.request(
             path='/app',
@@ -225,6 +271,7 @@ class SlicerExtensionManagerTest(base.TestCase):
                 'name': self._app['name']}
         )
         self.assertStatusOk(resp)
+        self.assertEqual(ObjectId(resp.json[0]['_id']), self._app['_id'])
         self.assertEqual(resp.json[0]['name'], self._app['name'])
         self.assertEqual(resp.json[0]['description'], self._app['description'])
         self.assertEqual(
@@ -239,7 +286,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             'App_test',
             'Application without specifying any collection',
             collDescription='Automatic creation of the collection Applications')
-        # Get the new application
+        # Get the new application by ID
         resp = self.request(
             path='/app',
             method='GET',
@@ -247,6 +294,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             params={'app_id': app['_id']}
         )
         self.assertStatusOk(resp)
+        self.assertEqual(resp.json['_id'], app['_id'])
         self.assertEqual(resp.json['name'], app['name'])
         # Delete the application
         resp = self.request(
@@ -255,10 +303,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             user=self._user
         )
         self.assertStatusOk(resp)
-        self.assertEqual(
-            resp.json,
-            {'message': 'Deleted folder %s.' % 'App_test'}
-        )
+        self.assertEqual(resp.json['_id'], app['_id'])
         # Try to get the application should failed
         resp = self.request(
             path='/app',
@@ -269,34 +314,63 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertStatusOk(resp)
         self.assertEqual(resp.json, None)
 
-    def testNewRelease(self):
+    def _createReleaseCheck(self, name, app_id, app_revision, desc=''):
         resp = self.request(
-            path='/app/%s/release' % self._app['_id'],
+            path='/app/%s/release' % app_id,
             method='POST',
             user=self._user,
             params={
-                'name': 'V3.2.1',
-                'app_revision': '12345',
-                'description': 'This is a new release'
+                'name': name,
+                'app_revision': app_revision,
+                'description': desc
             }
         )
         # Check if it has created the new release
         self.assertStatusOk(resp)
-        self.assertEqual(resp.json['name'], 'V3.2.1')
-        self.assertEqual(resp.json['description'], 'This is a new release')
-        self.assertEqual(resp.json['meta']['revision'], '12345')
+        self.assertEqual(resp.json['name'], name)
+        self.assertEqual(resp.json['description'], desc)
+        self.assertEqual(resp.json['meta']['revision'], app_revision)
 
-    def testGetAllRelease(self):
-        self.testNewRelease()
+        return resp.json
+
+    def testNewRelease(self):
+        self._createReleaseCheck(
+            name='V3.2.1',
+            app_id=self._app['_id'],
+            app_revision='001',
+            desc='This is a new release')
+
+    def testGetAllStableRelease(self):
+        release1 = self._createReleaseCheck(
+            name='V3.2.1',
+            app_id=self._app['_id'],
+            app_revision='002',
+            desc='This is a new release')
 
         resp = self.request(
             path='/app/%s/release' % self._app['_id'],
             method='GET',
             user=self._user
         )
-        # Check if it has return all the releases
+        # Check if it has return all the stable releases
         self.assertStatusOk(resp)
         self.assertEqual(len(resp.json), 2)
+        self.assertEqual(resp.json[0]['_id'], release1['_id'])
+        self.assertEqual(ObjectId(resp.json[1]['_id']), self._release['_id'])
+
+    def testGetAllNightlyRelease(self):
+        resp = self.request(
+            path='/app/%s/release/nightly' % self._app['_id'],
+            method='GET',
+            user=self._user
+        )
+        # Check if it has return all the revision from the default release
+        self.assertStatusOk(resp)
+        self.assertEqual(len(resp.json), 1)
+        self.assertEqual(ObjectId(resp.json[0]['_id']), self._nightlyRevision['_id'])
+        self.assertEqual(
+            resp.json[0]['meta']['revision'],
+            self._nightlyRevision['meta']['revision'])
 
     def testGetReleaseByIdOrName(self):
         # Get by ID
@@ -327,19 +401,11 @@ class SlicerExtensionManagerTest(base.TestCase):
 
     def testDeleteReleaseByID(self):
         # Create the release
-        resp = self.request(
-            path='/app/%s/release' % self._app['_id'],
-            method='POST',
-            user=self._user,
-            params={
-                'name': 'V3.2.1',
-                'app_revision': '12345',
-                'description': 'This is a new release'
-            }
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['name'], 'V3.2.1')
-        release = resp.json
+        release = self._createReleaseCheck(
+            name='V3.2.1',
+            app_id=self._app['_id'],
+            app_revision='001',
+            desc='This is a new release')
         # Get the new release by ID
         resp = self.request(
             path='/app/%(app_id)s/release/%(id_or_name)s' % {
@@ -349,6 +415,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             user=self._user,
         )
         self.assertStatusOk(resp)
+        self.assertEqual(resp.json['_id'], release['_id'])
         self.assertEqual(resp.json['name'], release['name'])
         # Delete the release by ID
         resp = self.request(
@@ -359,10 +426,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             user=self._user
         )
         self.assertStatusOk(resp)
-        self.assertEqual(
-            resp.json,
-            {'message': 'Deleted folder %s.' % release['name']}
-        )
+        self.assertEqual(resp.json['_id'], release['_id'])
         # Try to get the release should failed
         resp = self.request(
             path='/app/%(app_id)s/release/%(id_or_name)s' % {
@@ -376,19 +440,11 @@ class SlicerExtensionManagerTest(base.TestCase):
 
     def testDeleteReleaseByName(self):
         # Create the release
-        resp = self.request(
-            path='/app/%s/release' % self._app['_id'],
-            method='POST',
-            user=self._user,
-            params={
-                'name': 'V3.2.1',
-                'app_revision': '12345',
-                'description': 'This is a new release'
-            }
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['name'], 'V3.2.1')
-        release = resp.json
+        release = self._createReleaseCheck(
+            name='V3.2.1',
+            app_id=self._app['_id'],
+            app_revision='001',
+            desc='This is a new release')
         # Get the new release by name
         resp = self.request(
             path='/app/%(app_id)s/release/%(id_or_name)s' % {
@@ -398,6 +454,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             user=self._user,
         )
         self.assertStatusOk(resp)
+        self.assertEqual(resp.json['_id'], release['_id'])
         self.assertEqual(resp.json['name'], release['name'])
         # Delete the release by name
         resp = self.request(
@@ -408,10 +465,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             user=self._user
         )
         self.assertStatusOk(resp)
-        self.assertEqual(
-            resp.json,
-            {'message': 'Deleted folder %s.' % release['name']}
-        )
+        self.assertEqual(resp.json['_id'], release['_id'])
         # Try to get the release should failed
         resp = self.request(
             path='/app/%(app_id)s/release/%(id_or_name)s' % {
@@ -422,6 +476,45 @@ class SlicerExtensionManagerTest(base.TestCase):
         )
         self.assertStatusOk(resp)
         self.assertEqual(resp.json, None)
+
+    def testDeleteRevisionRelease(self):
+        # Create extensions in the "nightly" release
+        extension1 = self._createOrUpdateExtension(
+            self._extensions['extension3']['meta'],
+            'extension3.tar.gz')
+        self.assertEqual(extension1['name'], self._extensions['extension3']['name'])
+        extension2 = self._createOrUpdateExtension(
+            self._extensions['extension4']['meta'],
+            'extension4.tar.gz')
+        self.assertEqual(extension2['name'], self._extensions['extension4']['name'])
+
+        resp = self.request(
+            path='/app/%s/release/nightly' % self._app['_id'],
+            method='GET',
+            user=self._user
+        )
+        # Check if it has return all the revision from the default release
+        self.assertStatusOk(resp)
+        self.assertEqual(len(resp.json), 2)
+
+        # Delete by Name the revision release '0001' in Nightly
+        resp = self.request(
+            path='/app/%(app_id)s/release/%(release_id_or_name)s' % {
+                'app_id': self._app['_id'],
+                'release_id_or_name': self._extensions['extension4']['meta']['app_revision']},
+            method='DELETE',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+
+        resp = self.request(
+            path='/app/%s/release/nightly' % self._app['_id'],
+            method='GET',
+            user=self._user
+        )
+        # Check if it has return all the revision from the default release
+        self.assertStatusOk(resp)
+        self.assertEqual(len(resp.json), 1)
 
     def _uploadExternalData(self, item, filePath, fileName=None):
         file = os.path.join(self.dataDir, filePath)
@@ -471,18 +564,6 @@ class SlicerExtensionManagerTest(base.TestCase):
             self.assertEqual(uploadedFile['size'], size)
         return uploadedFile
 
-    def _createOrUpdateExtension(self, params):
-        resp = self.request(
-            path='/app/%s/extension' % self._app['_id'],
-            method='POST',
-            user=self._user,
-            params=params)
-        self.assertStatusOk(resp)
-        # Remove the app_id to check the metadata with these set at the top
-        resp.json['meta'].pop('app_id')
-        self.assertEqual(resp.json['meta'], params)
-        return resp.json
-
     def _downloadFile(self, id):
         resp = self.request(
             path='/file/%s/download' % id,
@@ -492,53 +573,65 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertStatusOk(resp)
         return self.getBody(resp, text=False)
 
-    def testCreateExtension(self):
+    def _getSha512(self, file):
+        sha512 = hashlib.sha512()
+        sha512.update(file)
+        return sha512.hexdigest()
+
+    def _createOrUpdateExtension(self, params, filePath=None):
+        resp = self.request(
+            path='/app/%s/extension' % self._app['_id'],
+            method='POST',
+            user=self._user,
+            params=params)
+        self.assertStatusOk(resp)
+        # Remove the app_id to check the metadata with these set during the creation
+        metadata = resp.json['meta'].copy()
+        metadata.pop('app_id')
+        self.assertDictEqual(metadata, params)
+
+        if filePath:
+            # Upload an extension file
+            file = os.path.join(self.dataDir, filePath)
+            with open(file, 'rb') as fp:
+                extension_sha = self._getSha512(fp.read())
+            uploadedExtension = self._uploadExternalData(resp.json, filePath)
+
+            # Download the extension and compare files
+            self.assertEqual(
+                self._getSha512(self._downloadFile(uploadedExtension['_id'])),
+                extension_sha
+            )
+        return resp.json
+
+    def testUploadAndDownloadExtension(self):
         # Create a new extension in the release "self._release"
-        extension1 = self._createOrUpdateExtension(self._extensions['extension1']['meta'])
+        extension1 = self._createOrUpdateExtension(
+            self._extensions['extension1']['meta'],
+            'extension1.tar.gz')
         self.assertEqual(extension1['name'], self._extensions['extension1']['name'])
         self.assertEqual(ObjectId(extension1['folderId']), self._release['_id'])
-
         # Create an other extension in the "nightly" release
-        extension2 = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
+        extension2 = self._createOrUpdateExtension(
+            self._extensions['extension2']['meta'],
+            'extension2.tar.gz')
         self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
-
         # Create a third extension in the "nightly" release
-        extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
+        extension3 = self._createOrUpdateExtension(
+            self._extensions['extension3']['meta'],
+            'extension3.tar.gz')
         self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
-
-        # Upload an extension file
-        sha512 = hashlib.sha512()
-        filePath = 'extension.tar.gz'
-        file = os.path.join(self.dataDir, filePath)
-        with open(file, 'rb') as fp:
-            sha512.update(fp.read())
-            shaUploadedFile = sha512.hexdigest()
-        uploadedFile = self._uploadExternalData(extension3, filePath)
-
         # Try to create the same extension should just get the same one
-        extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
+        extension3 = self._createOrUpdateExtension(
+            self._extensions['extension3']['meta'],
+            'extension3.tar.gz')
         self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
-
-        # Download the extension
-        sha512 = hashlib.sha512()
-        sha512.update(self._downloadFile(uploadedFile['_id']))
-        shaDownloadedFile = sha512.hexdigest()
-
-        self.assertEqual(shaUploadedFile, shaDownloadedFile)
 
     def testUpdateExtensions(self):
-        extension = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
+        extension = self._createOrUpdateExtension(
+            self._extensions['extension2']['meta'],
+            'extension2.tar.gz')
         self.assertEqual(extension['name'], self._extensions['extension2']['name'])
-
-        # Upload an extension file
-        sha512 = hashlib.sha512()
-        filePath = 'extension.tar.gz'
-        file = os.path.join(self.dataDir, filePath)
-        with open(file, 'rb') as fp:
-            sha512.update(fp.read())
-            shaUploadedFile = sha512.hexdigest()
-        uploadedFile = self._uploadExternalData(extension, filePath)
-
         # Update the same extension
         newParams = self._extensions['extension2']['meta'].copy()
         newParams.update({
@@ -549,36 +642,24 @@ class SlicerExtensionManagerTest(base.TestCase):
             'description': 'Extension for Slicer 4 new version 2'
         })
         updatedExtension = self._createOrUpdateExtension(newParams)
-        self.assertEqual(updatedExtension['name'], constants.EXTENSION_TEMPLATE_NAME.format(**{
-            'app_revision': '112233',
-            'baseName': 'slicerExt1',
-            'os': 'win',
-            'arch': 'i386',
-            'revision': '0000'
-        }))
+        # Check the same extension has different metadata
+        self.assertEqual(updatedExtension['_id'], extension['_id'])
+        self.assertEqual(
+            updatedExtension['name'],
+            constants.EXTENSION_TEMPLATE_NAME.format(**newParams)
+        )
         self.assertNotEqual(updatedExtension['meta'], extension['meta'])
-
-        # Download the extension
-        sha512 = hashlib.sha512()
-        sha512.update(self._downloadFile(uploadedFile['_id']))
-        shaDownloadedFile = sha512.hexdigest()
-
-        self.assertEqual(shaUploadedFile, shaDownloadedFile)
 
     def testGetExtensions(self):
         # Create a new extension in the release "self._release"
         extension1 = self._createOrUpdateExtension(self._extensions['extension1']['meta'])
         self.assertEqual(extension1['name'], self._extensions['extension1']['name'])
         self.assertEqual(ObjectId(extension1['folderId']), self._release['_id'])
-
-        # Create an other extension in the "nightly" release
+        # Create other extensions in the "nightly" release
         extension2 = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
         self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
-
-        # Create a third extension
         extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
         self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
-
         # Get all the extension of the application
         resp = self.request(
             path='/app/%s/extension' % self._app['_id'],
@@ -587,7 +668,6 @@ class SlicerExtensionManagerTest(base.TestCase):
         )
         self.assertStatusOk(resp)
         self.assertEqual(len(resp.json), 3)
-
         # Get all the extension of the application for Linux
         resp = self.request(
             path='/app/%s/extension' % self._app['_id'],
@@ -601,7 +681,6 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertEqual(len(resp.json), 2)
         for ext in resp.json:
             self.assertEqual(ext['meta']['os'], 'linux')
-
         # Get all the extension of the application for Linux and amd64 architecture
         resp = self.request(
             path='/app/%s/extension' % self._app['_id'],
@@ -617,6 +696,23 @@ class SlicerExtensionManagerTest(base.TestCase):
         for ext in resp.json:
             self.assertEqual(ext['meta']['os'], 'linux')
             self.assertEqual(ext['meta']['arch'], 'amd64')
+        # Get a specific extension by name
+        resp = self.request(
+            path='/app/%s/extension/%s' % (self._app['_id'], extension3['name']),
+            method='GET',
+            user=self._user,
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json['_id'], extension3['_id'])
+        self.assertEqual(resp.json['name'], extension3['name'])
+        # Get a specific extension with wrong name
+        resp = self.request(
+            path='/app/%s/extension/%s' % (self._app['_id'], 'wrong_name'),
+            method='GET',
+            user=self._user,
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json, None)
 
     def testDeleteExtension(self):
         # Create a new extension in the release "self._release"
@@ -631,6 +727,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         )
         self.assertStatusOk(resp)
         self.assertEqual(len(resp.json), 1)
+        self.assertEqual(resp.json[0]['_id'], extension['_id'])
         # Delete the extension
         resp = self.request(
             path='/app/%(app_id)s/extension/%(ext_id)s' % {
@@ -640,10 +737,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             user=self._user
         )
         self.assertStatusOk(resp)
-        self.assertEqual(
-            resp.json,
-            {'message': 'Deleted extension %s.' % extension['name']}
-        )
+        self.assertEqual(resp.json['_id'], extension['_id'])
         # Try to get the extension shouldn't success
         resp = self.request(
             path='/app/%s/extension' % self._app['_id'],
@@ -652,3 +746,119 @@ class SlicerExtensionManagerTest(base.TestCase):
         )
         self.assertStatusOk(resp)
         self.assertEqual(len(resp.json), 0)
+
+    def testDownloadStats(self):
+        extension1 = self._createOrUpdateExtension(
+            self._extensions['extension1']['meta'],
+            'extension1.tar.gz')
+        self.assertEqual(extension1['name'], self._extensions['extension1']['name'])
+        extension2 = self._createOrUpdateExtension(
+            self._extensions['extension2']['meta'],
+            'extension2.tar.gz')
+        self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
+        extension3 = self._createOrUpdateExtension(
+            self._extensions['extension3']['meta'],
+            'extension3.tar.gz')
+        self.assertEqual(extension3['name'], self._extensions['extension3']['name'])
+        extension4 = self._createOrUpdateExtension(
+            self._extensions['extension4']['meta'],
+            'extension4.tar.gz')
+        self.assertEqual(extension4['name'], self._extensions['extension4']['name'])
+        extension5 = self._createOrUpdateExtension(
+            self._extensions['extension5']['meta'],
+            'extension5.tar.gz')
+        self.assertEqual(extension5['name'], self._extensions['extension5']['name'])
+
+        # Get the downloadStats
+        expectedDownloadStats = {
+            'Ext1': {
+                '0005': {
+                    'linux': {
+                        'i386': 1
+                    }
+                }
+            },
+            'Ext2': {
+                '0000': {
+                    'win': {
+                        'i386': 1
+                    }
+                }
+            },
+            'Ext3': {
+                '0001': {
+                    'linux': {
+                        'amd64': 1
+                    },
+                    'macosx': {
+                        'amd64': 1,
+                        'i386': 1
+                    }
+                }
+            }
+        }
+        resp = self.request(
+            path='/app/%s/extension/downloadStats' % self._app['_id'],
+            method='GET',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        self.assertDictEqual(resp.json, expectedDownloadStats)
+
+        # Download multiple time an extension
+        ext4_file = list(File().find({'itemId': ObjectId(extension4['_id'])}))
+        ext5_file = list(File().find({'itemId': ObjectId(extension5['_id'])}))
+
+        N = 5
+        for idx in range(N):
+            self._downloadFile(ext4_file[0]['_id'])
+            self._downloadFile(ext5_file[0]['_id'])
+
+        expectedDownloadStats['Ext3']['0001']['macosx'].update({
+            'amd64': N + expectedDownloadStats['Ext3']['0001']['macosx']['amd64'],
+            'i386': N + expectedDownloadStats['Ext3']['0001']['macosx']['i386']
+        })
+        resp = self.request(
+            path='/app/%s/extension/downloadStats' % self._app['_id'],
+            method='GET',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        self.assertDictEqual(resp.json, expectedDownloadStats)
+
+        # The download stats aren't affected by deletion of extension or revision
+        # in the default release
+        # Delete extensions
+        resp = self.request(
+            path='/app/%(app_id)s/extension/%(ext_id)s' % {
+                'app_id': self._app['_id'],
+                'ext_id': extension4['_id']},
+            method='DELETE',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        resp = self.request(
+            path='/app/%(app_id)s/extension/%(ext_id)s' % {
+                'app_id': self._app['_id'],
+                'ext_id': extension5['_id']},
+            method='DELETE',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        # Delete the revision '0000' in Nightly
+        resp = self.request(
+            path='/app/%(app_id)s/release/%(release_id)s' % {
+                'app_id': self._app['_id'],
+                'release_id': self._nightlyRevision['_id']},
+            method='DELETE',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        # Check if download Stats are the same
+        resp = self.request(
+            path='/app/%s/extension/downloadStats' % self._app['_id'],
+            method='GET',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        self.assertDictEqual(resp.json, expectedDownloadStats)
