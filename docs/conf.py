@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Slicer Extension Manager documentation build configuration file, created by
+# Slicer Package Manager documentation build configuration file, created by
 # sphinx-quickstart on Mon Feb 12 16:59:31 2018.
 #
 # This file is execfile()d with the current directory set to its
@@ -51,7 +51,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Slicer Extension Manager'
+project = u'Slicer Package Manager'
 copyright = u'2018, Kitware, Inc'
 author = u'Pierre Assemat'
 
@@ -117,7 +117,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'SlicerExtensionManagerdoc'
+htmlhelp_basename = 'SlicerPackageManagerdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -144,7 +144,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'SlicerExtensionManager.tex', u'Slicer Extension Manager Documentation',
+    (master_doc, 'SlicerPackageManager.tex', u'Slicer Package Manager Documentation',
      u'Pierre Assemat', 'manual'),
 ]
 
@@ -154,7 +154,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'slicerextensionmanager', u'Slicer Extension Manager Documentation',
+    (master_doc, 'slicerpackagemanager', u'Slicer Package Manager Documentation',
      [author], 1)
 ]
 
@@ -165,10 +165,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'SlicerExtensionManager',
-     u'Slicer Extension Manager Documentation',
+    (master_doc, 'SlicerPackageManager',
+     u'Slicer Package Manager Documentation',
      author,
-     'SlicerExtensionManager',
+     'SlicerPackageManager',
      'One line description of project.',
      'Miscellaneous'),
 ]

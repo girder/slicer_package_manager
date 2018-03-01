@@ -43,9 +43,9 @@ if __name__ == "__main__":
         'root': '/home/circleci/project/assetstore'
     })
 
-    # Enable the 'slicer_extension_manager' plugin
+    # Enable the 'slicer_package_manager' plugin
     gc.put('system/plugins', parameters={
-        "plugins": '["slicer_extension_manager"]'
+        "plugins": '["slicer_package_manager"]'
     })
 
     # Restart the server

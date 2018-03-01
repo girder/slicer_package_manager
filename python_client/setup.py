@@ -31,13 +31,13 @@ with open('README.rst') as f:
 
 # perform the install
 setup(
-    name='slicer_extension_manager_client',
+    name='slicer_package_manager_client',
     version='0.0.1',
-    description='Python client for interacting with the Slicer extension manager endpoint.',
+    description='Python client for interacting with the Slicer package manager endpoint.',
     long_description=readme,
     author='Kitware, Inc.',
     author_email='kitware@kitware.com',
-    url='http://girder.readthedocs.org/en/latest/slicer-extension-python-client.html',
+    url='http://girder.readthedocs.org/en/latest/slicer-package-python-client.html',
     license='Apache 2.0',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -52,7 +52,7 @@ setup(
     zip_safe=False,
     entry_points={
         'console_scripts': [
-            'slicer_extension_manager_client = slicer_extension_manager_client.cli:main'
+            'slicer_package_manager_client = slicer_package_manager_client.cli:main'
         ]
     }
 )

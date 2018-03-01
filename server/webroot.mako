@@ -13,6 +13,6 @@
   <body>
     <div id="g-global-info-apiroot" class="hide">${apiRoot}</div>
     <div id="g-global-info-staticroot" class="hide">${staticRoot}</div>
-    <script src="${staticRoot}/built/plugins/slicer_extension_manager/app.min.js"></script>
+    <script src="${staticRoot}/built/plugins/slicer_package_manager/app.min.js"></script>
   </body>
 </html>

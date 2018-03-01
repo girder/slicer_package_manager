@@ -2,9 +2,9 @@
 User Guide
 ==========
 
-The **Slicer Extension Manager** is a Girder plugin to easily manage packages or extensions from an Application.
+The **Slicer Package Manager** is a Girder plugin to easily manage packages or extensions from an Application.
 It is used by the Slicer community to share Slicer extensions by allowing to Upload and Download them.
-Build onto the open source data management platform: **Girder**, the **Slicer Extension Manager** use some of the
+Build onto the open source data management platform: **Girder**, the **Slicer Package Manager** use some of the
 concepts_ developed in Girder and embedded new ones as Application, Release or Extension.
 
 This plugin is designed to be robust, fast, extensible and easy to use.
@@ -12,10 +12,10 @@ This plugin is designed to be robust, fast, extensible and easy to use.
 The server side is built in Python under the open source
 `Apache License, version  2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
 
-How to use the Slicer Extension Manager?
+How to use the Slicer Package Manager?
 ----------------------------------------
 
-There are 3 different ways to use the Slicer Extension Manager:
+There are 3 different ways to use the Slicer Package Manager:
 
 * By using the User Interface (Work In Progress):
 
@@ -29,7 +29,7 @@ There are 3 different ways to use the Slicer Extension Manager:
 
 * By using the :doc:`commands_shell`:
 
-    This is the more easy way to use the basic feature of the Slicer Extension Manager. These commands allow you to
+    This is the more easy way to use the basic feature of the Slicer Package Manager. These commands allow you to
     easily create or list applications and releases, and also list, upload or download extensions.
 
 .. _concepts: http://girder.readthedocs.io/en/latest/user-guide.html#concepts
@@ -72,7 +72,7 @@ Concepts
     ``extensionNameTemplate`` set on the application they are made for.
     Each extension contain a bunch of metadata that give us information on which environment can use the extension like
     Operating System: ``os``, architecture: ``arch``, application revision: ``app_revision``, repository url...
-    (see the `list of parameters <http://slicer-extension-manager.readthedocs.io/en/latest/server.api.html
+    (see the `list of parameters <http://slicer-package-manager.readthedocs.io/en/latest/server.api.html
     #server.api.app.App.createOrUpdateExtension>`_ on the server API to have an exhausted list of all the metadata).
 
 
@@ -89,7 +89,7 @@ Concepts
 Schema of concepts
 ------------------
 
-.. image:: images/slicer_extension_manager_models.JPG
+.. image:: images/slicer_package_manager_models.JPG
 
 
 Download Statistics

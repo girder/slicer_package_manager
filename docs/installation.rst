@@ -11,15 +11,15 @@ To install from the latest source, first obtain the source code
 
 * Using HTTPS::
 
-    $ git clone https://github.com/girder/slicer_extension_manager.git
+    $ git clone https://github.com/girder/slicer_package_manager.git
 
 * Or using SSH::
 
-    $ git clone git@github.com:girder/slicer_extension_manager.git
+    $ git clone git@github.com:girder/slicer_package_manager.git
 
 Then::
 
-    $ cd slicer_extension_manager
+    $ cd slicer_package_manager
 
 Run via Docker
 --------------
@@ -43,6 +43,6 @@ Then to run the server just use the following command::
 The Girder application should then be running at http://localhost:8080/ and be already setup:
 
 * Creation of an **Admin User** (username: *admin*, password: *adminadmin*)
-* Creation of a local **Assetstore** (in *~/slicer_extension_manager/assetstore*), let's read the Filesystem_ documentation for more detail about it
+* Creation of a local **Assetstore** (in *~/slicer_package_manager/assetstore*), let's read the Filesystem_ documentation for more detail about it
 
 .. _Filesystem: http://girder.readthedocs.io/en/latest/user-guide.html#assetstores

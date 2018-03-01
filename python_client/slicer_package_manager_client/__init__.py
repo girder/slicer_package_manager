@@ -45,15 +45,15 @@ class Constant:
 
     # Default
     _home = os.path.expanduser("~")
-    DEFAULT_DOWNLOAD_PATH = os.path.join(_home, 'slicer_extension_manager/extensions')
+    DEFAULT_DOWNLOAD_PATH = os.path.join(_home, 'slicer_package_manager/extensions')
     DRAFT_RELEASE = 'draft'
     DEFAULT_LIMIT = 50
 
 
-class SlicerExtensionClient(GirderClient):
+class SlicerPackageClient(GirderClient):
     """
-    The SlicerExtensionClient allow to us the GirderClient with specific functions to use the
-    slicer_extension_manager plugin of Girder. This allow to manage 3 top level entity:
+    The SlicerPackageClient allow to us the GirderClient with specific functions to use the
+    slicer_package_manager plugin of Girder. This allow to manage 3 top level entity:
 
         * Application
         * Release
@@ -64,7 +64,7 @@ class SlicerExtensionClient(GirderClient):
 
     def __init__(self, host=None, port=None, apiRoot=None, scheme=None, apiUrl=None,
                  progressReporterCls=None):
-        super(SlicerExtensionClient, self).__init__(
+        super(SlicerPackageClient, self).__init__(
             host=host, port=port, apiRoot=apiRoot, scheme=scheme, apiUrl=apiUrl,
             progressReporterCls=progressReporterCls)
 

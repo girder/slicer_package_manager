@@ -37,14 +37,14 @@ class Webroot(WebrootBase):
         if not templatePath:
             templatePath = os.path.join(
                 getPluginDir(),
-                'slicer_extension_manager',
+                'slicer_package_manager',
                 'server',
                 'webroot.mako')
         super(Webroot, self).__init__(templatePath)
         self.vars = {
             'apiRoot': '/api/v1',
             'staticRoot': '/static',
-            'title': 'Slicer extension manager'
+            'title': 'Slicer package manager'
         }
 
 
@@ -68,10 +68,10 @@ def _onDownloadFileComplete(event):
 
 def load(info):
     info['apiRoot'].app = App()
-    info['serverRoot'].updateHtmlVars({'title': 'Slicer extension manager'})
+    info['serverRoot'].updateHtmlVars({'title': 'Slicer package manager'})
 
     # Download statistics
-    events.bind('model.file.download.complete', 'slicer_extension_manager', _onDownloadFileComplete)
+    events.bind('model.file.download.complete', 'slicer_package_manager', _onDownloadFileComplete)
 
     # Mongo indexes
     Item().ensureIndex('meta.baseName')

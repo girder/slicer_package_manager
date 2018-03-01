@@ -2,7 +2,7 @@
 
 DEBUG=true
 
-cmd=slicer_extension_manager_client
+cmd=slicer_package_manager_client
 auth='--username admin --password adminadmin'
 
 app1Name="App1"

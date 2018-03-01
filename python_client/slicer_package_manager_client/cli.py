@@ -21,10 +21,10 @@ import click
 import platform
 
 from girder_client import GirderClient
-from . import SlicerExtensionClient, __version__, Constant
+from . import SlicerPackageClient, __version__, Constant
 
 
-class SlicerExtensionCli(SlicerExtensionClient):
+class SlicerPackageCli(SlicerPackageClient):
     """
     A command line Python client for interacting with a Girder instance's
     RESTful api, specifically for performing uploads into a Girder instance.
@@ -33,7 +33,7 @@ class SlicerExtensionCli(SlicerExtensionClient):
     def __init__(self, username, password, host=None, port=None, apiRoot=None,
                  scheme=None, apiUrl=None, apiKey=None):
         """
-        Initialization function to create a SlicerExtensionCli instance, will attempt
+        Initialization function to create a SlicerPackageCli instance, will attempt
         to authenticate with the designated Girder instance. Aside from username, password,
         apiKey, and sslVerify, all other kwargs are passed directly through to the
         :py:class:`girder_client.GirderClient` base class constructor.
@@ -49,8 +49,8 @@ class SlicerExtensionCli(SlicerExtensionClient):
             bar.show_pos = True
             return bar
 
-        super(SlicerExtensionCli, self).__init__(host=host, port=port, apiRoot=apiRoot, scheme=scheme, apiUrl=apiUrl,
-                                                 progressReporterCls=_progressBar)
+        super(SlicerPackageCli, self).__init__(host=host, port=port, apiRoot=apiRoot, scheme=scheme, apiUrl=apiUrl,
+                                               progressReporterCls=_progressBar)
         interactive = password is None
         if apiKey:
             self.authenticate(apiKey=apiKey)
@@ -58,7 +58,7 @@ class SlicerExtensionCli(SlicerExtensionClient):
             self.authenticate(username, password, interactive=interactive)
 
     def _requestFunc(self, *args, **kwargs):
-        return super(SlicerExtensionCli, self)._requestFunc(*args, **kwargs)
+        return super(SlicerPackageCli, self)._requestFunc(*args, **kwargs)
 
 
 class _HiddenOption(click.Option):
@@ -162,7 +162,7 @@ def main(ctx, username, password,
         raise click.BadArgumentUsage(
             'Option "--no-ssl-verify" and option "--certificate" are mutually exclusive.')
 
-    ctx.obj = SlicerExtensionCli(
+    ctx.obj = SlicerPackageCli(
         username, password, host=host, port=port, apiRoot=api_root,
         scheme=scheme, apiUrl=api_url, apiKey=api_key)
 

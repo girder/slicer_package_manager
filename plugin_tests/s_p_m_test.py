@@ -14,7 +14,7 @@ from tests import base
 
 
 def setUpModule():
-    base.enabledPlugins.append('slicer_extension_manager')
+    base.enabledPlugins.append('slicer_package_manager')
     base.startServer()
 
 
@@ -22,16 +22,16 @@ def tearDownModule():
     base.stopServer()
 
 
-class SlicerExtensionManagerTest(base.TestCase):
+class SlicerPackageManagerTest(base.TestCase):
 
     def setUp(self):
-        super(SlicerExtensionManagerTest, self).setUp()
+        super(SlicerPackageManagerTest, self).setUp()
 
         self.maxDiff = None
         self._MAX_CHUNK_SIZE = 1024 * 1024 * 64
 
         self.dataDir = os.path.join(
-            os.environ['GIRDER_TEST_DATA_PREFIX'], 'plugins', 'slicer_extension_manager')
+            os.environ['GIRDER_TEST_DATA_PREFIX'], 'plugins', 'slicer_package_manager')
 
         self._user = User().createUser('usr0', 'passwd', 'tst', 'usr', 'u@u.com')
         self._collection = Collection().createCollection(

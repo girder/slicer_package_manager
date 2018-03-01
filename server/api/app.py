@@ -17,7 +17,7 @@
 #  limitations under the License.
 ##############################################################################
 """
-The internal API of Slicer Extension Manager Girder plugin. Use these endpoints to
+The internal API of Slicer Package Manager Girder plugin. Use these endpoints to
 create new applications, new releases, and upload or download extensions or packages
 """
 from bson.objectid import ObjectId
@@ -740,8 +740,7 @@ class App(Resource):
         `` {"baseName": { "revision": { "os": {"arch": downloadCount}}}} ``
 
         :param app_id: Application ID
-        :return: The JSON document of all the download statistics of extension from
-        the application
+        :return: The JSON document of all the download statistics of extension from the application
         """
         user = self.getCurrentUser()
         application = self._model.load(app_id, user=user)

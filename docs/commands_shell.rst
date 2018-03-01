@@ -7,7 +7,7 @@ Commands shell
 Installation
 ------------
 
-To install the latest version of the ``slicer_extension_manager_client``::
+To install the latest version of the ``slicer_package_manager_client``::
 
     $ cd python_client
 
@@ -28,11 +28,11 @@ There are few solutions to authenticate on your Girder instance when using the c
 
 * Using your login and your password::
 
-    $ slicer_extension_manager_client --username admin --password adminadmin
+    $ slicer_package_manager_client --username admin --password adminadmin
 
 * Generating an API-KEY see the documentation_ for more details::
 
-    $ slicer_extension_manager_client --api-key EKTb15LjqD4Q7jJuAVPuUSuW8N7s3dmuAekpRGLD
+    $ slicer_package_manager_client --api-key EKTb15LjqD4Q7jJuAVPuUSuW8N7s3dmuAekpRGLD
 
 or by using the ``GIRDER_API_KEY`` environment variable::
 
@@ -42,21 +42,21 @@ or by using the ``GIRDER_API_KEY`` environment variable::
     *The API-KEY is given as an example, follow the documentation on* api-key_ *to create one.*
 
 Then you can start using the API that allow you to easily create applications, manage releases,
-upload and download extensions, see :ref:`slicer_extension_manager_client` documentation for more details.
+upload and download packages, see :ref:`slicer_package_manager_client` documentation for more details.
 
 .. note::
-    Once you've created an API-KEY, you can easily create an alias with both the ``slicer_extension_manager_client``
+    Once you've created an API-KEY, you can easily create an alias with both the ``slicer_package_manager_client``
     command and the API-KEY to use the client more efficiency.
 
 .. _api-key: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
 .. _documentation: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
 
-.. _slicer_extension_manager_client:
+.. _slicer_package_manager_client:
 
-Slicer Extension Manager Client
+Slicer Package Manager Client
 -------------------------------
 
-The command ``slicer_extension_manager_client`` allows to use a simplified API to interact with the Python Client API.
+The command ``slicer_package_manager_client`` allows to use a simplified API to interact with the Python Client API.
 There are 3 different commands that can be used to manage models:
 
 * Application
@@ -69,7 +69,7 @@ Let's read the :doc:`commands_shell` documentation first.
 Application
 -----------
 
-Use ``slicer_extension_manager_client app`` to manage applications, this command allow to create, list and delete them
+Use ``slicer_package_manager_client app`` to manage applications, this command allow to create, list and delete them
 
 
 Create & Initialized a new application
@@ -77,7 +77,7 @@ Create & Initialized a new application
 
 ::
 
-    slicer_extension_manager_client app create NAME [OPTIONS]
+    slicer_package_manager_client app create NAME [OPTIONS]
 
 Arguments:
 
@@ -92,7 +92,7 @@ List all the application in the default collection 'Applications'
 
 ::
 
-    slicer_extension_manager_client app list
+    slicer_package_manager_client app list
 
 
 Delete an application
@@ -100,7 +100,7 @@ Delete an application
 
 ::
 
-    slicer_extension_manager_client app delete NAME
+    slicer_package_manager_client app delete NAME
 
 Arguments:
 
@@ -110,14 +110,14 @@ Arguments:
 Release
 -------
 
-Use ``slicer_extension_manager_client release`` to manage releases: create, list and delete them.
+Use ``slicer_package_manager_client release`` to manage releases: create, list and delete them.
 
 Create a new release
 ^^^^^^^^^^^^^^^^^^^^
 
 ::
 
-    slicer_extension_manager_client release create APP_NAME [OPTIONS]
+    slicer_package_manager_client release create APP_NAME [OPTIONS]
 
 Arguments:
 
@@ -134,7 +134,7 @@ List all the release from an application
 
 ::
 
-    slicer_extension_manager_client release list APP_NAME
+    slicer_package_manager_client release list APP_NAME
 
 Arguments:
 
@@ -146,7 +146,7 @@ Delete a release
 
 ::
 
-    slicer_extension_manager_client release delete APP_NAME NAME
+    slicer_package_manager_client release delete APP_NAME NAME
 
 Arguments:
 
@@ -156,7 +156,7 @@ Arguments:
 Extension
 ---------
 
-Use ``slicer_extension_manager_client extension`` to upload, download or just list extensions
+Use ``slicer_package_manager_client extension`` to upload, download or just list extensions
 
 Upload a new extension
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -171,7 +171,7 @@ application setting page.
 
 ::
 
-    slicer_extension_manager_client extension upload APP_NAME FILE_PATH [OPTIONS]
+    slicer_package_manager_client extension upload APP_NAME FILE_PATH [OPTIONS]
 
 Arguments:
 
@@ -201,7 +201,7 @@ one extension by providing the ``--fullname`` option of an extension.
 
 ::
 
-    slicer_extension_manager_client extension list APP_NAME [OPTIONS]
+    slicer_package_manager_client extension list APP_NAME [OPTIONS]
 
 Arguments:
 
@@ -223,7 +223,7 @@ Download an extension
 
 ::
 
-    slicer_extension_manager_client extension download APP_NAME ID_OR_NAME [OPTIONS]
+    slicer_package_manager_client extension download APP_NAME ID_OR_NAME [OPTIONS]
 
 Arguments:
 
@@ -242,7 +242,7 @@ Provide either the ID or the name of the extension to delete it.
 
 ::
 
-    slicer_extension_manager_client extension delete APP_NAME ID_OR_NAME
+    slicer_package_manager_client extension delete APP_NAME ID_OR_NAME
 
 Arguments:
 
