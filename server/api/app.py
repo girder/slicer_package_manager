@@ -128,14 +128,32 @@ class App(Resource):
                     creator=creator)
             else:
                 collection = collection[0]
+        # Load or create the top_level_folder
+        top_level_folder = list(self._model.childFolders(
+            parent=collection,
+            parentType='Collection',
+            user=creator,
+            filters={'name': constants.TOP_LEVEL_FOLDER_NAME}))
+        if top_level_folder:
+            top_level_folder = top_level_folder[0]
+        else:
+            # Create the 'package' folder
+            top_level_folder = self._model.createFolder(
+                parent=collection,
+                name=constants.TOP_LEVEL_FOLDER_NAME,
+                description='',
+                parentType='Collection',
+                public=public,
+                creator=creator)
+
         # Create the application
         if not app_description:
             app_description = ''
         app = self._model.createFolder(
-            parent=collection,
+            parent=top_level_folder,
             name=name,
             description=app_description,
-            parentType='Collection',
+            parentType='Folder',
             public=public,
             creator=creator)
         # Create the 'draft' release which will be the default folder when uploading an extension
@@ -189,6 +207,14 @@ class App(Resource):
                 parent = Collection().findOne(
                     query={'name': 'Applications'}, user=user, offset=offset)
             if parent:
+                top_folder_name = list(self._model.childFolders(
+                    parentType='collection', parent=parent, user=user,
+                    filters={'name': constants.TOP_LEVEL_FOLDER_NAME}))
+                if top_folder_name:
+                    top_folder_name = top_folder_name[0]
+                else:
+                    raise Exception('The top folder "%s" is not in the collection %s' %
+                                    (constants.TOP_LEVEL_FOLDER_NAME, parent['name']))
                 filters = {}
                 if text:
                     filters['$text'] = {
@@ -198,7 +224,7 @@ class App(Resource):
                     filters['name'] = name
 
                 return list(self._model.childFolders(
-                    parentType='collection', parent=parent, user=user,
+                    parentType='Folder', parent=top_folder_name, user=user,
                     offset=offset, limit=limit, sort=sort, filters=filters))
             return []
 
