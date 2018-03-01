@@ -798,7 +798,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             }
         }
         resp = self.request(
-            path='/app/%s/extension/downloadStats' % self._app['_id'],
+            path='/app/%s/downloadstats' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -819,7 +819,7 @@ class SlicerExtensionManagerTest(base.TestCase):
             'i386': N + expectedDownloadStats['Ext3']['0001']['macosx']['i386']
         })
         resp = self.request(
-            path='/app/%s/extension/downloadStats' % self._app['_id'],
+            path='/app/%s/downloadstats' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -856,7 +856,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertStatusOk(resp)
         # Check if download Stats are the same
         resp = self.request(
-            path='/app/%s/extension/downloadStats' % self._app['_id'],
+            path='/app/%s/downloadstats' % self._app['_id'],
             method='GET',
             user=self._user
         )
