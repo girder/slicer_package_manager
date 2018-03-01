@@ -156,7 +156,7 @@ class SlicerExtensionClient(GirderClient):
             releases = self.get('/app/%s/release/%s' % (app['_id'], name))
         else:
             releases = self.get('/app/%s/release' % app['_id'])
-            draft_release = self.get('/app/%s/release/draft' % app['_id'])
+            draft_release = self.get('/app/%s/release/draftrelease' % app['_id'])
             releases += draft_release
         return releases
 
@@ -166,7 +166,7 @@ class SlicerExtensionClient(GirderClient):
             return Constant.ERROR_APP_NOT_EXIST
         app = apps[0]
         return self.get(
-            '/app/%s/release/draft' % app['_id'],
+            '/app/%s/release/draftrelease' % app['_id'],
             parameters={'offset': offset}
         )
 
