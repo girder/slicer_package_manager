@@ -1,4 +1,4 @@
-Slicer extension manager Python Client
+Slicer package manager Python Client
 ======================================
 
 Installation
@@ -6,12 +6,12 @@ Installation
 
 To install with pip::
 
-    $ pip install slicer-extension-manager
+    $ pip install slicer-package-manager
 
 To install from the latest source, first obtain the source code::
 
-    $ git clone https://github.com/girder/slicer_extension_manager.git
-    $ cd slicer_extension_manager/python_client
+    $ git clone https://github.com/girder/slicer_package_manager.git
+    $ cd slicer_package_manager/python_client
 
 Then install with::
 
@@ -26,5 +26,5 @@ for development.
 Miscellaneous
 --------------------------------------
 
-The documentation is accessible at http://girder.readthedocs.org/en/latest/slicer-extension-python-client.html.
+The documentation is accessible at http://girder.readthedocs.org/en/latest/slicer-package-python-client.html.
 

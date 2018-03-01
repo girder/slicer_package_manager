@@ -4,8 +4,8 @@ import {exposePluginConfig} from 'girder/utilities/PluginUtils';
 
 import ConfigView from './views/ConfigView';
 
-exposePluginConfig('slicer_extension_manager', 'plugins/slicer_extension_manager/config');
+exposePluginConfig('slicer_package_manager', 'plugins/slicer_package_manager/config');
 
-router.route('plugins/slicer_extension_manager/config', 'slicerConfig', function () {
+router.route('plugins/slicer_package_manager/config', 'slicerConfig', function () {
     events.trigger('g:navigateTo', ConfigView);
 });

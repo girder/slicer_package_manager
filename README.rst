@@ -1,14 +1,14 @@
-===================================================
-Slicer Package Manager |CircleCI| |Documentation|
+
+Slicer package manager |CircleCI| |Documentation|
 ===================================================
 
-External plugin of Girder that allow the management of Slicer package and extension
+External plugin of Girder that allow the management of Slicer packages and extensions
 (before handled by the data management platform Midas).
 
 If you need to learn more about the Slicer Package Manager, the documentation is available at
 http://slicer-package-manager.readthedocs.io/en/latest/.
 
-And to have a better idea of how works the Slicer Package Manager plugin within Girder, here is a diagram:
+And to have a better idea of how works the Slicer package manager plugin within Girder, here is a diagram:
 
 .. figure:: docs/images/slicer_package_manager_models.JPG
 

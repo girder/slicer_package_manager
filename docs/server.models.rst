@@ -1,5 +1,5 @@
-server\.models package
-======================
+server.models package
+=====================
 
 .. automodule:: server.models
     :members:
@@ -9,8 +9,8 @@ server\.models package
 Submodules
 ----------
 
-server\.models\.extension module
---------------------------------
+server.models.extension module
+------------------------------
 
 .. automodule:: server.models.extension
     :members:

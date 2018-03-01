@@ -2,10 +2,10 @@
 Python Client API
 =================
 
-Slicer Extension Manager
+Slicer Package Manager
 ------------------------
 
-.. automodule:: slicer_extension_manager_client.__init__
+.. automodule:: slicer_package_manager_client.__init__
     :members:
     :undoc-members:
     :show-inheritance:

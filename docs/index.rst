@@ -1,12 +1,12 @@
-.. Slicer Extension Manager documentation master file, created by
+.. Slicer Package Manager documentation master file, created by
    sphinx-quickstart on Mon Feb 12 16:59:31 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Slicer Extension Manager's documentation!
+Welcome to Slicer Package Manager's documentation!
 ====================================================
 
-The **Slicer Extension Manager** is a Girder plugin that allows you to manage Slicer extensions within Girder.
+The **Slicer Package Manager** is a Girder plugin that allows you to manage Slicer package and extension within Girder.
 It provides a simple API to Upload and Download extensions or packages, create new applications,
 and manage releases of your applications.
 
@@ -70,6 +70,6 @@ Resources
 =========
 
 * Free software: Apache-2.0_
-* Source code: https://github.com/girder/slicer_extension_manager
+* Source code: https://github.com/girder/slicer_package_manager
 
 .. _Apache-2.0: https://www.apache.org/licenses/LICENSE-2.0
