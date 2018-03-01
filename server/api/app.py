@@ -58,7 +58,7 @@ class App(Resource):
         self.route('GET', (':app_id', 'downloadstats'), self.getDownloadStats)
         self.route('POST', (':app_id', 'release'), self.createNewRelease)
         self.route('GET', (':app_id', 'release'), self.getAllStableReleases)
-        self.route('GET', (':app_id', 'release', 'draft'), self.getAllDraftReleases)
+        self.route('GET', (':app_id', 'release', 'draftrelease'), self.getAllDraftReleases)
         self.route('GET', (':app_id', 'release', ':release_id_or_name'), self.getReleaseByIdOrName)
         self.route('DELETE', (':app_id', 'release', ':release_id_or_name'),
                    self.deleteReleaseByIdOrName)
@@ -225,7 +225,7 @@ class App(Resource):
         .responseClass('Folder')
         .notes('The application\'s revision is stored as metadata of the new release.')
         .param('name', 'The release\'s name.')
-        .param('app_id', 'The application\'s ID which contain the release')
+        .param('app_id', 'The application\'s ID which contain the release', paramType='path')
         .param('app_revision', 'The application\'s revision which correspond to the release')
         .param('description', 'The application\'s description.', required=False)
         .param('public', 'Whether the release should be publicly visible.',
@@ -264,7 +264,7 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Get all the releases from an application.')
         .responseClass('Folder')
-        .param('app_id', 'The application\'s ID.')
+        .param('app_id', 'The application\'s ID.', paramType='path')
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
@@ -295,7 +295,7 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Get all the draft releases from an application.')
         .responseClass('Folder')
-        .param('app_id', 'The application\'s ID.')
+        .param('app_id', 'The application\'s ID.', paramType='path')
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
@@ -335,8 +335,8 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Get a particular releases by ID or name from an application.')
         .responseClass('Folder')
-        .param('app_id', 'The application\'s ID.')
-        .param('release_id_or_name', 'The release\'s ID or name.')
+        .param('app_id', 'The application\'s ID.', paramType='path')
+        .param('release_id_or_name', 'The release\'s ID or name.', paramType='path')
         .errorResponse('ID or name was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
@@ -366,7 +366,7 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Delete a release by ID or name.')
         .modelParam('app_id', model=Folder, level=AccessType.ADMIN)
-        .param('release_id_or_name', 'The release\'s ID or name.')
+        .param('release_id_or_name', 'The release\'s ID or name.', paramType='path')
         .param('progress', 'Whether to record progress on this task.',
                required=False, dataType='boolean', default=False)
         .errorResponse('ID was invalid.')
@@ -416,7 +416,7 @@ class App(Resource):
                ' then you must provide the app_revision to use this parameters. '
                'If not, it will just be ignored.')
         .responseClass('Extension')
-        .param('app_id', 'The ID of the application.')
+        .param('app_id', 'The ID of the application.', paramType='path')
         .param('release_id', 'The release id.', required=False)
         .param('extension_id', 'The extension id.', required=False)
         .param('os', 'The target operating system of the package.',
@@ -504,8 +504,8 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Get a particular extension by name from an application.')
         .responseClass('Item')
-        .param('app_id', 'The application\'s ID.')
-        .param('extension_name', 'The extension\'s name.')
+        .param('app_id', 'The application\'s ID.', paramType='path')
+        .param('extension_name', 'The extension\'s name.', paramType='path')
         .errorResponse('ID or name was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
@@ -550,7 +550,7 @@ class App(Resource):
 
     @autoDescribeRoute(  # noqa: C901
         Description('Create or Update an extension package.')
-        .param('app_id', 'The ID of the App.')
+        .param('app_id', 'The ID of the App.', paramType='path')
         .param('os', 'The target operating system of the package.',
                enum=['linux', 'win', 'macosx'])
         .param('arch', 'The os chip architecture.', enum=['i386', 'amd64'])
@@ -707,7 +707,7 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_WRITE)
     @autoDescribeRoute(
         Description('Delete an Extension by ID.')
-        .param('app_id', 'The ID of the App.')
+        .param('app_id', 'The ID of the App.', paramType='path')
         .modelParam('ext_id', model=Item, level=AccessType.WRITE)
         .errorResponse('ID was invalid.')
         .errorResponse('Admin access was denied for the extension.', 403)
@@ -725,7 +725,7 @@ class App(Resource):
 
     @autoDescribeRoute(
         Description('Get download stats of extensions within an application.')
-        .param('app_id', 'The ID of the application.')
+        .param('app_id', 'The ID of the application.', paramType='path')
         .errorResponse()
     )
     @access.cookie
