@@ -55,6 +55,7 @@ class App(Resource):
         self.route('POST', (), self.initApp)
         self.route('GET', (), self.listApp)
         self.route('DELETE', (':app_id',), self.deleteApp)
+        self.route('GET', (':app_id', 'downloadStats'), self.getDownloadStats)
         self.route('POST', (':app_id', 'release'), self.createNewRelease)
         self.route('GET', (':app_id', 'release'), self.getAllStableReleases)
         self.route('GET', (':app_id', 'release', 'nightly'), self.getAllNightlyReleases)
@@ -63,7 +64,6 @@ class App(Resource):
                    self.deleteReleaseByIdOrName)
         self.route('GET', (':app_id', 'extension'), self.getExtensions)
         self.route('GET', (':app_id', 'extension', ':extension_name'), self.getExtensionByName)
-        self.route('GET', (':app_id', 'extension', 'downloadStats'), self.getDownloadStats)
         self.route('POST', (':app_id', 'extension'), self.createOrUpdateExtension)
         self.route('DELETE', (':app_id', 'extension', ':ext_id'), self.deleteExtension)
 
