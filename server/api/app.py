@@ -575,7 +575,8 @@ class App(Resource):
         .param('homepage', 'The url of the extension homepage.', required=False)
         .param('screenshots', 'Space-separate list of URLs of screenshots for the extension.',
                required=False)
-        .param('contributors', 'List of contributors of the extension', required=False)
+        .param('contributors', 'List of contributors of the extension.', required=False)
+        .param('dependency', 'List of the required extensions to use this one.', required=False)
         .errorResponse()
     )
     @access.cookie
@@ -583,7 +584,7 @@ class App(Resource):
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
                                 revision, app_revision, packagetype, codebase, description,
                                 release, icon_url, development_status, category, enabled, homepage,
-                                screenshots, contributors):
+                                screenshots, contributors, dependency):
         """
         Create an extension item in a specific release with providing ``release_id`` or in
         the **'draft'** folder by default.
@@ -672,6 +673,8 @@ class App(Resource):
             params['screenshots'] = screenshots
         if contributors:
             params['contributors'] = contributors
+        if dependency:
+            params['dependency'] = dependency
 
         name = application['meta']['extensionNameTemplate'].format(**params)
         filters = {
