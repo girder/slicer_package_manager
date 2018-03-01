@@ -163,7 +163,7 @@ Upload a new extension
 
 Give the ``FILE_PATH`` argument to be able to upload an extension. The extension will then automatically
 be added to the release which has the same revision than the ``--app_revision`` value. If any release correspond to the
-given revision, the extension will be uploaded in the `Nightly` folder, by default.
+given revision, the extension will be uploaded in the `draft` release, by default.
 
 The final name of the extension will depend of the ``extensionNameTemplate`` set as metadata on the application folder.
 The default name is ``{app_revision}_{os}_{arch}_{baseName}_{revision}``. It can be change at any time on the
@@ -195,7 +195,7 @@ List extensions
 ^^^^^^^^^^^^^^^
 
 Use options to filter the listed extensions. By default, the command will list all the extension from the
-'Nightly' release. It is possible to use the ``--release`` option to list the extension from a particular release.
+'draft' release. It is possible to use the ``--release`` option to list the extension from a particular release.
 Or use the flag ``--all`` to list all the extension present in the application. It is also possible to get only
 one extension by providing the ``--fullname`` option of an extension.
 

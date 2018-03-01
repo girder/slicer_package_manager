@@ -53,7 +53,7 @@ def _onDownloadFileComplete(event):
     meta = item['meta']
     release = Folder().load(item['folderId'], level=AccessType.READ)
     release = Folder().load(release['parentId'], level=AccessType.READ)
-    if release['name'] == constants.NIGHTLY_RELEASE_NAME:
+    if release['name'] == constants.DRAFT_RELEASE_NAME:
         Folder().increment(
             query={'_id': release['_id']},
             field='meta.downloadExtensions.%s.%s.%s.%s' % (

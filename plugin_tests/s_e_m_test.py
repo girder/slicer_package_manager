@@ -49,21 +49,21 @@ class SlicerExtensionManagerTest(base.TestCase):
             self._app,
             {'extensionNameTemplate': constants.EXTENSION_TEMPLATE_NAME}
         )
-        self._nightly = Folder().createFolder(
+        self._draftRelease = Folder().createFolder(
             parent=self._app,
-            name=constants.NIGHTLY_RELEASE_NAME,
+            name=constants.DRAFT_RELEASE_NAME,
             description='Uploaded each night, always up-to-date',
             parentType='Folder',
             public=True,
             creator=self._user)
-        self._nightlyRevision = Folder().createFolder(
-            parent=self._nightly,
+        self._draftRevision = Folder().createFolder(
+            parent=self._draftRelease,
             name='0000',
             parentType='Folder',
             public=True,
             creator=self._user)
-        self._nightlyRevision = Folder().setMetadata(
-            self._nightlyRevision,
+        self._draftRevision = Folder().setMetadata(
+            self._draftRevision,
             {'revision': '0000'}
         )
         self._release = Folder().createFolder(
@@ -193,12 +193,12 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertEqual(collection['name'], collName)
         if collDescription:
             self.assertEqual(collection['description'], collDescription)
-        # Check if it has created the default release "nightly"
+        # Check if it has created the "draft" release
         parent = Folder().load(resp.json['_id'], user=self._user)
-        nightly = list(Folder().childFolders(parent, 'Folder', user=self._user))
-        self.assertEqual(len(nightly), 1)
-        self.assertEqual(nightly[0]['name'], constants.NIGHTLY_RELEASE_NAME)
-        self.assertEqual(nightly[0]['description'], 'Uploaded each night, always up-to-date')
+        draft = list(Folder().childFolders(parent, 'Folder', user=self._user))
+        self.assertEqual(len(draft), 1)
+        self.assertEqual(draft[0]['name'], constants.DRAFT_RELEASE_NAME)
+        self.assertEqual(draft[0]['description'], 'Uploaded each night, always up-to-date')
 
         return resp.json
 
@@ -358,19 +358,19 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertEqual(resp.json[0]['_id'], release1['_id'])
         self.assertEqual(ObjectId(resp.json[1]['_id']), self._release['_id'])
 
-    def testGetAllNightlyRelease(self):
+    def testGetAllDraftRelease(self):
         resp = self.request(
-            path='/app/%s/release/nightly' % self._app['_id'],
+            path='/app/%s/release/draft' % self._app['_id'],
             method='GET',
             user=self._user
         )
         # Check if it has return all the revision from the default release
         self.assertStatusOk(resp)
         self.assertEqual(len(resp.json), 1)
-        self.assertEqual(ObjectId(resp.json[0]['_id']), self._nightlyRevision['_id'])
+        self.assertEqual(ObjectId(resp.json[0]['_id']), self._draftRevision['_id'])
         self.assertEqual(
             resp.json[0]['meta']['revision'],
-            self._nightlyRevision['meta']['revision'])
+            self._draftRevision['meta']['revision'])
 
     def testGetReleaseByIdOrName(self):
         # Get by ID
@@ -478,7 +478,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertEqual(resp.json, None)
 
     def testDeleteRevisionRelease(self):
-        # Create extensions in the "nightly" release
+        # Create extensions in the "draft" release
         extension1 = self._createOrUpdateExtension(
             self._extensions['extension3']['meta'],
             'extension3.tar.gz')
@@ -489,7 +489,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertEqual(extension2['name'], self._extensions['extension4']['name'])
 
         resp = self.request(
-            path='/app/%s/release/nightly' % self._app['_id'],
+            path='/app/%s/release/draft' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -497,7 +497,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertStatusOk(resp)
         self.assertEqual(len(resp.json), 2)
 
-        # Delete by Name the revision release '0001' in Nightly
+        # Delete by Name the revision release '0001' in the "draft" release
         resp = self.request(
             path='/app/%(app_id)s/release/%(release_id_or_name)s' % {
                 'app_id': self._app['_id'],
@@ -508,7 +508,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         self.assertStatusOk(resp)
 
         resp = self.request(
-            path='/app/%s/release/nightly' % self._app['_id'],
+            path='/app/%s/release/draft' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -611,12 +611,12 @@ class SlicerExtensionManagerTest(base.TestCase):
             'extension1.tar.gz')
         self.assertEqual(extension1['name'], self._extensions['extension1']['name'])
         self.assertEqual(ObjectId(extension1['folderId']), self._release['_id'])
-        # Create an other extension in the "nightly" release
+        # Create an other extension in the "draft" release
         extension2 = self._createOrUpdateExtension(
             self._extensions['extension2']['meta'],
             'extension2.tar.gz')
         self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
-        # Create a third extension in the "nightly" release
+        # Create a third extension in the "draft" release
         extension3 = self._createOrUpdateExtension(
             self._extensions['extension3']['meta'],
             'extension3.tar.gz')
@@ -655,7 +655,7 @@ class SlicerExtensionManagerTest(base.TestCase):
         extension1 = self._createOrUpdateExtension(self._extensions['extension1']['meta'])
         self.assertEqual(extension1['name'], self._extensions['extension1']['name'])
         self.assertEqual(ObjectId(extension1['folderId']), self._release['_id'])
-        # Create other extensions in the "nightly" release
+        # Create other extensions in the "draft" release
         extension2 = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
         self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
         extension3 = self._createOrUpdateExtension(self._extensions['extension3']['meta'])
@@ -845,11 +845,11 @@ class SlicerExtensionManagerTest(base.TestCase):
             user=self._user
         )
         self.assertStatusOk(resp)
-        # Delete the revision '0000' in Nightly
+        # Delete the revision '0000' in the "draft" release
         resp = self.request(
             path='/app/%(app_id)s/release/%(release_id)s' % {
                 'app_id': self._app['_id'],
-                'release_id': self._nightlyRevision['_id']},
+                'release_id': self._draftRevision['_id']},
             method='DELETE',
             user=self._user
         )
