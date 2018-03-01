@@ -59,7 +59,7 @@ Concepts
     They meant to contain packages or extensions which are developed for this specific application revision.
     It's why each release has the application ``revision`` as metadata.
 
-    By default, when creating a new application, the 'Nightly' release is created. This release is used as default
+    By default, when creating a new application, the 'draft' release is created. This release is used as default
     release to upload an extension or a package which its own ``app_revision`` metadata doesn't correspond to any
     release of the application (by checking the correspondence between the ``revision`` metadata stored on the release
     and the ``app_revision`` set when the upload occurs).
@@ -79,7 +79,7 @@ Concepts
     When uploading an extension, some of these metadata are required, and the ``app_revision`` is used to determined
     in which release to upload the extension. The release which have the same ``revision`` as the given ``app_revision``
     metadata will be added the extension. If any release within the application has a corresponding revision,
-    the extension will be uploaded directly into the 'Nightly' release (by default).
+    the extension will be uploaded directly into the 'draft' release (by default).
 
     The file extension (binary file) during the upload will be kept as it within Girder. So when the extension will be
     downloaded, the downloaded file will keep the same extension (.bin, .zip, ...). For instance, if the uploaded

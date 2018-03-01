@@ -431,7 +431,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
               help='The revision of the application',
               cls=_AdvancedOption
               )
-@click.option('--release', default=Constant.DEFAULT_RELEASE,
+@click.option('--release', default=Constant.DRAFT_RELEASE,
               help='List all extension within the release',
               cls=_AdvancedOption
               )

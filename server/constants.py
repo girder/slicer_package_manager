@@ -21,5 +21,5 @@
 Constants should be defined here.
 """
 
-NIGHTLY_RELEASE_NAME = 'nightly'
+DRAFT_RELEASE_NAME = 'draft'
 EXTENSION_TEMPLATE_NAME = '{baseName}_{os}_{arch}_{revision}'

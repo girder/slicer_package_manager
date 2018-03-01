@@ -58,7 +58,7 @@ class App(Resource):
         self.route('GET', (':app_id', 'downloadstats'), self.getDownloadStats)
         self.route('POST', (':app_id', 'release'), self.createNewRelease)
         self.route('GET', (':app_id', 'release'), self.getAllStableReleases)
-        self.route('GET', (':app_id', 'release', 'nightly'), self.getAllNightlyReleases)
+        self.route('GET', (':app_id', 'release', 'draft'), self.getAllDraftReleases)
         self.route('GET', (':app_id', 'release', ':release_id_or_name'), self.getReleaseByIdOrName)
         self.route('DELETE', (':app_id', 'release', ':release_id_or_name'),
                    self.deleteReleaseByIdOrName)
@@ -94,7 +94,7 @@ class App(Resource):
         if provided, or **'Applications'**. If the collection 'Applications already exist it will
         get it.
         Return the new application (as a folder) that always contain a default
-        sub-folder named 'nightly'.
+        sub-folder named 'draft'.
 
         :param name: Name of the new application
         :param app_description: Description of the new application
@@ -138,10 +138,10 @@ class App(Resource):
             parentType='Collection',
             public=public,
             creator=creator)
-        # Create the 'nightly' release which will be the default folder when uploading an extension
+        # Create the 'draft' release which will be the default folder when uploading an extension
         self._model.createFolder(
             parent=app,
-            name=constants.NIGHTLY_RELEASE_NAME,
+            name=constants.DRAFT_RELEASE_NAME,
             description='Uploaded each night, always up-to-date',
             parentType='Folder',
             public=public,
@@ -281,7 +281,7 @@ class App(Resource):
         application = self._model.load(app_id, user=user)
 
         filters = {
-            'name': {'$ne': constants.NIGHTLY_RELEASE_NAME}
+            'name': {'$ne': constants.DRAFT_RELEASE_NAME}
         }
         return list(self._model.childFolders(
             application,
@@ -293,7 +293,7 @@ class App(Resource):
             filters=filters))
 
     @autoDescribeRoute(
-        Description('Get all the Nightly releases from an application.')
+        Description('Get all the draft releases from an application.')
         .responseClass('Folder')
         .param('app_id', 'The application\'s ID.')
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
@@ -301,9 +301,9 @@ class App(Resource):
         .errorResponse('Read permission denied on the application.', 403)
     )
     @access.user(scope=TokenScope.DATA_READ)
-    def getAllNightlyReleases(self, app_id, limit, offset, sort):
+    def getAllDraftReleases(self, app_id, limit, offset, sort):
         """
-        Get a list of all the Nightly release of an application.
+        Get a list of all the draft release of an application.
 
         :param app_id: Application ID
         :return: List of all release within the application
@@ -312,7 +312,7 @@ class App(Resource):
         application = self._model.load(app_id, user=user)
 
         filters = {
-            'name': constants.NIGHTLY_RELEASE_NAME
+            'name': constants.DRAFT_RELEASE_NAME
         }
         release = list(self._model.childFolders(
             application,
@@ -321,7 +321,7 @@ class App(Resource):
             filters=filters))
         if not release:
             raise Exception('There is no %s release in this application.'
-                            % constants.NIGHTLY_RELEASE_NAME)
+                            % constants.DRAFT_RELEASE_NAME)
         release = release[0]
 
         return list(self._model.childFolders(
@@ -394,7 +394,7 @@ class App(Resource):
                 release_folder = list(self._model.childFolders(
                     folder,
                     'Folder',
-                    filters={'lowerName': constants.NIGHTLY_RELEASE_NAME.lower()}))
+                    filters={'lowerName': constants.DRAFT_RELEASE_NAME.lower()}))
                 if not release_folder:
                     raise Exception("Couldn't find release %s" % release_id_or_name)
                 revision_folder = list(self._model.childFolders(
@@ -412,7 +412,7 @@ class App(Resource):
 
     @autoDescribeRoute(
         Description('List or search available extensions.')
-        .notes('If the "release_id" provided correspond to the "Nightly" release,'
+        .notes('If the "release_id" provided correspond to the "draft" release,'
                ' then you must provide the app_revision to use this parameters. '
                'If not, it will just be ignored.')
         .responseClass('Extension')
@@ -434,7 +434,7 @@ class App(Resource):
                       baseName, limit, offset, sort):
         """
         Get a list of extension which is filtered by some optional parameters. If the ``release_id``
-        provided correspond to the Nightly release, then you must provide the app_revision to use
+        provided correspond to the draft release, then you must provide the app_revision to use
         this parameters. If not, it will just be ignored.
 
         :param app_id: Application ID
@@ -467,7 +467,7 @@ class App(Resource):
             filters['meta.baseName'] = baseName
         if ObjectId.is_valid(release_id):
             release = self._model.load(release_id, user=user)
-            if release['name'] == constants.NIGHTLY_RELEASE_NAME:
+            if release['name'] == constants.DRAFT_RELEASE_NAME:
                 if app_revision:
                     revisions = list(self._model.childFolders(
                         release,
@@ -528,7 +528,7 @@ class App(Resource):
             raise Exception('The application has no release')
         extensions = None
         for release in release_folder:
-            if release['name'] == constants.NIGHTLY_RELEASE_NAME:
+            if release['name'] == constants.DRAFT_RELEASE_NAME:
                 revisions_folders = self._model.childFolders(
                     release,
                     'Folder')
@@ -586,7 +586,7 @@ class App(Resource):
                                 screenshots, contributors):
         """
         Create an extension item in a specific release with providing ``release_id`` or in
-        the **'Nightly'** folder by default.
+        the **'draft'** folder by default.
         It's also possible to update an existing extension. In this case, it will update the name
         and the metadata of the extension.
 
@@ -615,14 +615,14 @@ class App(Resource):
                         release_folder = folder
                         break
         if not release_folder:
-            # Only the nightly folder in the list
+            # Only the draft release in the list
             release_folder = list(self._model.childFolders(
                 application,
                 'Folder',
                 user=creator,
-                filters={'name': constants.NIGHTLY_RELEASE_NAME}))
+                filters={'name': constants.DRAFT_RELEASE_NAME}))
             if not release_folder:
-                raise Exception('The %s folder not found.' % constants.NIGHTLY_RELEASE_NAME)
+                raise Exception('The %s folder not found.' % constants.DRAFT_RELEASE_NAME)
             release_folder = release_folder[0]
 
             revision_folder = list(self._model.childFolders(
@@ -749,7 +749,7 @@ class App(Resource):
         for release in releases:
             if 'meta' in release and 'downloadExtensions' in release['meta']:
                 rawDownloadStats = release['meta']['downloadExtensions']
-                if release['name'] == constants.NIGHTLY_RELEASE_NAME:
+                if release['name'] == constants.DRAFT_RELEASE_NAME:
                     for (revision, extensionStat) in rawDownloadStats.items():
                         for (baseName, data) in extensionStat.items():
                             try:

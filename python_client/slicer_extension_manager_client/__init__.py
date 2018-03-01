@@ -46,7 +46,7 @@ class Constant:
     # Default
     _home = os.path.expanduser("~")
     DEFAULT_DOWNLOAD_PATH = os.path.join(_home, 'slicer_extension_manager/extensions')
-    DEFAULT_RELEASE = 'Nightly'
+    DRAFT_RELEASE = 'draft'
     DEFAULT_LIMIT = 50
 
 
@@ -71,7 +71,7 @@ class SlicerExtensionClient(GirderClient):
     def createApp(self, name, desc=None):
         """
         Create a new application in the default collection ``Applications``.
-        The application will contain a ``Nightly`` folder.
+        The application will contain a ``draft`` release (folder).
         A template of the name of each future uploaded extension will be set as a metadata of
         this new application.
 
@@ -156,8 +156,8 @@ class SlicerExtensionClient(GirderClient):
             releases = self.get('/app/%s/release/%s' % (app['_id'], name))
         else:
             releases = self.get('/app/%s/release' % app['_id'])
-            nightly_release = self.get('/app/%s/release/nightly' % app['_id'])
-            releases += nightly_release
+            draft_release = self.get('/app/%s/release/draft' % app['_id'])
+            releases += draft_release
         return releases
 
     def getRelease(self, app_name, offset=0):
@@ -166,7 +166,7 @@ class SlicerExtensionClient(GirderClient):
             return Constant.ERROR_APP_NOT_EXIST
         app = apps[0]
         return self.get(
-            '/app/%s/release/nightly' % app['_id'],
+            '/app/%s/release/draft' % app['_id'],
             parameters={'offset': offset}
         )
 
@@ -324,10 +324,10 @@ class SlicerExtensionClient(GirderClient):
         return ext
 
     def listExtension(self, app_name, name=None, ext_os=None, arch=None, app_revision=None,
-                      release=Constant.DEFAULT_RELEASE, limit=Constant.DEFAULT_LIMIT, all=False):
+                      release=Constant.DRAFT_RELEASE, limit=Constant.DEFAULT_LIMIT, all=False):
         """
         List all the extension for a specific release and filter them with some option
-        (os, arch, ...). By default the extensions within ``Nightly`` release are listed.
+        (os, arch, ...). By default the extensions within ``draft`` release are listed.
         It's also possible to specify the ``--all`` option to list all the extensions from all
         the release of an application.
         To use the ``--id`` functionality you must provide a valid fullname of the extension.
