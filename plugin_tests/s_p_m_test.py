@@ -38,11 +38,17 @@ class SlicerPackageManagerTest(base.TestCase):
             'testCollection',
             creator=self._user,
             description='Contain applications')
-        self._app = Folder().createFolder(
+        self._packages = Folder().createFolder(
             parent=self._collection,
+            name=constants.TOP_LEVEL_FOLDER_NAME,
+            parentType='Collection',
+            public=True,
+            creator=self._user)
+        self._app = Folder().createFolder(
+            parent=self._packages,
             name='application',
             description='app description',
-            parentType='Collection',
+            parentType='Folder',
             public=True,
             creator=self._user)
         self._app = Folder().setMetadata(
@@ -189,7 +195,8 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(
             resp.json['meta']['extensionNameTemplate'], constants.EXTENSION_TEMPLATE_NAME)
         # Check if it has created/load the collection
-        collection = Collection().load(resp.json['parentId'], user=self._user)
+        topLevelFolder = Folder().load(resp.json['parentId'], user=self._user)
+        collection = Collection().load(topLevelFolder['parentId'], user=self._user)
         self.assertEqual(collection['name'], collName)
         if collDescription:
             self.assertEqual(collection['description'], collDescription)
