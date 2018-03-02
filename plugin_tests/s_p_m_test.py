@@ -786,28 +786,34 @@ class SlicerPackageManagerTest(base.TestCase):
 
         # Get the downloadStats
         expectedDownloadStats = {
-            'Ext1': {
-                '0005': {
-                    'linux': {
-                        'i386': 1
+            '0000': {
+                'extensions': {
+                    'Ext2': {
+                        'win': {
+                            'i386': 1
+                        }
                     }
                 }
             },
-            'Ext2': {
-                '0000': {
-                    'win': {
-                        'i386': 1
+            '0001': {
+                'extensions': {
+                    'Ext3': {
+                        'linux': {
+                            'amd64': 1
+                        },
+                        'macosx': {
+                            'amd64': 1,
+                            'i386': 1
+                        }
                     }
                 }
             },
-            'Ext3': {
-                '0001': {
-                    'linux': {
-                        'amd64': 1
-                    },
-                    'macosx': {
-                        'amd64': 1,
-                        'i386': 1
+            '0005': {
+                'extensions': {
+                    'Ext1': {
+                        'linux': {
+                            'i386': 1
+                        }
                     }
                 }
             }
@@ -829,9 +835,9 @@ class SlicerPackageManagerTest(base.TestCase):
             self._downloadFile(ext4_file[0]['_id'])
             self._downloadFile(ext5_file[0]['_id'])
 
-        expectedDownloadStats['Ext3']['0001']['macosx'].update({
-            'amd64': N + expectedDownloadStats['Ext3']['0001']['macosx']['amd64'],
-            'i386': N + expectedDownloadStats['Ext3']['0001']['macosx']['i386']
+        expectedDownloadStats['0001']['extensions']['Ext3']['macosx'].update({
+            'amd64': N + expectedDownloadStats['0001']['extensions']['Ext3']['macosx']['amd64'],
+            'i386': N + expectedDownloadStats['0001']['extensions']['Ext3']['macosx']['i386']
         })
         resp = self.request(
             path='/app/%s/downloadstats' % self._app['_id'],
