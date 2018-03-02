@@ -27,4 +27,7 @@ add_python_test(
   plugins/slicer_package_manager/extension3.tar.gz
   plugins/slicer_package_manager/extension4.tar.gz
   plugins/slicer_package_manager/extension5.tar.gz
+  plugins/slicer_package_manager/pkg1.dmg
+  plugins/slicer_package_manager/pkg2.exe
+  plugins/slicer_package_manager/pkg3.tar.gz
 )
