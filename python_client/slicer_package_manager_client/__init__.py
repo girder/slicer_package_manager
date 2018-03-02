@@ -153,10 +153,12 @@ class SlicerPackageClient(GirderClient):
             return Constant.ERROR_APP_NOT_EXIST
         app = apps[0]
         if name:
-            releases = self.get('/app/%s/release/%s' % (app['_id'], name))
+            releases = self.get(
+                '/app/%s/release' % app['_id'],
+                parameters={'release_id_or_name': name})
         else:
             releases = self.get('/app/%s/release' % app['_id'])
-            draft_release = self.get('/app/%s/release/draftrelease' % app['_id'])
+            draft_release = self.get('/app/%s/release/revision' % app['_id'])
             releases += draft_release
         return releases
 
@@ -166,7 +168,7 @@ class SlicerPackageClient(GirderClient):
             return Constant.ERROR_APP_NOT_EXIST
         app = apps[0]
         return self.get(
-            '/app/%s/release/draftrelease' % app['_id'],
+            '/app/%s/release/revision' % app['_id'],
             parameters={'offset': offset}
         )
 
@@ -186,7 +188,7 @@ class SlicerPackageClient(GirderClient):
         if not release:
             return Constant.ERROR_RELEASE_NOT_EXIST
         self.delete('/app/%s/release/%s' % (app['_id'], name))
-        return release
+        return release[0]
 
     def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url, revision,
                         app_revision, packagetype, codebase, desc):
@@ -311,7 +313,11 @@ class SlicerPackageClient(GirderClient):
         if ObjectId.is_valid(id_or_name):
             ext = self.get('/resource/%s' % id_or_name, parameters={'type': 'item'})
         else:
-            ext = self.get('/app/%s/extension/%s' % (app['_id'], id_or_name))
+            ext = self.get(
+                '/app/%s/extension' % app['_id'],
+                parameters={'extension_name': id_or_name})
+            if ext:
+                ext = ext[0]
         if not ext:
             return Constant.ERROR_EXT_NOT_EXIST
         files = self.get('/item/%s/files' % ext['_id'])
@@ -384,7 +390,9 @@ class SlicerPackageClient(GirderClient):
         if ObjectId.is_valid(id_or_name):
             ext = self.get('/resource/%s' % id_or_name, parameters={'type': 'item'})
         else:
-            ext = self.get('/app/%s/extension/%s' % (app['_id'], id_or_name))
+            ext = self.get(
+                '/app/%s/extension' % app['_id'],
+                parameters={'extension_name': id_or_name})
         if not ext:
             return Constant.ERROR_EXT_NOT_EXIST
         self.delete('/app/%s/extension/%s' % (app['_id'], ext['_id']))
