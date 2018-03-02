@@ -20,7 +20,6 @@
 import datetime
 import six
 
-from girder.constants import AccessType
 from girder.models.folder import Folder
 from girder.models.item import Item
 from girder.models.model_base import ValidationException
@@ -33,14 +32,9 @@ class Extension(Item):
     """
 
     def initialize(self):
+        super(Extension, self).initialize()
+        # To be able to upload within an Extension the name has to stay as 'item'.
         self.name = 'item'
-
-        self.ensureIndices(['extension_id', 'item_id'])
-        self.ensureTextIndex({
-            'name': 10,
-            'description': 1
-        })
-        self.exposeFields(level=AccessType.READ, fields=('extension_id', 'item_id', 'meta'))
 
     def get(self, release, limit=0, offset=0, sort=None, filters=None, **kwargs):
         """
@@ -136,7 +130,7 @@ class Extension(Item):
                 'name': doc['name'],
                 'os': doc['meta']['os'],
                 'arch': doc['meta']['arch'],
-                'revision': doc['meta']['revision']
+                'app_revision': doc['meta']['app_revision']
             }
             if '_id' in doc:
                 duplicateQuery['_id'] = {'$ne': doc['_id']}
