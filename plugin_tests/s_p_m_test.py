@@ -619,7 +619,8 @@ class SlicerPackageManagerTest(base.TestCase):
             self._extensions['extension1']['meta'],
             'extension1.tar.gz')
         self.assertEqual(extension1['name'], self._extensions['extension1']['name'])
-        self.assertEqual(ObjectId(extension1['folderId']), self._release['_id'])
+        extensions_folder = Folder().load(extension1['folderId'], user=self._user)
+        self.assertEqual(ObjectId(extensions_folder['parentId']), self._release['_id'])
         # Create an other extension in the "draft" release
         extension2 = self._createOrUpdateExtension(
             self._extensions['extension2']['meta'],
@@ -663,7 +664,8 @@ class SlicerPackageManagerTest(base.TestCase):
         # Create a new extension in the release "self._release"
         extension1 = self._createOrUpdateExtension(self._extensions['extension1']['meta'])
         self.assertEqual(extension1['name'], self._extensions['extension1']['name'])
-        self.assertEqual(ObjectId(extension1['folderId']), self._release['_id'])
+        extensions_folder = Folder().load(extension1['folderId'], user=self._user)
+        self.assertEqual(ObjectId(extensions_folder['parentId']), self._release['_id'])
         # Create other extensions in the "draft" release
         extension2 = self._createOrUpdateExtension(self._extensions['extension2']['meta'])
         self.assertEqual(extension2['name'], self._extensions['extension2']['name'])
@@ -730,7 +732,8 @@ class SlicerPackageManagerTest(base.TestCase):
         # Create a new extension in the release "self._release"
         extension = self._createOrUpdateExtension(self._extensions['extension1']['meta'])
         self.assertEqual(extension['name'], self._extensions['extension1']['name'])
-        self.assertEqual(ObjectId(extension['folderId']), self._release['_id'])
+        extensions_folder = Folder().load(extension['folderId'], user=self._user)
+        self.assertEqual(ObjectId(extensions_folder['parentId']), self._release['_id'])
         # Get all the extension of the application, this should only be the new one
         resp = self.request(
             path='/app/%s/extension' % self._app['_id'],
