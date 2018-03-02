@@ -57,13 +57,11 @@ class App(Resource):
         self.route('DELETE', (':app_id',), self.deleteApp)
         self.route('GET', (':app_id', 'downloadstats'), self.getDownloadStats)
         self.route('POST', (':app_id', 'release'), self.createNewRelease)
-        self.route('GET', (':app_id', 'release'), self.getAllStableReleases)
-        self.route('GET', (':app_id', 'release', 'draftrelease'), self.getAllDraftReleases)
-        self.route('GET', (':app_id', 'release', ':release_id_or_name'), self.getReleaseByIdOrName)
+        self.route('GET', (':app_id', 'release'), self.getReleases)
+        self.route('GET', (':app_id', 'release', 'revision'), self.getAllDraftReleases)
         self.route('DELETE', (':app_id', 'release', ':release_id_or_name'),
                    self.deleteReleaseByIdOrName)
         self.route('GET', (':app_id', 'extension'), self.getExtensions)
-        self.route('GET', (':app_id', 'extension', ':extension_name'), self.getExtensionByName)
         self.route('POST', (':app_id', 'extension'), self.createOrUpdateExtension)
         self.route('DELETE', (':app_id', 'extension', ':ext_id'), self.deleteExtension)
 
@@ -213,8 +211,7 @@ class App(Resource):
                 if top_folder_name:
                     top_folder_name = top_folder_name[0]
                 else:
-                    raise Exception('The top folder "%s" is not in the collection %s' %
-                                    (constants.TOP_LEVEL_FOLDER_NAME, parent['name']))
+                    return []
                 filters = {}
                 if text:
                     filters['$text'] = {
@@ -291,21 +288,37 @@ class App(Resource):
         Description('Get all the releases from an application.')
         .responseClass('Folder')
         .param('app_id', 'The application\'s ID.', paramType='path')
+        .param('release_id_or_name', 'The release\'s ID or name.', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
     @access.user(scope=TokenScope.DATA_READ)
-    def getAllStableReleases(self, app_id, limit, offset, sort):
+    def getReleases(self, app_id, release_id_or_name, limit, offset, sort):
         """
-        Get a list of all the stable release of an application.
+        Get a list of all the stable release of an application. You can also search
+        for a specific release if you provide the ``release_id_or_name`` parameter.
+        If the ``release_id_or_name`` parameter doesn't correspond to any existing
+        release, this will just return ``None``.
 
         :param app_id: Application ID
-        :return: List of all release within the application
+        :param release_id_or_name: Could be either the release ID or the release name
+        :return: List of all release within the application or a specific release folder
         """
         user = self.getCurrentUser()
         application = self._model.load(app_id, user=user)
 
+        if ObjectId.is_valid(release_id_or_name):
+            return self._model.load(release_id_or_name, user=user)
+        elif release_id_or_name:
+            release_folder = list(self._model.childFolders(
+                application,
+                'Folder',
+                filters={'lowerName': release_id_or_name.lower()}))
+            if not release_folder:
+                return None
+            else:
+                return release_folder[0]
         filters = {
             'name': {'$ne': constants.DRAFT_RELEASE_NAME}
         }
@@ -357,36 +370,6 @@ class App(Resource):
             limit=limit,
             offset=offset,
             sort=sort))
-
-    @autoDescribeRoute(
-        Description('Get a particular releases by ID or name from an application.')
-        .responseClass('Folder')
-        .param('app_id', 'The application\'s ID.', paramType='path')
-        .param('release_id_or_name', 'The release\'s ID or name.', paramType='path')
-        .errorResponse('ID or name was invalid.')
-        .errorResponse('Read permission denied on the application.', 403)
-    )
-    @access.user(scope=TokenScope.DATA_READ)
-    def getReleaseByIdOrName(self, app_id, release_id_or_name):
-        """
-        Get the release folder by ID or by name.
-
-        :param app_id: Application ID
-        :param release_id_or_name: Could be either the release ID or the release name
-        :return: The release folder
-        """
-        user = self.getCurrentUser()
-        application = self._model.load(app_id, user=user)
-
-        if ObjectId.is_valid(release_id_or_name):
-            return self._model.load(release_id_or_name, user=user)
-        release_folder = list(self._model.childFolders(
-            application,
-            'Folder',
-            filters={'lowerName': release_id_or_name.lower()}))
-        if not release_folder:
-            return None
-        return release_folder[0]
 
     @access.user(scope=TokenScope.DATA_WRITE)
     @autoDescribeRoute(
@@ -443,6 +426,7 @@ class App(Resource):
                'If not, it will just be ignored.')
         .responseClass('Extension')
         .param('app_id', 'The ID of the application.', paramType='path')
+        .param('extension_name', 'The name of the extension.', required=False)
         .param('release_id', 'The release id.', required=False)
         .param('extension_id', 'The extension id.', required=False)
         .param('os', 'The target operating system of the package.',
@@ -456,14 +440,15 @@ class App(Resource):
     )
     @access.cookie
     @access.public
-    def getExtensions(self, app_id, release_id, extension_id, os, arch, app_revision,
-                      baseName, limit, offset, sort):
+    def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
+                      app_revision, baseName, limit, offset, sort):
         """
         Get a list of extension which is filtered by some optional parameters. If the ``release_id``
         provided correspond to the draft release, then you must provide the app_revision to use
         this parameters. If not, it will just be ignored.
 
         :param app_id: Application ID
+        :param extension_name: Extension name
         :param release_id: Release ID
         :param extension_id: Extension ID
         :param os: The operation system used for the extension.
@@ -480,6 +465,8 @@ class App(Resource):
                 {'meta.arch': {'$exists': True}},
                 {'meta.app_revision': {'$exists': True}}]
         }
+        if extension_name:
+            filters['lowerName'] = extension_name.lower()
         if ObjectId.is_valid(extension_id):
             filters['_id'] = ObjectId(extension_id)
         if os:
@@ -526,53 +513,6 @@ class App(Resource):
             limit=limit,
             offset=offset,
             sort=sort))
-
-    @autoDescribeRoute(
-        Description('Get a particular extension by name from an application.')
-        .responseClass('Item')
-        .param('app_id', 'The application\'s ID.', paramType='path')
-        .param('extension_name', 'The extension\'s name.', paramType='path')
-        .errorResponse('ID or name was invalid.')
-        .errorResponse('Read permission denied on the application.', 403)
-    )
-    @access.user(scope=TokenScope.DATA_READ)
-    def getExtensionByName(self, app_id, extension_name):
-        """
-        Get the extension item by name.
-
-        :param app_id: Application ID
-        :param extension_name: The extension name
-        :return: The extension item
-        """
-        user = self.getCurrentUser()
-        application = self._model.load(app_id, user=user)
-
-        release_folder = list(self._model.childFolders(
-            application,
-            'Folder'))
-        if not release_folder:
-            raise Exception('The application has no release')
-        extensions = None
-        for release in release_folder:
-            if release['name'] == constants.DRAFT_RELEASE_NAME:
-                revisions_folders = self._model.childFolders(
-                    release,
-                    'Folder')
-                for revision in revisions_folders:
-                    extensions = list(self._model.childItems(
-                        revision,
-                        filters={'lowerName': extension_name.lower()}
-                    ))
-                    if extensions:
-                        break
-            else:
-                extensions = list(self._model.childItems(
-                    release,
-                    filters={'lowerName': extension_name.lower()}
-                ))
-            if extensions:
-                return extensions[0]
-        return None
 
     @autoDescribeRoute(  # noqa: C901
         Description('Create or Update an extension package.')
