@@ -419,7 +419,7 @@ class App(Resource):
 
         return _deleteFolder(release, progress, self.getCurrentUser())
 
-    @autoDescribeRoute(
+    @autoDescribeRoute(  # noqa: C901
         Description('List or search available extensions.')
         .notes('If the "release_id" provided correspond to the "draft" release,'
                ' then you must provide the app_revision to use this parameters. '
@@ -441,7 +441,7 @@ class App(Resource):
     @access.cookie
     @access.public
     def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
-                      app_revision, baseName, limit, offset, sort):
+                      app_revision, baseName, limit, sort, offset=0):
         """
         Get a list of extension which is filtered by some optional parameters. If the ``release_id``
         provided correspond to the draft release, then you must provide the app_revision to use
@@ -487,7 +487,12 @@ class App(Resource):
                         'Folder',
                         filters={'name': app_revision}))
                     if revisions:
-                        filters['folderId'] = ObjectId(revisions[0]['_id'])
+                        extensions_folder = list(self._model.childFolders(
+                            revisions[0],
+                            'Folder',
+                            filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
+                        if extensions_folder:
+                            filters['folderId'] = ObjectId(extensions_folder[0]['_id'])
                 else:
                     revisions = self._model.childFolders(
                         release,
@@ -495,7 +500,16 @@ class App(Resource):
                     extensions = []
                     limit_tmp = limit
                     for revision in revisions:
-                        filters['folderId'] = ObjectId(revision['_id'])
+                        extensions_folder = list(self._model.childFolders(
+                            revision,
+                            'Folder',
+                            user=user,
+                            filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
+                        # If the 'extensions' directory is not here, there are no extensions to list
+                        if not extensions_folder:
+                            continue
+                        extensions_folder = extensions_folder[0]
+                        filters['folderId'] = ObjectId(extensions_folder['_id'])
                         extensions += list(ExtensionModel().find(
                             query=filters,
                             limit=limit_tmp,
@@ -506,8 +520,16 @@ class App(Resource):
                             break
                     return extensions
             else:
-                filters['folderId'] = ObjectId(release_id)
-
+                extensions_folder = list(self._model.childFolders(
+                    release,
+                    'Folder',
+                    user=user,
+                    filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
+                # If the 'extensions' directory is not here, there are no extensions to list
+                if not extensions_folder:
+                    return []
+                extensions_folder = extensions_folder[0]
+                filters['folderId'] = ObjectId(extensions_folder['_id'])
         return list(ExtensionModel().find(
             query=filters,
             limit=limit,
@@ -610,6 +632,23 @@ class App(Resource):
                     revision_folder,
                     {'revision': app_revision})
             release_folder = revision_folder
+
+        extensions_folder = list(self._model.childFolders(
+            release_folder,
+            'Folder',
+            user=creator,
+            filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
+        if not extensions_folder:
+            extensions_folder = self._model.createFolder(
+                parent=release_folder,
+                name=constants.EXTENSIONS_FOLDER_NAME,
+                parentType='Folder',
+                public=release_folder['public'],
+                description='This directory contains all the extensions packages',
+                creator=creator)
+        else:
+            extensions_folder = extensions_folder[0]
+
         params = {
             'app_id': app_id,
             'baseName': baseName,
@@ -650,11 +689,10 @@ class App(Resource):
             'meta.app_revision': app_revision
         }
         # Only one extensions should be in this list
-        extensions = list(ExtensionModel().get(release_folder, filters=filters))
+        extensions = list(ExtensionModel().get(extensions_folder, filters=filters))
         if not len(extensions):
             # The extension doesn't exist yet:
-            extension = ExtensionModel().createExtension(name, creator, release_folder, params)
-
+            extension = ExtensionModel().createExtension(name, creator, extensions_folder, params)
         elif len(extensions) == 1:
             # The extension already exist
             extension = extensions[0]

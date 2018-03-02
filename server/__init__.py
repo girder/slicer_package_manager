@@ -51,7 +51,8 @@ class Webroot(WebrootBase):
 def _onDownloadFileComplete(event):
     item = Item().load(event.info['file']['itemId'], level=AccessType.READ)
     meta = item['meta']
-    release = Folder().load(item['folderId'], level=AccessType.READ)
+    extension_folder = Folder().load(item['folderId'], level=AccessType.READ)
+    release = Folder().load(extension_folder['parentId'], level=AccessType.READ)
     release = Folder().load(release['parentId'], level=AccessType.READ)
     if release['name'] == constants.DRAFT_RELEASE_NAME:
         Folder().increment(
@@ -61,7 +62,7 @@ def _onDownloadFileComplete(event):
             amount=1)
     else:
         Folder().increment(
-            query={'_id': item['folderId']},
+            query={'_id': extension_folder['parentId']},
             field='meta.downloadExtensions.%s.%s.%s' % (meta['baseName'], meta['os'], meta['arch']),
             amount=1)
 
