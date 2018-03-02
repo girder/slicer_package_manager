@@ -26,7 +26,6 @@ from girder.api import access
 from girder.constants import TokenScope, AccessType, SortDir
 from girder.api.describe import Description, autoDescribeRoute
 from girder.api.rest import Resource
-from girder.models.item import Item
 from girder.models.folder import Folder
 from girder.models.collection import Collection
 from girder.utility.progress import ProgressContext
@@ -697,7 +696,7 @@ class App(Resource):
             # The extension already exist
             extension = extensions[0]
             # Check the file inside the extension Item
-            files = Item().childFiles(extension)
+            files = ExtensionModel().childFiles(extension)
             if not files.count():
                 # Extension empty
                 raise Exception("Extension existing without any binary file.")
@@ -715,7 +714,7 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Delete an Extension by ID.')
         .param('app_id', 'The ID of the App.', paramType='path')
-        .modelParam('ext_id', model=Item, level=AccessType.WRITE)
+        .modelParam('ext_id', model=ExtensionModel, level=AccessType.WRITE)
         .errorResponse('ID was invalid.')
         .errorResponse('Admin access was denied for the extension.', 403)
     )
@@ -727,7 +726,7 @@ class App(Resource):
         :param ext_id: Extension ID
         :return: Confirmation message with the name of the deleted extension
         """
-        Item().remove(item)
+        ExtensionModel().remove(item)
         return item
 
     @autoDescribeRoute(
