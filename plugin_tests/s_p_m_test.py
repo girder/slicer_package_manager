@@ -347,7 +347,7 @@ class SlicerPackageManagerTest(base.TestCase):
             app_revision='001',
             desc='This is a new release')
 
-    def testGetAllStableRelease(self):
+    def testGetRelease(self):
         release1 = self._createReleaseCheck(
             name='V3.2.1',
             app_id=self._app['_id'],
@@ -365,9 +365,43 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(resp.json[0]['_id'], release1['_id'])
         self.assertEqual(ObjectId(resp.json[1]['_id']), self._release['_id'])
 
+        # Get one release by ID
+        resp = self.request(
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': self._release['_id']},
+            method='GET',
+            user=self._user,
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json['name'], self._release['name'])
+        self.assertEqual(resp.json['description'], self._release['description'])
+        self.assertEqual(ObjectId(resp.json['_id']), self._release['_id'])
+
+        # Get one release by name
+        resp = self.request(
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': self._release['name']},
+            method='GET',
+            user=self._user,
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json['name'], self._release['name'])
+        self.assertEqual(resp.json['description'], self._release['description'])
+        self.assertEqual(ObjectId(resp.json['_id']), self._release['_id'])
+
+        resp = self.request(
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': constants.DRAFT_RELEASE_NAME},
+            method='GET',
+            user=self._user,
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json['name'], constants.DRAFT_RELEASE_NAME)
+        self.assertEqual(ObjectId(resp.json['_id']), self._draftRelease['_id'])
+
     def testGetAllDraftRelease(self):
         resp = self.request(
-            path='/app/%s/release/draftrelease' % self._app['_id'],
+            path='/app/%s/release/revision' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -379,44 +413,6 @@ class SlicerPackageManagerTest(base.TestCase):
             resp.json[0]['meta']['revision'],
             self._draftRevision['meta']['revision'])
 
-    def testGetReleaseByIdOrName(self):
-        # Get by ID
-        resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': self._release['_id']},
-            method='GET',
-            user=self._user,
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['name'], self._release['name'])
-        self.assertEqual(resp.json['description'], self._release['description'])
-        self.assertEqual(ObjectId(resp.json['_id']), self._release['_id'])
-
-        # Get by name
-        resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': self._release['name']},
-            method='GET',
-            user=self._user,
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['name'], self._release['name'])
-        self.assertEqual(resp.json['description'], self._release['description'])
-        self.assertEqual(ObjectId(resp.json['_id']), self._release['_id'])
-
-        resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': constants.DRAFT_RELEASE_NAME},
-            method='GET',
-            user=self._user,
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['name'], constants.DRAFT_RELEASE_NAME)
-        self.assertEqual(ObjectId(resp.json['_id']), self._draftRelease['_id'])
-
     def testDeleteReleaseByID(self):
         # Create the release
         release = self._createReleaseCheck(
@@ -426,9 +422,8 @@ class SlicerPackageManagerTest(base.TestCase):
             desc='This is a new release')
         # Get the new release by ID
         resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': release['_id']},
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': release['_id']},
             method='GET',
             user=self._user,
         )
@@ -447,9 +442,8 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(resp.json['_id'], release['_id'])
         # Try to get the release should failed
         resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': release['_id']},
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': release['_id']},
             method='GET',
             user=self._user,
         )
@@ -465,9 +459,8 @@ class SlicerPackageManagerTest(base.TestCase):
             desc='This is a new release')
         # Get the new release by name
         resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': release['name']},
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': release['name']},
             method='GET',
             user=self._user,
         )
@@ -486,9 +479,8 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(resp.json['_id'], release['_id'])
         # Try to get the release should failed
         resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': release['name']},
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': release['name']},
             method='GET',
             user=self._user,
         )
@@ -507,7 +499,7 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(extension2['name'], self._extensions['extension4']['name'])
 
         resp = self.request(
-            path='/app/%s/release/draftrelease' % self._app['_id'],
+            path='/app/%s/release/revision' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -517,16 +509,15 @@ class SlicerPackageManagerTest(base.TestCase):
 
         # Delete by Name the revision release '0001' in the "draft" release
         resp = self.request(
-            path='/app/%(app_id)s/release/%(release_id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'release_id_or_name': self._extensions['extension4']['meta']['app_revision']},
+            path='/app/%s/release/%s' %
+                 (self._app['_id'], self._extensions['extension4']['meta']['app_revision']),
             method='DELETE',
             user=self._user
         )
         self.assertStatusOk(resp)
 
         resp = self.request(
-            path='/app/%s/release/draftrelease' % self._app['_id'],
+            path='/app/%s/release/revision' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -716,21 +707,24 @@ class SlicerPackageManagerTest(base.TestCase):
             self.assertEqual(ext['meta']['arch'], 'amd64')
         # Get a specific extension by name
         resp = self.request(
-            path='/app/%s/extension/%s' % (self._app['_id'], extension3['name']),
+            path='/app/%s/extension' % self._app['_id'],
+            params={'extension_name': extension3['name']},
             method='GET',
             user=self._user,
         )
         self.assertStatusOk(resp)
-        self.assertEqual(resp.json['_id'], extension3['_id'])
-        self.assertEqual(resp.json['name'], extension3['name'])
+        self.assertEqual(resp.json[0]['_id'], extension3['_id'])
+        self.assertEqual(resp.json[0]['name'], extension3['name'])
         # Get a specific extension with wrong name
         resp = self.request(
-            path='/app/%s/extension/%s' % (self._app['_id'], 'wrong_name'),
+            path='/app/%s/extension' % self._app['_id'],
+            params={'extension_name': 'wrong_name'},
             method='GET',
             user=self._user,
         )
         self.assertStatusOk(resp)
-        self.assertEqual(resp.json, None)
+        self.assertEqual(len(resp.json), 0)
+        self.assertEqual(resp.json, [])
 
     def testDeleteExtension(self):
         # Create a new extension in the release "self._release"
