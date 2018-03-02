@@ -28,21 +28,11 @@ from girder.api.describe import Description, autoDescribeRoute
 from girder.api.rest import Resource
 from girder.models.folder import Folder
 from girder.models.collection import Collection
-from girder.utility.progress import ProgressContext
 
 from ..models.extension import Extension as ExtensionModel
+from ..models.package import Package as PackageModel
 from .. import constants
-
-
-def _deleteFolder(folder, progress, user):
-    with ProgressContext(progress, user=user,
-                         title='Deleting folder %s' % folder['name'],
-                         message='Calculating folder size...') as ctx:
-        # Don't do the subtree count if we weren't asked for progress
-        if progress:
-            ctx.update(total=Folder().subtreeCount(folder))
-        Folder().remove(folder, progress=ctx)
-    return folder
+from .. import utilities
 
 
 class App(Resource):
@@ -60,9 +50,12 @@ class App(Resource):
         self.route('GET', (':app_id', 'release', 'revision'), self.getAllDraftReleases)
         self.route('DELETE', (':app_id', 'release', ':release_id_or_name'),
                    self.deleteReleaseByIdOrName)
-        self.route('GET', (':app_id', 'extension'), self.getExtensions)
         self.route('POST', (':app_id', 'extension'), self.createOrUpdateExtension)
+        self.route('GET', (':app_id', 'extension'), self.getExtensions)
         self.route('DELETE', (':app_id', 'extension', ':ext_id'), self.deleteExtension)
+        self.route('POST', (':app_id', 'package'), self.createOrUpdatePackage)
+        self.route('GET', (':app_id', 'package'), self.getPackages)
+        self.route('DELETE', (':app_id', 'package', ':pkg_id'), self.deletePackage)
 
     @autoDescribeRoute(
         Description('Create a new application.')
@@ -165,7 +158,7 @@ class App(Resource):
         # this can be changed in anytime.
         return self._model.setMetadata(
             app,
-            {'extensionNameTemplate': constants.EXTENSION_TEMPLATE_NAME}
+            {'packageNameTemplate': constants.PACKAGE_TEMPLATE_NAME}
         )
 
     @autoDescribeRoute(
@@ -240,7 +233,7 @@ class App(Resource):
         :param id: Id of the application
         :return: Confirmation message with the deleted application name
         """
-        return _deleteFolder(folder, progress, self.getCurrentUser())
+        return utilities.deleteFolder(folder, progress, self.getCurrentUser())
 
     @autoDescribeRoute(
         Description('Create a new release.')
@@ -416,7 +409,7 @@ class App(Resource):
             else:
                 release = release_folder[0]
 
-        return _deleteFolder(release, progress, self.getCurrentUser())
+        return utilities.deleteFolder(release, progress, self.getCurrentUser())
 
     @autoDescribeRoute(  # noqa: C901
         Description('List or search available extensions.')
@@ -432,7 +425,7 @@ class App(Resource):
                required=False, enum=['linux', 'win', 'macosx'])
         .param('arch', 'The os chip architecture.',
                required=False, enum=['i386', 'amd64'])
-        .param('app_revision', 'The revision of the package.', required=False)
+        .param('app_revision', 'The revision of the application.', required=False)
         .param('baseName', 'The baseName of the extension', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
@@ -484,7 +477,7 @@ class App(Resource):
                     revisions = list(self._model.childFolders(
                         release,
                         'Folder',
-                        filters={'name': app_revision}))
+                        filters={'meta.revision': app_revision}))
                     if revisions:
                         extensions_folder = list(self._model.childFolders(
                             revisions[0],
@@ -535,7 +528,7 @@ class App(Resource):
             offset=offset,
             sort=sort))
 
-    @autoDescribeRoute(  # noqa: C901
+    @autoDescribeRoute(
         Description('Create or Update an extension package.')
         .param('app_id', 'The ID of the App.', paramType='path')
         .param('os', 'The target operating system of the package.',
@@ -589,48 +582,14 @@ class App(Resource):
         :param packagetype: Type of the extension.
         :param codebase: The codebase baseName.
         :param description: The description of the extension.
-        :return: The status of the upload.
+        :return: The created/updated extension.
         """
         creator = self.getCurrentUser()
-        application = self._model.load(app_id, user=creator)
-        release_folder = None
-        # Find the release by metadata revision
-        releases = self._model.childFolders(application, 'Folder', user=creator)
-        for folder in releases:
-            if 'meta' in folder:
-                if 'revision' in folder['meta']:
-                    if folder['meta']['revision'] == app_revision:
-                        release_folder = folder
-                        break
-        if not release_folder:
-            # Only the draft release in the list
-            release_folder = list(self._model.childFolders(
-                application,
-                'Folder',
-                user=creator,
-                filters={'name': constants.DRAFT_RELEASE_NAME}))
-            if not release_folder:
-                raise Exception('The %s folder not found.' % constants.DRAFT_RELEASE_NAME)
-            release_folder = release_folder[0]
-
-            revision_folder = list(self._model.childFolders(
-                release_folder,
-                'Folder',
-                user=creator,
-                filters={'meta.revision': app_revision}))
-            if revision_folder:
-                revision_folder = revision_folder[0]
-            else:
-                revision_folder = self._model.createFolder(
-                    parent=release_folder,
-                    name=app_revision,
-                    parentType='Folder',
-                    public=release_folder['public'],
-                    creator=creator)
-                revision_folder = self._model.setMetadata(
-                    revision_folder,
-                    {'revision': app_revision})
-            release_folder = revision_folder
+        application = Folder().load(app_id, user=creator)
+        release_folder = utilities.getOrCreateReleaseFolder(
+            application=application,
+            user=creator,
+            app_revision=app_revision)
 
         extensions_folder = list(self._model.childFolders(
             release_folder,
@@ -680,7 +639,7 @@ class App(Resource):
         if dependency:
             params['dependency'] = dependency
 
-        name = application['meta']['extensionNameTemplate'].format(**params)
+        name = application['meta']['packageNameTemplate'].format(**params)
         filters = {
             'meta.baseName': baseName,
             'meta.os': os,
@@ -724,13 +683,209 @@ class App(Resource):
 
         :param app_id: Application ID
         :param ext_id: Extension ID
-        :return: Confirmation message with the name of the deleted extension
+        :return: The deleted extension
         """
         ExtensionModel().remove(item)
         return item
 
     @autoDescribeRoute(
-        Description('Get download stats of extensions within an application.')
+        Description('List or search available packages.')
+        .notes('If the "release_id" provided correspond to the "draft" release,'
+               ' then you must provide the revision to use this parameters. '
+               'If not, it will just be ignored.')
+        .responseClass('Package')
+        .param('app_id', 'The ID of the application.', paramType='path')
+        .param('package_name', 'The name of the package.', required=False)
+        .param('release_id', 'The release id.', required=False)
+        .param('package_id', 'The package id.', required=False)
+        .param('os', 'The target operating system of the package.',
+               required=False, enum=['linux', 'win', 'macosx'])
+        .param('arch', 'The os chip architecture.',
+               required=False, enum=['i386', 'amd64'])
+        .param('revision', 'The revision of the application.', required=False)
+        .param('baseName', 'The baseName of the package', required=False)
+        .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
+        .errorResponse()
+    )
+    @access.cookie
+    @access.public
+    def getPackages(self, app_id, package_name, release_id, package_id, os, arch,
+                    revision, baseName, limit, offset, sort):
+        """
+        Get a list of package which is filtered by some optional parameters. If the ``release_id``
+        provided correspond to the draft release, then you must provide the revision to use
+        this parameters. If not, it will just be ignored.
+
+        :param app_id: Application ID
+        :param package_name: Package name
+        :param release_id: Release ID
+        :param package_id: Package ID
+        :param os: The operation system used for the application package.
+        :param arch: The architecture compatible with the application package.
+        :param revision: The revision of the application
+        :param baseName: The baseName of the package
+        :return: The list of application packages
+        """
+        user = self.getCurrentUser()
+        filters = {
+            '$and': [
+                {'meta.app_id': {'$eq': app_id}},
+                {'meta.os': {'$exists': True}},
+                {'meta.arch': {'$exists': True}},
+                {'meta.revision': {'$exists': True}},
+                {'meta.app_revision': {'$exists': False}}]
+        }
+        if package_name:
+            filters['lowerName'] = package_name.lower()
+        if ObjectId.is_valid(package_id):
+            filters['_id'] = ObjectId(package_id)
+        if os:
+            filters['meta.os'] = os
+        if arch:
+            filters['meta.arch'] = arch
+        if revision:
+            filters['meta.revision'] = revision
+        if baseName:
+            # Provide a exact match base on baseName
+            filters['meta.baseName'] = baseName
+        if ObjectId.is_valid(release_id):
+            release = self._model.load(release_id, user=user)
+            if release['name'] == constants.DRAFT_RELEASE_NAME:
+                if revision:
+                    revisions = list(self._model.childFolders(
+                        release,
+                        'Folder',
+                        filters={'meta.revision': revision}))
+                    if revisions:
+                        filters['folderId'] = ObjectId(revisions[0]['_id'])
+                else:
+                    revisions = self._model.childFolders(
+                        release,
+                        'Folder')
+                    packages = []
+                    limit_tmp = limit
+                    for rev in revisions:
+                        filters['folderId'] = ObjectId(rev['_id'])
+                        packages += list(PackageModel().find(
+                            query=filters,
+                            limit=limit_tmp,
+                            offset=offset,
+                            sort=sort))
+                        limit_tmp = limit - len(packages)
+                        if limit_tmp <= 0:
+                            break
+                    return packages
+            else:
+                filters['folderId'] = ObjectId(release['_id'])
+
+        return list(PackageModel().find(
+            query=filters,
+            limit=limit,
+            offset=offset,
+            sort=sort))
+
+    @autoDescribeRoute(
+        Description('Create or Update an application package.')
+        .param('app_id', 'The ID of the App.', paramType='path')
+        .param('os', 'The target operating system of the package.',
+               enum=['linux', 'win', 'macosx'])
+        .param('arch', 'The os chip architecture.', enum=['i386', 'amd64'])
+        .param('baseName', 'The baseName of the package (ie installer baseName).')
+        .param('repository_type', 'The type of the repository (svn, git).')
+        .param('repository_url', 'The url of the repository.')
+        .param('revision', 'The revision of the application')
+        .param('description', 'Text describing the package.', required=False)
+        .errorResponse()
+    )
+    @access.cookie
+    @access.public
+    def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
+                              revision, description):
+        """
+        Create a package item in a specific release with providing ``release_id`` or in
+        the **'draft'** folder by default.
+        It's also possible to update an existing package. In this case, it will update the name
+        and the metadata of the package.
+
+        :param app_id: The ID of the application.
+        :param os: The operation system used for the package.
+        :param arch: The architecture compatible with the application package.
+        :param baseName: The base name of the package.
+        :param repository_type: The type of repository (github, gitlab, ...).
+        :param repository_url: The Url of the repository.
+        :param revision: The revision of the application.
+        :param description: Description of the application package
+        :return: The created/updated package.
+        """
+        creator = self.getCurrentUser()
+        application = Folder().load(app_id, user=creator)
+        release_folder = utilities.getOrCreateReleaseFolder(
+            application=application,
+            user=creator,
+            app_revision=revision)
+
+        params = {
+            'app_id': app_id,
+            'baseName': baseName,
+            'os': os,
+            'arch': arch,
+            'repository_type': repository_type,
+            'repository_url': repository_url,
+            'revision': revision,
+        }
+
+        name = application['meta']['packageNameTemplate'].format(**params)
+        filters = {
+            'meta.baseName': baseName,
+            'meta.os': os,
+            'meta.arch': arch,
+            'meta.revision': revision
+        }
+        # Only one package should be in this list
+        package = list(PackageModel().get(release_folder, filters=filters))
+        if not len(package):
+            # The package doesn't exist yet:
+            package = PackageModel().createPackage(name, creator, release_folder, params,
+                                                   description)
+        elif len(package) == 1:
+            # The package already exist
+            package = package[0]
+            # Check the file inside the application package
+            files = PackageModel().childFiles(package)
+            if not files.count():
+                # Package empty
+                raise Exception("Application Package existing without any binary file.")
+            # Update the package
+            package['name'] = name
+            package = PackageModel().setMetadata(package, params)
+        else:
+            raise Exception('Too many packages found for the same name :"%s"' % name)
+
+        # Ready to upload the binary file
+        return package
+
+    @access.user(scope=TokenScope.DATA_WRITE)
+    @autoDescribeRoute(
+        Description('Delete a Package by ID.')
+        .param('app_id', 'The ID of the App.', paramType='path')
+        .modelParam('pkg_id', model=PackageModel, level=AccessType.WRITE)
+        .errorResponse('ID was invalid.')
+        .errorResponse('Admin access was denied for the package.', 403)
+    )
+    def deletePackage(self, app_id, item):
+        """
+        Delete the package by ID.
+
+        :param app_id: Application ID
+        :param pkg_id: Package ID
+        :return: The deleted package
+        """
+        PackageModel().remove(item)
+        return item
+
+    @autoDescribeRoute(
+        Description('Get download stats of application and extensions packages '
+                    'within an application.')
         .param('app_id', 'The ID of the application.', paramType='path')
         .errorResponse()
     )
