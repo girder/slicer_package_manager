@@ -51,20 +51,24 @@ class Webroot(WebrootBase):
 def _onDownloadFileComplete(event):
     item = Item().load(event.info['file']['itemId'], level=AccessType.READ)
     meta = item['meta']
-    extension_folder = Folder().load(item['folderId'], level=AccessType.READ)
-    release = Folder().load(extension_folder['parentId'], level=AccessType.READ)
-    release = Folder().load(release['parentId'], level=AccessType.READ)
-    if release['name'] == constants.DRAFT_RELEASE_NAME:
-        Folder().increment(
-            query={'_id': release['_id']},
-            field='meta.downloadExtensions.%s.%s.%s.%s' % (
-                meta['app_revision'], meta['baseName'], meta['os'], meta['arch']),
-            amount=1)
-    else:
-        Folder().increment(
-            query={'_id': extension_folder['parentId']},
-            field='meta.downloadExtensions.%s.%s.%s' % (meta['baseName'], meta['os'], meta['arch']),
-            amount=1)
+    item_folder = Folder().load(item['folderId'], level=AccessType.READ)
+    if item_folder['name'] == constants.EXTENSIONS_FOLDER_NAME:
+        release = Folder().load(item_folder['parentId'], level=AccessType.READ)
+        release = Folder().load(release['parentId'], level=AccessType.READ)
+        if release['name'] == constants.DRAFT_RELEASE_NAME:
+            Folder().increment(
+                query={'_id': release['_id']},
+                field='meta.downloadExtensions.%s.%s.%s.%s.%s' % (
+                    meta['app_revision'], constants.EXTENSIONS_FOLDER_NAME,
+                    meta['baseName'], meta['os'], meta['arch']),
+                amount=1)
+        else:
+            Folder().increment(
+                query={'_id': item_folder['parentId']},
+                field='meta.downloadExtensions.%s.%s.%s.%s' %
+                      (constants.EXTENSIONS_FOLDER_NAME, meta['baseName'],
+                       meta['os'], meta['arch']),
+                amount=1)
 
 
 def load(info):

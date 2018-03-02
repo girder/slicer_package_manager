@@ -754,19 +754,14 @@ class App(Resource):
 
         for release in releases:
             if 'meta' in release and 'downloadExtensions' in release['meta']:
-                rawDownloadStats = release['meta']['downloadExtensions']
                 if release['name'] == constants.DRAFT_RELEASE_NAME:
-                    for (revision, extensionStat) in rawDownloadStats.items():
-                        for (baseName, data) in extensionStat.items():
-                            try:
-                                downloadStats[baseName].update({revision: data})
-                            except KeyError:
-                                downloadStats[baseName] = {revision: data}
+                    downloadStats.update(release['meta']['downloadExtensions'])
                 else:
-                    for (baseName, data) in rawDownloadStats.items():
-                        try:
-                            downloadStats[baseName].update({release['meta']['revision']: data})
-                        except KeyError:
-                            downloadStats[baseName] = {release['meta']['revision']: data}
+                    try:
+                        downloadStats[release['meta']['revision']].update(
+                            release['meta']['downloadExtensions'])
+                    except KeyError:
+                        downloadStats[
+                            release['meta']['revision']] = release['meta']['downloadExtensions']
 
         return downloadStats
