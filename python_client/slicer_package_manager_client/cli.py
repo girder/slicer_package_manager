@@ -201,13 +201,13 @@ def _cli_createApp(sc, *args, **kwargs):
     Create a new application
     """
     newApp = sc.createApp(*args, **kwargs)
-    if newApp == Constant.ERROR_ALREADY_EXIST:
-        print('ERROR: The application \'%s\' already exist' % kwargs['name'])
-    else:
-        print('%s (%s)\t%s' % (newApp['_id'], newApp['name'], 'CREATED'))
+    print('%s (%s)\t%s' % (newApp['_id'], newApp['name'], 'CREATED'))
 
 
 @app.command('list')
+@click.option('--name', default=None,
+              help='Name of the application',
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_listApp(sc, *args, **kwargs):
     """
@@ -217,7 +217,8 @@ def _cli_listApp(sc, *args, **kwargs):
     print('%-25s\t%-20s\t%-50s' % ('APPLICATION ID', 'NAME', 'DESCRIPTION'))
     print('%-25s\t%-20s\t%-50s' % ('-' * 25, '-' * 20, '-' * 50))
     for application in apps:
-        print('%-25s\t%-20s\t%-50s' % (application['_id'], application['name'], application['description'][0:50]))
+        print('%-25s\t%-20s\t%-50s' %
+              (application['_id'], application['name'], application['description'][0:50]))
 
 
 @app.command('delete')
@@ -228,10 +229,7 @@ def _cli_deleteApp(sc, *args, **kwargs):
     Delete an application
     """
     application = sc.deleteApp(*args, **kwargs)
-    if application == Constant.ERROR_APP_NOT_EXIST:
-        print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['name'])
-    else:
-        print('%s (%s)\t%s' % (application['name'], application['_id'], 'DELETED'))
+    print('%s (%s)\t%s' % (application['name'], application['_id'], 'DELETED'))
 
 
 @release.command('create')
@@ -254,12 +252,7 @@ def _cli_createRelease(sc, *args, **kwargs):
     Create a new release
     """
     newRelease = sc.createRelease(*args, **kwargs)
-    if newRelease == Constant.ERROR_APP_NOT_EXIST:
-        print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['app_name'])
-    elif newRelease == Constant.ERROR_ALREADY_EXIST:
-        print('ERROR: The release \'%s\' already exist' % kwargs['name'])
-    else:
-        print('%s (%s)\t%s' % (newRelease['name'], newRelease['_id'], 'CREATED'))
+    print('%s (%s)\t%s' % (newRelease['name'], newRelease['_id'], 'CREATED'))
 
 
 @release.command('list')
@@ -270,18 +263,15 @@ def _cli_listRelease(sc, *args, **kwargs):
     List all the release within an application
     """
     releases = sc.listRelease(*args, **kwargs)
-    if releases == Constant.ERROR_APP_NOT_EXIST:
-        print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['app_name'])
-    else:
-        print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
-        print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
-        for release in releases:
-            if 'meta' in release and 'revision' in release['meta']:
-                revision = release['meta']['revision']
-            else:
-                revision = ''
-            print('%-25s\t%-20s\t%-15s\t%-50s' % (
-                release['_id'], release['name'], revision, release['description'][0:50]))
+    print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
+    print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
+    for release in releases:
+        if 'meta' in release and 'revision' in release['meta']:
+            revision = release['meta']['revision']
+        else:
+            revision = ''
+        print('%-25s\t%-20s\t%-15s\t%-50s' % (
+            release['_id'], release['name'], revision, release['description'][0:50]))
 
 
 @release.command('get')
@@ -290,23 +280,20 @@ def _cli_listRelease(sc, *args, **kwargs):
               help='Offset of the list',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_getRelease(sc, *args, **kwargs):
+def _cli_getRevisions(sc, *args, **kwargs):
     """
     List all the revision of the default preview within an application
     """
     releases = sc.getRelease(*args, **kwargs)
-    if releases == Constant.ERROR_APP_NOT_EXIST:
-        print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['app_name'])
-    else:
-        print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
-        print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
-        for release in releases:
-            if 'meta' in release and 'revision' in release['meta']:
-                revision = release['meta']['revision']
-            else:
-                revision = ''
-            print('%-25s\t%-20s\t%-15s\t%-50s' % (
-                release['_id'], release['name'], revision, release['description'][0:50]))
+    print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
+    print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
+    for release in releases:
+        if 'meta' in release and 'revision' in release['meta']:
+            revision = release['meta']['revision']
+        else:
+            revision = ''
+        print('%-25s\t%-20s\t%-15s\t%-50s' % (
+            release['_id'], release['name'], revision, release['description'][0:50]))
 
 
 @release.command('delete')
@@ -318,12 +305,7 @@ def _cli_deleteRelease(sc, *args, **kwargs):
     Delete a release
     """
     release = sc.deleteRelease(*args, **kwargs)
-    if release == Constant.ERROR_APP_NOT_EXIST:
-        print('ERROR: The Application \'%s\' doesn\'t exist' % kwargs['app_name'])
-    elif release == Constant.ERROR_RELEASE_NOT_EXIST:
-        print('ERROR: The release \'%s\' doesn\'t exist' % kwargs['name'])
-    else:
-        print('%s (%s)\t%s' % (release['name'], release['_id'], 'DELETED'))
+    print('%s (%s)\t%s' % (release['name'], release['_id'], 'DELETED'))
 
 
 def _getOs():
@@ -379,6 +361,10 @@ def _getOs():
               help='Description of the extension',
               cls=_AdvancedOption
               )
+@click.option('--force', default=False,
+              help='Force the upload',
+              cls=_AdvancedOption
+              )
 @click.pass_obj
 def _cli_uploadExtension(sc, *args, **kwargs):
     """
@@ -386,11 +372,7 @@ def _cli_uploadExtension(sc, *args, **kwargs):
     """
     print('Create the extension %s' % kwargs['name'])
     ext = sc.uploadExtension(*args, **kwargs)
-    if ext == Constant.ERROR_APP_NOT_EXIST:
-        print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['app_name'])
-    elif ext == Constant.ERROR_EXT_NOT_EXIST:
-        print('ERROR: The extension which correspond to (\'%s\') doesn\'t exist' % kwargs['name'])
-    elif ext == Constant.EXTENSION_AREADY_UP_TO_DATE:
+    if ext == Constant.EXTENSION_AREADY_UP_TO_DATE:
         print('Extension "%s" is already up-to-date\t(Extension Item updated)' % kwargs['name'])
     elif ext == Constant.EXTENSION_NOW_UP_TO_DATE:
         print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The extension is now up-to-date'))
@@ -401,7 +383,7 @@ def _cli_uploadExtension(sc, *args, **kwargs):
 @extension.command('download')
 @click.argument('app_name')
 @click.argument('id_or_name')
-@click.option('--dir_path', default=Constant.DEFAULT_DOWNLOAD_PATH,
+@click.option('--dir_path', default=Constant.CURRENT_FOLDER,
               help='Path to the directory where will be downloaded the extenion',
               cls=_AdvancedOption
               )
@@ -412,12 +394,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
     """
     print('Start download...')
     ext = sc.downloadExtension(*args, **kwargs)
-    if ext == Constant.ERROR_EXT_NOT_EXIST:
-        print('ERROR: The extension which correspond to (\'%s\') doesn\'t exist' % kwargs['id_or_name'])
-    elif ext == Constant.ERROR_EXT_NO_FILE:
-        print('ERROR: The extension which correspond to (\'%s\') has no binary file' % kwargs['id_or_name'])
-    else:
-        print('%s (%s)\t%s\t[%s]' % (ext['name'], ext['_id'], 'DOWNLOADED', kwargs['dir_path']))
+    print('%s (%s)\t%s\t[%s]' % (ext['name'], ext['_id'], 'DOWNLOADED', kwargs['dir_path']))
 
 
 @extension.command('list')
@@ -431,7 +408,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
               help='The revision of the application',
               cls=_AdvancedOption
               )
-@click.option('--release', default=Constant.DRAFT_RELEASE,
+@click.option('--release', default=Constant.DRAFT_RELEASE_NAME,
               help='List all extension within the release',
               cls=_AdvancedOption
               )
@@ -450,17 +427,10 @@ def _cli_listExtension(sc, *args, **kwargs):
     List all the extension within an application
     """
     extensions = sc.listExtension(*args, **kwargs)
-    if extensions == Constant.ERROR_APP_NOT_EXIST:
-        print('ERROR: The application \'%s\' doesn\'t exist' % kwargs['app_name'])
-    elif extensions == Constant.ERROR_RELEASE_NOT_EXIST:
-        print('ERROR: The release \'%s\' doesn\'t exist' % kwargs['release'])
-    elif extensions == Constant.ERROR_EXT_NOT_EXIST:
-        print('ERROR: The extension \'%s\' doesn\'t exist' % kwargs['fullname'])
-    else:
-        print('%-25s\t%-30s\t\t%-50s' % ('EXTENSION ID', 'NAME', 'DESCRIPTION'))
-        print('%-25s\t%-30s\t\t%-50s' % ('-' * 25, '-' * 30, '-' * 50))
-        for extension in extensions:
-            print('%-25s\t%-30s\t\t%-50s' % (extension['_id'], extension['name'], extension['description'][0:50]))
+    print('%-25s\t%-30s\t\t%-50s' % ('EXTENSION ID', 'NAME', 'DESCRIPTION'))
+    print('%-25s\t%-30s\t\t%-50s' % ('-' * 25, '-' * 30, '-' * 50))
+    for extension in extensions:
+        print('%-25s\t%-30s\t\t%-50s' % (extension['_id'], extension['name'], extension['description'][0:50]))
 
 
 @extension.command('delete')
@@ -472,12 +442,7 @@ def _cli_deleteExtension(sc, *args, **kwargs):
     Delete a release
     """
     ext = sc.deleteExtension(*args, **kwargs)
-    if ext == Constant.ERROR_APP_NOT_EXIST:
-        print('ERROR: The Application \'%s\' doesn\'t exist' % kwargs['app_name'])
-    elif ext == Constant.ERROR_EXT_NOT_EXIST:
-        print('ERROR: The Extension \'%s\' doesn\'t exist' % kwargs['ID_or_Name'])
-    else:
-        print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'DELETED'))
+    print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'DELETED'))
 
 
 # TODO: Test the new fullname
