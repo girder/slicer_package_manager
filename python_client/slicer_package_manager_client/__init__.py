@@ -31,22 +31,14 @@ class Constant:
     """
     A bunch of utilities constant, as to handle ``Error`` or set default parameters.
     """
-    # Errors
-    ERROR_ALREADY_EXIST = 1
-    ERROR_APP_NOT_EXIST = 2
-    ERROR_RELEASE_NOT_EXIST = 3
-    ERROR_EXT_NOT_EXIST = 4
-    ERROR_EXT_NO_FILE = 5
-    ERROR_EXT_UPLOAD = 6
 
     # Success
     EXTENSION_AREADY_UP_TO_DATE = 30
     EXTENSION_NOW_UP_TO_DATE = 31
 
     # Default
-    _home = os.path.expanduser("~")
-    DEFAULT_DOWNLOAD_PATH = os.path.join(_home, 'slicer_package_manager/extensions')
-    DRAFT_RELEASE = 'draft'
+    CURRENT_FOLDER = os.getcwd()
+    DRAFT_RELEASE_NAME = 'draft'
     DEFAULT_LIMIT = 50
 
 
@@ -81,7 +73,7 @@ class SlicerPackageClient(GirderClient):
         """
         apps = self.listApp(name=name)
         if apps:
-            return Constant.ERROR_ALREADY_EXIST
+            raise Exception('The Application "%s" already exist.' % name)
         return self.post('/app', parameters={
             'name': name,
             'app_description': desc
@@ -100,6 +92,18 @@ class SlicerPackageClient(GirderClient):
         })
         return apps
 
+    def _getApp(self, app_name):
+        """
+        Private method to get a single application by Name.
+
+        :param app_name: Name of the application
+        :return: A single application
+        """
+        apps = self.listApp(app_name)
+        if not apps:
+            raise Exception('The Application "%s" doesn\'t exist.' % app_name)
+        return apps[0]
+
     def deleteApp(self, name):
         """
         Delete the application by ID.
@@ -107,10 +111,7 @@ class SlicerPackageClient(GirderClient):
         :param name: application name
         :return: The deleted application
         """
-        apps = self.listApp(name=name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
+        app = self._getApp(name)
         self.delete('/app/%s' % app['_id'])
         return app
 
@@ -124,15 +125,10 @@ class SlicerPackageClient(GirderClient):
         :param desc: Description of the release
         :return: The new release
         """
-        apps = self.listApp(app_name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
-
-        releases = self.listRelease(app_name=app_name)
-        for release in releases:
-            if release['name'] == name:
-                return Constant.ERROR_ALREADY_EXIST
+        app = self._getApp(app_name)
+        releases = self.listRelease(app_name=app_name, name=name)
+        if releases:
+            raise Exception('The release "%s" already exist.' % name)
         return self.post('/app/%s/release' % app['_id'], parameters={
             'name': name,
             'app_revision': revision,
@@ -148,25 +144,19 @@ class SlicerPackageClient(GirderClient):
         :param name: Name of the release
         :return: A list of all the release within the application
         """
-        apps = self.listApp(app_name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
+        app = self._getApp(app_name)
         if name:
             releases = self.get(
                 '/app/%s/release' % app['_id'],
                 parameters={'release_id_or_name': name})
         else:
             releases = self.get('/app/%s/release' % app['_id'])
-            draft_release = self.get('/app/%s/release/revision' % app['_id'])
-            releases += draft_release
+            draft_releases = self.get('/app/%s/release/revision' % app['_id'])
+            releases += draft_releases
         return releases
 
-    def getRelease(self, app_name, offset=0):
-        apps = self.listApp(app_name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
+    def getRevisions(self, app_name, offset=0):
+        app = self._getApp(app_name)
         return self.get(
             '/app/%s/release/revision' % app['_id'],
             parameters={'offset': offset}
@@ -180,18 +170,15 @@ class SlicerPackageClient(GirderClient):
         :param name: Name of the release
         :return: The deleted release
         """
-        apps = self.listApp(app_name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
+        app = self._getApp(app_name)
         release = self.listRelease(app_name, name)
         if not release:
-            return Constant.ERROR_RELEASE_NOT_EXIST
+            raise Exception('The release "%s" doesn\'t exist.')
         self.delete('/app/%s/release/%s' % (app['_id'], name))
-        return release[0]
+        return release
 
     def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url, revision,
-                        app_revision, packagetype, codebase, desc):
+                        app_revision, packagetype='', codebase='', desc='', force=False):
         """
         Upload an extension by providing a path to the file. It can also be used to update an
         existing one, in this case the upload is done only if the extension has a different revision
@@ -214,11 +201,7 @@ class SlicerPackageClient(GirderClient):
         def _displayProgress(*args, **kwargs):
             pass
 
-        apps = self.listApp(app_name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
-
+        app = self._getApp(app_name)
         # Get potential existing extension
         extensions = self.listExtension(
             app_name,
@@ -249,21 +232,22 @@ class SlicerPackageClient(GirderClient):
                 mimeType='application/octet-stream',
                 progressCallback=_displayProgress)
         else:
-            # Compare the revision
             extension = extensions[0]
-            if revision == extension['meta']['revision']:
-                return Constant.EXTENSION_AREADY_UP_TO_DATE
-            else:
+            # Revision different or force upload
+            if revision != extension['meta']['revision'] or force:
                 files = list(self.listFile(extension['_id']))
                 if files:
                     oldFile = files[0]
+                    filename = 'new_file'
+                else:
+                    filename = None
 
                 # Upload the extension
                 newFile = self.uploadFileToItem(
                     extension['_id'],
                     filepath,
                     reference='',
-                    filename='new_file',
+                    filename=filename,
                     mimeType='application/octet-stream',
                     progressCallback=_displayProgress)
 
@@ -290,12 +274,12 @@ class SlicerPackageClient(GirderClient):
                         'name': os.path.basename(filepath)
                     })
                     return Constant.EXTENSION_NOW_UP_TO_DATE
-                else:
-                    return Constant.ERROR_EXT_UPLOAD
+            else:
+                return Constant.EXTENSION_AREADY_UP_TO_DATE
 
         return extension
 
-    def downloadExtension(self, app_name, id_or_name, dir_path=Constant.DEFAULT_DOWNLOAD_PATH):
+    def downloadExtension(self, app_name, id_or_name, dir_path=Constant.CURRENT_FOLDER):
         """
         Download an extension by ID and store it in the given option ``dir_path``.
         When we use the extension id in ``id_or_name``, the parameter ``app_name`` is ignored.
@@ -305,10 +289,7 @@ class SlicerPackageClient(GirderClient):
         :param dir_path: Path of the directory when the extension has to be downloaded
         :return: The downloaded extension
         """
-        apps = self.listApp(app_name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
+        app = self._getApp(app_name)
 
         if ObjectId.is_valid(id_or_name):
             ext = self.get('/resource/%s' % id_or_name, parameters={'type': 'item'})
@@ -319,10 +300,10 @@ class SlicerPackageClient(GirderClient):
             if ext:
                 ext = ext[0]
         if not ext:
-            return Constant.ERROR_EXT_NOT_EXIST
+            raise Exception('The extension "%s" doesn\'t exist.' % id_or_name)
         files = self.get('/item/%s/files' % ext['_id'])
         if not files:
-            return Constant.ERROR_EXT_NO_FILE
+            raise Exception('The extension "%s" doesn\'t contain any file.' % id_or_name)
         file = files[0]
         self.downloadFile(
             file['_id'],
@@ -330,7 +311,7 @@ class SlicerPackageClient(GirderClient):
         return ext
 
     def listExtension(self, app_name, name=None, ext_os=None, arch=None, app_revision=None,
-                      release=Constant.DRAFT_RELEASE, limit=Constant.DEFAULT_LIMIT, all=False):
+                      release=Constant.DRAFT_RELEASE_NAME, limit=Constant.DEFAULT_LIMIT, all=False):
         """
         List all the extension for a specific release and filter them with some option
         (os, arch, ...). By default the extensions within ``draft`` release are listed.
@@ -348,10 +329,7 @@ class SlicerPackageClient(GirderClient):
         :param all: Boolean that allow to list extensions from all the release
         :return: A list of extensions filtered by optional parameters
         """
-        apps = self.listApp(app_name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
+        app = self._getApp(app_name)
 
         if all:
             release_id = None
@@ -360,7 +338,7 @@ class SlicerPackageClient(GirderClient):
             if release_folder:
                 release_id = release_folder['_id']
             else:
-                return Constant.ERROR_RELEASE_NOT_EXIST
+                raise Exception('The release "%s" doesn\'t exist.' % release)
 
         extensions = self.get('/app/%s/extension' % app['_id'], parameters={
             'os': ext_os,
@@ -382,18 +360,18 @@ class SlicerPackageClient(GirderClient):
         :param id_or_name: Extension ID or name
         :return: The deleted extension
         """
-        apps = self.listApp(app_name)
-        if not apps:
-            return Constant.ERROR_APP_NOT_EXIST
-        app = apps[0]
+        app = self._getApp(app_name)
 
         if ObjectId.is_valid(id_or_name):
-            ext = self.get('/resource/%s' % id_or_name, parameters={'type': 'item'})
+            ext = self.get(
+                '/app/%s/extension' % app['_id'],
+                parameters={'extension_id': id_or_name})
         else:
             ext = self.get(
                 '/app/%s/extension' % app['_id'],
                 parameters={'extension_name': id_or_name})
         if not ext:
-            return Constant.ERROR_EXT_NOT_EXIST
+            raise Exception('The extension "%s" doesn\'t exist.' % id_or_name)
+        ext = ext[0]
         self.delete('/app/%s/extension/%s' % (app['_id'], ext['_id']))
         return ext
