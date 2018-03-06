@@ -24,6 +24,20 @@ from girder_client import GirderClient
 from . import SlicerPackageClient, __version__, Constant
 
 
+# ---------------- UTILITIES ---------------- #
+
+def _getOs():
+    os = platform.system()
+    if os == 'Linux':
+        return 'linux'
+    elif os == 'Darwin':
+        return 'macosx'
+    elif os == 'Windows':
+        return 'win'
+
+# ------------------------------------------- #
+
+
 class SlicerPackageCli(SlicerPackageClient):
     """
     A command line Python client for interacting with a Girder instance's
@@ -128,13 +142,11 @@ _CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.option('--no-ssl-verify', is_flag=True, default=False,
               help='Disable SSL Verification',
               show_default=True,
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--certificate', default=None,
               help='Specify path to SSL certificate',
               show_default=True,
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.version_option(version=__version__, prog_name='Girder command line interface')
 @click.pass_context
 def main(ctx, username, password,
@@ -189,6 +201,12 @@ def extension(sc):
     pass
 
 
+@main.group(context_settings=_CONTEXT_SETTINGS)
+@click.pass_obj
+def package(sc):
+    pass
+
+
 @app.command('create')
 @click.argument('name')
 @click.option('--desc', default=None,
@@ -236,16 +254,13 @@ def _cli_deleteApp(sc, *args, **kwargs):
 @click.argument('app_name', required=True)
 @click.option('--name', prompt=True,
               help='Name of the new release',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--revision', prompt=True,
               help='Revision of the application',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--desc', default=None,
               help='Description of the release',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_createRelease(sc, *args, **kwargs):
     """
@@ -274,7 +289,7 @@ def _cli_listRelease(sc, *args, **kwargs):
             release['_id'], release['name'], revision, release['description'][0:50]))
 
 
-@release.command('get')
+@release.command('list_draft')
 @click.argument('app_name')
 @click.option('--offset', default=0,
               help='Offset of the list',
@@ -308,63 +323,42 @@ def _cli_deleteRelease(sc, *args, **kwargs):
     print('%s (%s)\t%s' % (release['name'], release['_id'], 'DELETED'))
 
 
-def _getOs():
-    os = platform.system()
-    if os == 'Linux':
-        return 'linux'
-    elif os == 'Darwin':
-        return 'macosx'
-    elif os == 'Windows':
-        return 'win'
-
-
 @extension.command('upload')
 @click.argument('app_name')
 @click.argument('filepath')
 @click.option('--os', 'ext_os', default=_getOs(),
               help='The target operating system of the package',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--arch', default='amd64',
               help='Architecture that is supported by the extension',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--name', prompt=True,
               help='The baseName of the extension',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--repo_type', default='',
               help='Type of the repository where find the extension',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--repo_url', default='',
               help='URL of the repository where find the extension',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--revision', default='0.0.1',
               help='Revision of the extension',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--app_revision', prompt=True,
               help='Revision of the application',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--packagetype', default='',
               help='Type of the package (Installer, data...)',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--codebase', default='',
               help='The codebase baseName',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--desc', default='',
               help='Description of the extension',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--force', default=False,
               help='Force the upload',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_uploadExtension(sc, *args, **kwargs):
     """
@@ -384,9 +378,8 @@ def _cli_uploadExtension(sc, *args, **kwargs):
 @click.argument('app_name')
 @click.argument('id_or_name')
 @click.option('--dir_path', default=Constant.CURRENT_FOLDER,
-              help='Path to the directory where will be downloaded the extenion',
-              cls=_AdvancedOption
-              )
+              help='Path to the directory where will be downloaded the extension',
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_downloadExtension(sc, *args, **kwargs):
     """
@@ -402,35 +395,31 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 @click.option('--name', default=None,
               help='The baseName of the extension',
               cls=_AdvancedOption)
-@click.option('--ext_os', type=click.Choice(['win', 'linux', 'macosx']))
+@click.option('--os', 'ext_os', type=click.Choice(['win', 'linux', 'macosx']))
 @click.option('--arch', type=click.Choice(['amd64', 'i386']))
 @click.option('--app_revision', default=None,
               help='The revision of the application',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--release', default=Constant.DRAFT_RELEASE_NAME,
               help='List all extension within the release',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--limit', default=Constant.DEFAULT_LIMIT,
               help='The limit number of listed extensions ',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.option('--all', 'all', flag_value='all',
               default=False,
               help='List all the extension of the application',
-              cls=_AdvancedOption
-              )
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_listExtension(sc, *args, **kwargs):
     """
     List all the extension within an application
     """
     extensions = sc.listExtension(*args, **kwargs)
-    print('%-25s\t%-30s\t\t%-50s' % ('EXTENSION ID', 'NAME', 'DESCRIPTION'))
-    print('%-25s\t%-30s\t\t%-50s' % ('-' * 25, '-' * 30, '-' * 50))
-    for extension in extensions:
-        print('%-25s\t%-30s\t\t%-50s' % (extension['_id'], extension['name'], extension['description'][0:50]))
+    print('%-25s\t%-30s\t\t%-30s' % ('EXTENSION ID', 'NAME', 'REVISION'))
+    print('%-25s\t%-30s\t\t%-30s' % ('-' * 25, '-' * 30, '-' * 30))
+    for ext in extensions:
+        print('%-25s\t%-30s\t\t%-30s' % (ext['_id'], ext['name'], ext['meta']['revision'][0:30]))
 
 
 @extension.command('delete')
@@ -439,10 +428,101 @@ def _cli_listExtension(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_deleteExtension(sc, *args, **kwargs):
     """
-    Delete a release
+    Delete an extension by ID or Name
     """
     ext = sc.deleteExtension(*args, **kwargs)
     print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'DELETED'))
 
 
-# TODO: Test the new fullname
+@package.command('upload')
+@click.argument('app_name')
+@click.argument('filepath')
+@click.option('--os', 'pkg_os', default=_getOs(),
+              help='The target operating system of the package',
+              cls=_AdvancedOption)
+@click.option('--arch', default='amd64',
+              help='Architecture that is supported by the package',
+              cls=_AdvancedOption)
+@click.option('--name', prompt=True,
+              help='The baseName of the package',
+              cls=_AdvancedOption)
+@click.option('--repo_type', default='',
+              help='Type of the repository where find the package',
+              cls=_AdvancedOption)
+@click.option('--repo_url', default='',
+              help='URL of the repository where find the package',
+              cls=_AdvancedOption)
+@click.option('--revision', prompt=True,
+              help='Revision of the application',
+              cls=_AdvancedOption)
+@click.option('--desc', default='',
+              help='Description of the package',
+              cls=_AdvancedOption)
+@click.pass_obj
+def _cli_uploadApplicationPackage(sc, *args, **kwargs):
+    """
+    Upload an application package
+    """
+    print('Create the application package %s' % kwargs['name'])
+    pkg = sc.uploadApplicationPackage(*args, **kwargs)
+    if pkg == Constant.PACKAGE_NOW_UP_TO_DATE:
+        print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The package is now up-to-date'))
+    else:
+        print('%s (%s)\t%s' % (pkg['name'], pkg['_id'], 'UPLOADED'))
+
+
+@package.command('download')
+@click.argument('app_name')
+@click.argument('id_or_name')
+@click.option('--dir_path', default=Constant.CURRENT_FOLDER,
+              help='Path to the directory where will be downloaded the package',
+              cls=_AdvancedOption)
+@click.pass_obj
+def _cli_downloadApplicationPackage(sc, *args, **kwargs):
+    """
+    Download an application package
+    """
+    print('Start download...')
+    pkg = sc.downloadApplicationPackage(*args, **kwargs)
+    print('%s (%s)\t%s\t[%s]' % (pkg['name'], pkg['_id'], 'DOWNLOADED', kwargs['dir_path']))
+
+
+@package.command('list')
+@click.argument('app_name')
+@click.option('--name', default=None,
+              help='The baseName of the package',
+              cls=_AdvancedOption)
+@click.option('--os', 'pkg_os', type=click.Choice(['win', 'linux', 'macosx']))
+@click.option('--arch', type=click.Choice(['amd64', 'i386']))
+@click.option('--revision', default=None,
+              help='The revision of the application',
+              cls=_AdvancedOption)
+@click.option('--release', default=None,
+              help='List all extension within the release',
+              cls=_AdvancedOption)
+@click.option('--limit', default=Constant.DEFAULT_LIMIT,
+              help='The limit number of listed extensions ',
+              cls=_AdvancedOption)
+@click.pass_obj
+def _cli_listApplicationPackage(sc, *args, **kwargs):
+    """
+    List all the application package within an application
+    """
+    packages = sc.listApplicationPackage(*args, **kwargs)
+    print('%-25s\t%-30s\t\t%-30s' % ('PACKAGE ID', 'NAME', 'REVISION'))
+    print('%-25s\t%-30s\t\t%-30s' % ('-' * 25, '-' * 30, '-' * 30))
+    for pkg in packages:
+        print('%-25s\t%-30s\t\t%-30s' % (pkg['_id'], pkg['name'], pkg['meta']['revision'][0:30]))
+
+
+
+@package.command('delete')
+@click.argument('app_name')
+@click.argument('id_or_name')
+@click.pass_obj
+def _cli_deleteApplicationPackage(sc, *args, **kwargs):
+    """
+    Delete an application package by ID or Name
+    """
+    pkg = sc.deleteApplicationPackage(*args, **kwargs)
+    print('%s (%s)\t%s' % (pkg['name'], pkg['_id'], 'DELETED'))
