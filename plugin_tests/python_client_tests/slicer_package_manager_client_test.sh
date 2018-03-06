@@ -88,19 +88,19 @@ echo 'Content of the extension 5' > file5.txt
 cat file*.txt > contents.txt
 
 echo -n "UPLOAD $ext1Name"
-check "$cmd $auth extension upload $app1Name ./file1.txt --ext_os win --arch i386 --name $ext1Name --app_revision 0000 --desc \"Description for ex1\" > _output1.txt"
+check "$cmd $auth extension upload $app1Name ./file1.txt  --os win --arch i386 --name $ext1Name --app_revision 0000 --desc \"Description for ex1\" > _output1.txt"
 echo
 echo -n "UPLOAD $ext2Name"
-check "$cmd $auth extension upload $app1Name ./file2.txt --ext_os linux --arch i386 --name $ext2Name --app_revision 0002 --desc \"Description for ex2\" > _output2.txt"
+check "$cmd $auth extension upload $app1Name ./file2.txt  --os linux --arch i386 --name $ext2Name --app_revision 0002 --desc \"Description for ex2\" > _output2.txt"
 echo
 echo -n "UPLOAD $ext3Name"
-check "$cmd $auth extension upload $app1Name ./file3.txt --ext_os $os3 --arch $arch3 --name $ext3Name --app_revision $app_rev3 --revision $rev3 > _output3.txt"
+check "$cmd $auth extension upload $app1Name ./file3.txt  --os $os3 --arch $arch3 --name $ext3Name --app_revision $app_rev3 --revision $rev3 > _output3.txt"
 echo
 echo -n "UPLOAD $ext4Name"
-check "$cmd $auth extension upload $app1Name ./file4.txt --ext_os linux --arch amd64 --name $ext4Name --app_revision 0000 > _output4.txt"
+check "$cmd $auth extension upload $app1Name ./file4.txt  --os linux --arch amd64 --name $ext4Name --app_revision 0000 > _output4.txt"
 echo
 echo -n "UPLOAD $ext5Name"
-check "$cmd $auth extension upload $app1Name ./file5.txt --ext_os macosx --arch amd64 --name $ext5Name --app_revision 0000 > _output5.txt"
+check "$cmd $auth extension upload $app1Name ./file5.txt  --os macosx --arch amd64 --name $ext5Name --app_revision 0000 > _output5.txt"
 echo
 echo
 echo "------ UPLOAD ... OK ------"
@@ -159,7 +159,7 @@ echo
 echo
 ### Update extension  ###
 echo -n "UPDATE $ext5Name with same revision"
-check "$cmd $auth extension upload $app1Name ./file1.txt --ext_os macosx --arch amd64 --name $ext5Name --app_revision 0000"
+check "$cmd $auth extension upload $app1Name ./file1.txt  --os macosx --arch amd64 --name $ext5Name --app_revision 0000"
 echo
 echo -n "DOWNLOAD $ext5Name"
 check "$cmd $auth extension download $app1Name \"$id5\" --dir_path ./dwn2"
@@ -170,7 +170,7 @@ checkDiff
 echo
 rm -rf dwn2
 echo -n "UPDATE $ext5Name with different revision"
-check "$cmd $auth extension upload $app1Name ./file1.txt --ext_os macosx --arch amd64 --name $ext5Name --app_revision 0000 --revision 1111"
+check "$cmd $auth extension upload $app1Name ./file1.txt  --os macosx --arch amd64 --name $ext5Name --app_revision 0000 --revision 1111"
 echo
 echo -n "DOWNLOAD $ext5Name"
 check "$cmd $auth extension download $app1Name \"$id5\" --dir_path ./dwn2"
