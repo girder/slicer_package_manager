@@ -895,7 +895,22 @@ class App(Resource):
         """
         Get all the download count of all extension from an application. This document follow
         the data structure:
-        `` {"baseName": { "revision": { "os": {"arch": downloadCount}}}} ``
+        `` {
+            "{revision}": {
+                "extension": {
+                    "{baseName}": {
+                        "{os}": {
+                            "{arch}": {downloadCount}
+                        }
+                    }
+                },
+                "application": {
+                    "{os}": {
+                        "{arch}": {downloadCount}
+                    }
+                }
+            }
+        }``
 
         :param app_id: Application ID
         :return: The JSON document of all the download statistics of extension from the application
@@ -907,15 +922,15 @@ class App(Resource):
         downloadStats = {}
 
         for release in releases:
-            if 'meta' in release and 'downloadExtensions' in release['meta']:
+            if 'meta' in release and 'downloadStats' in release['meta']:
                 if release['name'] == constants.DRAFT_RELEASE_NAME:
-                    downloadStats.update(release['meta']['downloadExtensions'])
+                    downloadStats.update(release['meta']['downloadStats'])
                 else:
                     try:
                         downloadStats[release['meta']['revision']].update(
-                            release['meta']['downloadExtensions'])
+                            release['meta']['downloadStats'])
                     except KeyError:
                         downloadStats[
-                            release['meta']['revision']] = release['meta']['downloadExtensions']
+                            release['meta']['revision']] = release['meta']['downloadStats']
 
         return downloadStats
