@@ -22,6 +22,12 @@ from girder.utility.progress import ProgressContext
 from . import constants
 
 
+def isSlicerPackages(item):
+    if 'meta' in item and all(k in item['meta'] for k in ('os', 'arch', 'baseName', 'revision')):
+        return True
+    return False
+
+
 def getOrCreateReleaseFolder(application, user, app_revision):
     release_folder = None
     # Find the release by metadata revision
