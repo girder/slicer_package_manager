@@ -321,7 +321,7 @@ def _getOs():
 @extension.command('upload')
 @click.argument('app_name')
 @click.argument('filepath')
-@click.option('--ext_os', default=_getOs(),
+@click.option('--os', 'ext_os', default=_getOs(),
               help='The target operating system of the package',
               cls=_AdvancedOption
               )
