@@ -33,8 +33,9 @@ class Constant:
     """
 
     # Success
-    EXTENSION_AREADY_UP_TO_DATE = 30
-    EXTENSION_NOW_UP_TO_DATE = 31
+    PACKAGE_NOW_UP_TO_DATE = 31
+    EXTENSION_AREADY_UP_TO_DATE = 32
+    EXTENSION_NOW_UP_TO_DATE = 33
 
     # Default
     CURRENT_FOLDER = os.getcwd()
@@ -196,6 +197,7 @@ class SlicerPackageClient(GirderClient):
         :param packagetype: Type of the package
         :param codebase: Codebase of the extension name
         :param desc: The description of the extension
+        :param force: To force update the binary file
         :return: The uploaded extension
         """
         def _displayProgress(*args, **kwargs):
@@ -286,38 +288,18 @@ class SlicerPackageClient(GirderClient):
 
         :param app_name: Name of the application
         :param id_or_name: ID or name of the extension
-        :param dir_path: Path of the directory when the extension has to be downloaded
+        :param dir_path: Path of the directory where the extension has to be downloaded
         :return: The downloaded extension
         """
-        app = self._getApp(app_name)
-
-        if ObjectId.is_valid(id_or_name):
-            ext = self.get('/resource/%s' % id_or_name, parameters={'type': 'item'})
-        else:
-            ext = self.get(
-                '/app/%s/extension' % app['_id'],
-                parameters={'extension_name': id_or_name})
-            if ext:
-                ext = ext[0]
-        if not ext:
-            raise Exception('The extension "%s" doesn\'t exist.' % id_or_name)
-        files = self.get('/item/%s/files' % ext['_id'])
-        if not files:
-            raise Exception('The extension "%s" doesn\'t contain any file.' % id_or_name)
-        file = files[0]
-        self.downloadFile(
-            file['_id'],
-            os.path.join(dir_path, '%s.%s' % (ext['name'], file['name'].split('.')[1])))
-        return ext
+        return self._downloadPackage('extension', app_name, id_or_name, dir_path)
 
     def listExtension(self, app_name, name=None, ext_os=None, arch=None, app_revision=None,
                       release=Constant.DRAFT_RELEASE_NAME, limit=Constant.DEFAULT_LIMIT, all=False):
         """
-        List all the extension for a specific release and filter them with some option
+        List all the extension for a specific release and filter them with some optional parameters
         (os, arch, ...). By default the extensions within ``draft`` release are listed.
         It's also possible to specify the ``--all`` option to list all the extensions from all
         the release of an application.
-        To use the ``--id`` functionality you must provide a valid fullname of the extension.
 
         :param app_name: Name of the application
         :param name: Base name of the extension
@@ -360,18 +342,193 @@ class SlicerPackageClient(GirderClient):
         :param id_or_name: Extension ID or name
         :return: The deleted extension
         """
+        return self._deletePackage('extension', app_name, id_or_name)
+
+    def uploadApplicationPackage(self, filepath, app_name, pkg_os, arch, name, repo_type,
+                                 repo_url, revision, desc=''):
+        """
+        Upload an application package by providing a path to the file. It can also be used to update an
+        existing one.
+
+        :param filepath: The path to the file
+        :param app_name: The name of the application
+        :param pkg_os: The target operating system of the package
+        :param arch: The os chip architecture
+        :param name: The baseName of the package
+        :param repo_type: Type of the repository
+        :param repo_url: Url of the repository
+        :param revision: The revision of the application
+        :param desc: The description of the application package
+        :return: The uploaded application package
+        """
+        def _displayProgress(*args, **kwargs):
+            pass
+
+        app = self._getApp(app_name)
+        # Get potential existing package
+        package = self.listApplicationPackage(
+            app_name,
+            name=name,
+            pkg_os=pkg_os,
+            arch=arch,
+            revision=revision)
+        if not package:
+            # Create the package into Girder hierarchy
+            package = self.post('/app/%s/package' % app['_id'], parameters={
+                'os': pkg_os,
+                'arch': arch,
+                'baseName': name,
+                'repository_type': repo_type,
+                'repository_url': repo_url,
+                'revision': revision,
+                'description': desc
+            })
+
+            # Upload the package
+            self.uploadFileToItem(
+                package['_id'],
+                filepath,
+                reference='',
+                mimeType='application/octet-stream',
+                progressCallback=_displayProgress)
+        else:
+            package = package[0]
+            # Revision different or force upload
+            files = list(self.listFile(package['_id']))
+            if files:
+                oldFile = files[0]
+                filename = 'new_file'
+            else:
+                filename = None
+
+            # Upload the package
+            newFile = self.uploadFileToItem(
+                package['_id'],
+                filepath,
+                reference='',
+                filename=filename,
+                mimeType='application/octet-stream',
+                progressCallback=_displayProgress)
+
+            # Update the package into Girder hierarchy
+            package = self.post('/app/%s/package' % app['_id'], parameters={
+                'os': pkg_os,
+                'arch': arch,
+                'baseName': name,
+                'repository_type': repo_type,
+                'repository_url': repo_url,
+                'revision': revision,
+                'description': desc
+            })
+
+            files = list(self.listFile(package['_id']))
+            if len(files) == 2:
+                # Remove the oldFIle
+                self.delete('/file/%s' % oldFile['_id'])
+                # Change the name
+                self.put('/file/%s' % newFile['_id'], parameters={
+                    'name': os.path.basename(filepath)
+                })
+                return Constant.PACKAGE_NOW_UP_TO_DATE
+        return package
+
+    def downloadApplicationPackage(self, app_name, id_or_name, dir_path=Constant.CURRENT_FOLDER):
+        """
+        Download an application package by ID and store it in the given option ``dir_path``.
+        When we use the package id in ``id_or_name``, the parameter ``app_name`` is ignored.
+
+        :param app_name: Name of the application
+        :param id_or_name: ID or name of the package
+        :param dir_path: Path of the directory where the application package has to be downloaded
+        :return: The downloaded package
+        """
+        return self._downloadPackage('package', app_name, id_or_name, dir_path)
+
+    def listApplicationPackage(self, app_name, name=None, pkg_os=None, arch=None, revision=None,
+                               release=None, limit=Constant.DEFAULT_LIMIT):
+        """
+        List all the application package filtered by some optional parameters (os, arch, ...).
+        By default all the application packages are listed.
+        It's also possible to specify the ``--release`` option to list all the package from a
+        specific release.
+
+        :param app_name: Name of the application
+        :param name: Base name of the extension
+        :param pkg_os: The target operating system of the package
+        :param arch: The os chip architecture
+        :param revision: Revision of the application
+        :param release: Name of the release
+        :param limit: Limit of the number of extensions listed
+        :return: A list of extensions filtered by optional parameters
+        """
+        app = self._getApp(app_name)
+        release_id = None
+        if release:
+            release_folder = self.listRelease(app_name, release)
+            if release_folder:
+                release_id = release_folder['_id']
+            else:
+                raise Exception('The release "%s" doesn\'t exist.' % release)
+
+        extensions = self.get('/app/%s/package' % app['_id'], parameters={
+            'os': pkg_os,
+            'arch': arch,
+            'baseName': name,
+            'revision': revision,
+            'release_id': release_id,
+            'limit': limit,
+            'sort': 'created',
+            'sortDir': -1
+        })
+        return extensions
+
+    def deleteApplicationPackage(self, app_name, id_or_name):
+        """
+        Delete an application package within an application.
+
+        :param app_name: Name of the application
+        :param id_or_name: Package ID or name
+        :return: The deleted application package
+        """
+        return self._deletePackage('package', app_name, id_or_name)
+
+    # ---------------- UTILITIES ---------------- #
+
+    def _downloadPackage(self, package_type, app_name, id_or_name, dir_path):
         app = self._getApp(app_name)
 
         if ObjectId.is_valid(id_or_name):
-            ext = self.get(
-                '/app/%s/extension' % app['_id'],
-                parameters={'extension_id': id_or_name})
+            pkg = self.get('/resource/%s' % id_or_name, parameters={'type': 'item'})
         else:
-            ext = self.get(
-                '/app/%s/extension' % app['_id'],
-                parameters={'extension_name': id_or_name})
-        if not ext:
-            raise Exception('The extension "%s" doesn\'t exist.' % id_or_name)
-        ext = ext[0]
-        self.delete('/app/%s/extension/%s' % (app['_id'], ext['_id']))
-        return ext
+            pkg = self.get(
+                '/app/%s/%s' % (app['_id'], package_type),
+                parameters={'%s_name' % package_type: id_or_name})
+            if pkg:
+                pkg = pkg[0]
+        if not pkg:
+            raise Exception('The %s "%s" doesn\'t exist.' % (package_type, id_or_name))
+        files = self.get('/item/%s/files' % pkg['_id'])
+        if not files:
+            raise Exception('The %s "%s" doesn\'t contain any file.' % (package_type, id_or_name))
+        file = files[0]
+        self.downloadFile(
+            file['_id'],
+            os.path.join(dir_path, '%s.%s' % (pkg['name'], file['name'].split('.')[1])))
+        return pkg
+
+    def _deletePackage(self, package_type, app_name, id_or_name):
+        app = self._getApp(app_name)
+
+        if ObjectId.is_valid(id_or_name):
+            pkg = self.get(
+                '/app/%s/%s' % (app['_id'], package_type),
+                parameters={'%s_id' % package_type: id_or_name})
+        else:
+            pkg = self.get(
+                '/app/%s/%s' % (app['_id'], package_type),
+                parameters={'%s_name' % package_type: id_or_name})
+        if not pkg:
+            raise Exception('The %s "%s" doesn\'t exist.' % (package_type, id_or_name))
+        pkg = pkg[0]
+        self.delete('/app/%s/%s/%s' % (app['_id'], package_type, pkg['_id']))
+        return pkg
