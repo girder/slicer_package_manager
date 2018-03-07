@@ -167,13 +167,6 @@ class SlicerPackageClient(GirderClient):
             releases += draft_releases
         return releases
 
-    def getRevisions(self, app_name, coll_id=None, offset=0):
-        app = self._getApp(app_name=app_name, coll_id=coll_id)
-        return self.get(
-            '/app/%s/draft' % app['_id'],
-            parameters={'offset': offset}
-        )
-
     def deleteRelease(self, app_name, name, coll_id=None):
         """
         Delete a release within an application.
@@ -186,9 +179,43 @@ class SlicerPackageClient(GirderClient):
         app = self._getApp(app_name=app_name, coll_id=coll_id)
         release = self.listRelease(app_name, name)
         if not release:
-            raise Exception('The release "%s" doesn\'t exist.')
+            raise Exception('The release "%s" doesn\'t exist.' % name)
         self.delete('/app/%s/release/%s' % (app['_id'], name))
         return release
+
+    def listDraftRelease(self, app_name, coll_id=None, revision=None, offset=0):
+        """
+        List all the draft release with an offset option to list only the older.
+        It's also possible to list one release within the Draft releaseby providing
+        its specific revision.
+
+        :param app_name: Name of the application
+        :param coll_id: Collection ID
+        :param revision: Revision of the release
+        :param offset: offset to list only older revisions
+        :return: The list of draft release
+        """
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
+        return self.get(
+            '/app/%s/draft' % app['_id'],
+            parameters={'revision': revision, 'offset': offset}
+        )
+
+    def deleteDraftRelease(self, app_name, revision, coll_id=None):
+        """
+        Delete a specific revision within the Draft release.
+
+        :param app_name: Name of the application
+        :param revision: Revision of the release
+        :param coll_id: Collection ID
+        :return: The deleted release
+        """
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
+        release = self.listDraftRelease(app_name, revision=revision)
+        if not release:
+            raise Exception('The release with the revision "%s" doesn\'t exist.' % revision)
+        self.delete('/app/%s/release/%s' % (app['_id'], release[0]['name']))
+        return release[0]
 
     def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url, revision,
                         app_revision, packagetype='', codebase='', desc='', coll_id=None, force=False):
@@ -491,7 +518,7 @@ class SlicerPackageClient(GirderClient):
             else:
                 raise Exception('The release "%s" doesn\'t exist.' % release)
 
-        extensions = self.get('/app/%s/package' % app['_id'], parameters={
+        pkg = self.get('/app/%s/package' % app['_id'], parameters={
             'os': pkg_os,
             'arch': arch,
             'baseName': name,
@@ -501,7 +528,7 @@ class SlicerPackageClient(GirderClient):
             'sort': 'created',
             'sortDir': -1
         })
-        return extensions
+        return pkg
 
     def deleteApplicationPackage(self, app_name, id_or_name, coll_id=None):
         """
