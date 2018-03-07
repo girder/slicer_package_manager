@@ -293,6 +293,30 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(
             resp.json[0]['meta']['revision'],
             self._draftRevision['meta']['revision'])
+        # With the parameter 'revision'
+        resp = self.request(
+            path='/app/%s/draft' % self._app['_id'],
+            method='GET',
+            user=self._user,
+            params={'revision': self._draftRevision['meta']['revision']}
+        )
+        # Check if it has return the good revision from the draft folder
+        self.assertStatusOk(resp)
+        self.assertEqual(len(resp.json), 1)
+        self.assertEqual(ObjectId(resp.json[0]['_id']), self._draftRevision['_id'])
+        self.assertEqual(
+            resp.json[0]['meta']['revision'],
+            self._draftRevision['meta']['revision'])
+        # With the parameter 'revision' set to a wrong value
+        resp = self.request(
+            path='/app/%s/draft' % self._app['_id'],
+            method='GET',
+            user=self._user,
+            params={'revision': 'wrongRev'}
+        )
+        # Check if it has return the good revision from the draft folder
+        self.assertStatusOk(resp)
+        self.assertEqual(len(resp.json), 0)
 
     def testDeleteReleaseByID(self):
         self._deleteRelease('_id')
