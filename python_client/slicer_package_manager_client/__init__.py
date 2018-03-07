@@ -152,14 +152,14 @@ class SlicerPackageClient(GirderClient):
                 parameters={'release_id_or_name': name})
         else:
             releases = self.get('/app/%s/release' % app['_id'])
-            draft_releases = self.get('/app/%s/release/revision' % app['_id'])
+            draft_releases = self.get('/app/%s/draft' % app['_id'])
             releases += draft_releases
         return releases
 
     def getRevisions(self, app_name, offset=0):
         app = self._getApp(app_name)
         return self.get(
-            '/app/%s/release/revision' % app['_id'],
+            '/app/%s/draft' % app['_id'],
             parameters={'offset': offset}
         )
 

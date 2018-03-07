@@ -284,7 +284,7 @@ class SlicerPackageManagerTest(base.TestCase):
 
     def testGetAllDraftRelease(self):
         resp = self.request(
-            path='/app/%s/release/revision' % self._app['_id'],
+            path='/app/%s/draft' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -384,7 +384,7 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(extension2['name'], self._extensions['extension4']['name'])
 
         resp = self.request(
-            path='/app/%s/release/revision' % self._app['_id'],
+            path='/app/%s/draft' % self._app['_id'],
             method='GET',
             user=self._user
         )
@@ -402,7 +402,7 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertStatusOk(resp)
 
         resp = self.request(
-            path='/app/%s/release/revision' % self._app['_id'],
+            path='/app/%s/draft' % self._app['_id'],
             method='GET',
             user=self._user
         )
