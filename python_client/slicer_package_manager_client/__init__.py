@@ -52,7 +52,12 @@ class SlicerPackageClient(GirderClient):
         * Release
         * Extension
 
-    To know more about the it : TODO: LINK to README
+    It's now possible to choose the collection within create the application. It's also
+    possible to get an existing collection by ID for creating the application inside.
+
+    In this case, you must provide the 'coll_id' argument to use all the other
+    command on these application. By default all the command look for application
+    which are under the "Applications" collection.
     """
 
     def __init__(self, host=None, port=None, apiRoot=None, scheme=None, apiUrl=None,
@@ -61,15 +66,23 @@ class SlicerPackageClient(GirderClient):
             host=host, port=port, apiRoot=apiRoot, scheme=scheme, apiUrl=apiUrl,
             progressReporterCls=progressReporterCls)
 
-    def createApp(self, name, desc=None):
+    def createApp(self, name, desc=None, coll_id=None, coll_name=None, coll_desc=None,
+                  public=None):
         """
-        Create a new application in the default collection ``Applications``.
+        Create a new application in the collection which correspond to ``coll_id``,
+        by default it will create the application in the collection ``Applications``.
         The application will contain a ``draft`` release (folder).
         A template of the name of each future uploaded extension will be set as a metadata of
         this new application.
+        It's also possible to create a new collection by specifying "coll_name". If this collection
+        already exist it will use it.
 
         :param name: name of the new application
         :param desc: Optional description of the application
+        :param coll_id: Id of an existing collection
+        :param coll_name: Name of the collection
+        :param coll_desc: Optional description of the new collection
+        :param public: Whether the collection should be publicly visible
         :return:  The new application
         """
         apps = self.listApp(name=name)
@@ -77,56 +90,53 @@ class SlicerPackageClient(GirderClient):
             raise Exception('The Application "%s" already exist.' % name)
         return self.post('/app', parameters={
             'name': name,
-            'app_description': desc
+            'app_description': desc,
+            'collection_id': coll_id,
+            'collection_name': coll_name,
+            'collection_description': coll_desc,
+            'public': public
         })
 
-    def listApp(self, name=None):
+    def listApp(self, name=None, coll_id=None):
         """
-        1. List all the applications within the default collection ``Applications``.
-        2. Get the application by name.
+        List all the applications within a specific collection by providing the option
+        ``coll_id``. By default it will list within the collection ``Applications``.
+        It can also lead to get the application by name.
 
         :param name: application mame
+        :param coll_id: Collection ID
         :return:  A list of applications
         """
         apps = self.get('/app', parameters={
+            'collection_id': coll_id,
             'name': name
         })
         return apps
 
-    def _getApp(self, app_name):
-        """
-        Private method to get a single application by Name.
-
-        :param app_name: Name of the application
-        :return: A single application
-        """
-        apps = self.listApp(app_name)
-        if not apps:
-            raise Exception('The Application "%s" doesn\'t exist.' % app_name)
-        return apps[0]
-
-    def deleteApp(self, name):
+    def deleteApp(self, name, coll_id=None):
         """
         Delete the application by ID.
 
         :param name: application name
+        :param coll_id: Collection ID
         :return: The deleted application
         """
-        app = self._getApp(name)
+        app = self._getApp(app_name=name, coll_id=coll_id)
         self.delete('/app/%s' % app['_id'])
         return app
 
-    def createRelease(self, app_name, name, revision, desc=None):
+    def createRelease(self, app_name, name, revision, coll_id=None, desc=None):
         """
         Create a new release within the application corresponding to ``app_name``.
 
         :param app_name: Name of the application
         :param name: Name of the release
         :param revision: Revision of the application
+        :param coll_id: Collection ID
         :param desc: Description of the release
         :return: The new release
         """
-        app = self._getApp(app_name)
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
         releases = self.listRelease(app_name=app_name, name=name)
         if releases:
             raise Exception('The release "%s" already exist.' % name)
@@ -136,16 +146,17 @@ class SlicerPackageClient(GirderClient):
             'description': desc
         })
 
-    def listRelease(self, app_name, name=None):
+    def listRelease(self, app_name, name=None, coll_id=None):
         """
         1. List all the release within an application.
         2. Get the release by name.
 
         :param app_name: Name of the application
         :param name: Name of the release
+        :param coll_id: Collection ID
         :return: A list of all the release within the application
         """
-        app = self._getApp(app_name)
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
         if name:
             releases = self.get(
                 '/app/%s/release' % app['_id'],
@@ -156,22 +167,23 @@ class SlicerPackageClient(GirderClient):
             releases += draft_releases
         return releases
 
-    def getRevisions(self, app_name, offset=0):
-        app = self._getApp(app_name)
+    def getRevisions(self, app_name, coll_id=None, offset=0):
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
         return self.get(
             '/app/%s/draft' % app['_id'],
             parameters={'offset': offset}
         )
 
-    def deleteRelease(self, app_name, name):
+    def deleteRelease(self, app_name, name, coll_id=None):
         """
         Delete a release within an application.
 
         :param app_name: Name of the application
         :param name: Name of the release
+        :param coll_id: Collection ID
         :return: The deleted release
         """
-        app = self._getApp(app_name)
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
         release = self.listRelease(app_name, name)
         if not release:
             raise Exception('The release "%s" doesn\'t exist.')
@@ -179,7 +191,7 @@ class SlicerPackageClient(GirderClient):
         return release
 
     def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url, revision,
-                        app_revision, packagetype='', codebase='', desc='', force=False):
+                        app_revision, packagetype='', codebase='', desc='', coll_id=None, force=False):
         """
         Upload an extension by providing a path to the file. It can also be used to update an
         existing one, in this case the upload is done only if the extension has a different revision
@@ -197,13 +209,14 @@ class SlicerPackageClient(GirderClient):
         :param packagetype: Type of the package
         :param codebase: Codebase of the extension name
         :param desc: The description of the extension
+        :param coll_id: Collection ID
         :param force: To force update the binary file
         :return: The uploaded extension
         """
         def _displayProgress(*args, **kwargs):
             pass
 
-        app = self._getApp(app_name)
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
         # Get potential existing extension
         extensions = self.listExtension(
             app_name,
@@ -281,19 +294,21 @@ class SlicerPackageClient(GirderClient):
 
         return extension
 
-    def downloadExtension(self, app_name, id_or_name, dir_path=Constant.CURRENT_FOLDER):
+    def downloadExtension(self, app_name, id_or_name, coll_id=None, dir_path=Constant.CURRENT_FOLDER):
         """
         Download an extension by ID and store it in the given option ``dir_path``.
         When we use the extension id in ``id_or_name``, the parameter ``app_name`` is ignored.
 
         :param app_name: Name of the application
         :param id_or_name: ID or name of the extension
+        :param coll_id: Collection ID
         :param dir_path: Path of the directory where the extension has to be downloaded
         :return: The downloaded extension
         """
-        return self._downloadPackage('extension', app_name, id_or_name, dir_path)
+        return self._downloadPackage('extension', app_name=app_name, id_or_name=id_or_name,
+                                     dir_path=dir_path, coll_id=coll_id)
 
-    def listExtension(self, app_name, name=None, ext_os=None, arch=None, app_revision=None,
+    def listExtension(self, app_name, coll_id=None, name=None, ext_os=None, arch=None, app_revision=None,
                       release=Constant.DRAFT_RELEASE_NAME, limit=Constant.DEFAULT_LIMIT, all=False):
         """
         List all the extension for a specific release and filter them with some optional parameters
@@ -302,6 +317,7 @@ class SlicerPackageClient(GirderClient):
         the release of an application.
 
         :param app_name: Name of the application
+        :param coll_id: Collection ID
         :param name: Base name of the extension
         :param ext_os: The target operating system of the package
         :param arch: The os chip architecture
@@ -311,7 +327,7 @@ class SlicerPackageClient(GirderClient):
         :param all: Boolean that allow to list extensions from all the release
         :return: A list of extensions filtered by optional parameters
         """
-        app = self._getApp(app_name)
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
 
         if all:
             release_id = None
@@ -334,18 +350,19 @@ class SlicerPackageClient(GirderClient):
         })
         return extensions
 
-    def deleteExtension(self, app_name, id_or_name):
+    def deleteExtension(self, app_name, id_or_name, coll_id=None):
         """
         Delete an extension within an application.
 
         :param app_name: Name of the application
         :param id_or_name: Extension ID or name
+        :param coll_id: Collection ID
         :return: The deleted extension
         """
-        return self._deletePackage('extension', app_name, id_or_name)
+        return self._deletePackage('extension', app_name, id_or_name, coll_id)
 
     def uploadApplicationPackage(self, filepath, app_name, pkg_os, arch, name, repo_type,
-                                 repo_url, revision, desc=''):
+                                 repo_url, revision, coll_id=None, desc=''):
         """
         Upload an application package by providing a path to the file. It can also be used to update an
         existing one.
@@ -358,13 +375,14 @@ class SlicerPackageClient(GirderClient):
         :param repo_type: Type of the repository
         :param repo_url: Url of the repository
         :param revision: The revision of the application
+        :param coll_id: Collection ID
         :param desc: The description of the application package
         :return: The uploaded application package
         """
         def _displayProgress(*args, **kwargs):
             pass
 
-        app = self._getApp(app_name)
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
         # Get potential existing package
         package = self.listApplicationPackage(
             app_name,
@@ -432,19 +450,21 @@ class SlicerPackageClient(GirderClient):
                 return Constant.PACKAGE_NOW_UP_TO_DATE
         return package
 
-    def downloadApplicationPackage(self, app_name, id_or_name, dir_path=Constant.CURRENT_FOLDER):
+    def downloadApplicationPackage(self, app_name, id_or_name, coll_id=None, dir_path=Constant.CURRENT_FOLDER):
         """
         Download an application package by ID and store it in the given option ``dir_path``.
         When we use the package id in ``id_or_name``, the parameter ``app_name`` is ignored.
 
         :param app_name: Name of the application
         :param id_or_name: ID or name of the package
+        :param coll_id: Collection ID
         :param dir_path: Path of the directory where the application package has to be downloaded
         :return: The downloaded package
         """
-        return self._downloadPackage('package', app_name, id_or_name, dir_path)
+        return self._downloadPackage('package', app_name=app_name, id_or_name=id_or_name,
+                                     dir_path=dir_path, coll_id=coll_id)
 
-    def listApplicationPackage(self, app_name, name=None, pkg_os=None, arch=None, revision=None,
+    def listApplicationPackage(self, app_name, coll_id=None, name=None, pkg_os=None, arch=None, revision=None,
                                release=None, limit=Constant.DEFAULT_LIMIT):
         """
         List all the application package filtered by some optional parameters (os, arch, ...).
@@ -453,6 +473,7 @@ class SlicerPackageClient(GirderClient):
         specific release.
 
         :param app_name: Name of the application
+        :param coll_id: Collection ID
         :param name: Base name of the extension
         :param pkg_os: The target operating system of the package
         :param arch: The os chip architecture
@@ -461,7 +482,7 @@ class SlicerPackageClient(GirderClient):
         :param limit: Limit of the number of extensions listed
         :return: A list of extensions filtered by optional parameters
         """
-        app = self._getApp(app_name)
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
         release_id = None
         if release:
             release_folder = self.listRelease(app_name, release)
@@ -482,20 +503,34 @@ class SlicerPackageClient(GirderClient):
         })
         return extensions
 
-    def deleteApplicationPackage(self, app_name, id_or_name):
+    def deleteApplicationPackage(self, app_name, id_or_name, coll_id=None):
         """
         Delete an application package within an application.
 
         :param app_name: Name of the application
         :param id_or_name: Package ID or name
+        :param coll_id: Collection ID
         :return: The deleted application package
         """
-        return self._deletePackage('package', app_name, id_or_name)
+        return self._deletePackage('package', app_name=app_name, id_or_name=id_or_name, coll_id=coll_id)
 
     # ---------------- UTILITIES ---------------- #
 
-    def _downloadPackage(self, package_type, app_name, id_or_name, dir_path):
-        app = self._getApp(app_name)
+    def _getApp(self, app_name, coll_id=None):
+        """
+        Private method to get a single application by Name.
+
+        :param app_name: Name of the application
+        :param coll_id: ID of the collection that contains the application
+        :return: A single application
+        """
+        apps = self.listApp(name=app_name, coll_id=coll_id)
+        if not apps:
+            raise Exception('The Application "%s" doesn\'t exist.' % app_name)
+        return apps[0]
+
+    def _downloadPackage(self, package_type, app_name, id_or_name, dir_path, coll_id):
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
 
         if ObjectId.is_valid(id_or_name):
             pkg = self.get('/resource/%s' % id_or_name, parameters={'type': 'item'})
@@ -516,8 +551,8 @@ class SlicerPackageClient(GirderClient):
             os.path.join(dir_path, '%s.%s' % (pkg['name'], file['name'].split('.')[1])))
         return pkg
 
-    def _deletePackage(self, package_type, app_name, id_or_name):
-        app = self._getApp(app_name)
+    def _deletePackage(self, package_type, app_name, id_or_name, coll_id):
+        app = self._getApp(app_name=app_name, coll_id=coll_id)
 
         if ObjectId.is_valid(id_or_name):
             pkg = self.get(

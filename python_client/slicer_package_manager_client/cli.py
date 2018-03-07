@@ -213,6 +213,23 @@ def package(sc):
               help='Description of the application',
               show_default=True,
               cls=_AdvancedOption)
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
+@click.option('--coll_name', default=None,
+              help='Name of the new collection',
+              show_default=True,
+              cls=_AdvancedOption)
+@click.option('--coll_desc', default=None,
+              help='Description of the new collection',
+              show_default=True,
+              cls=_AdvancedOption)
+@click.option('--public', flag_value='public', default=None,
+              help='Whether the collection should be publicly visible',
+              show_default=True,
+              cls=_AdvancedOption)
+
 @click.pass_obj
 def _cli_createApp(sc, *args, **kwargs):
     """
@@ -223,6 +240,10 @@ def _cli_createApp(sc, *args, **kwargs):
 
 
 @app.command('list')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--name', default=None,
               help='Name of the application',
               cls=_AdvancedOption)
@@ -241,6 +262,10 @@ def _cli_listApp(sc, *args, **kwargs):
 
 @app.command('delete')
 @click.argument('name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_deleteApp(sc, *args, **kwargs):
     """
@@ -258,6 +283,10 @@ def _cli_deleteApp(sc, *args, **kwargs):
 @click.option('--revision', prompt=True,
               help='Revision of the application',
               cls=_AdvancedOption)
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--desc', default=None,
               help='Description of the release',
               cls=_AdvancedOption)
@@ -272,6 +301,10 @@ def _cli_createRelease(sc, *args, **kwargs):
 
 @release.command('list')
 @click.argument('app_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_listRelease(sc, *args, **kwargs):
     """
@@ -291,6 +324,10 @@ def _cli_listRelease(sc, *args, **kwargs):
 
 @release.command('list_draft')
 @click.argument('app_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--offset', default=0,
               help='Offset of the list',
               cls=_AdvancedOption)
@@ -314,6 +351,10 @@ def _cli_getRevisions(sc, *args, **kwargs):
 @release.command('delete')
 @click.argument('app_name')
 @click.argument('name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_deleteRelease(sc, *args, **kwargs):
     """
@@ -356,6 +397,10 @@ def _cli_deleteRelease(sc, *args, **kwargs):
 @click.option('--desc', default='',
               help='Description of the extension',
               cls=_AdvancedOption)
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--force', default=False,
               help='Force the upload',
               cls=_AdvancedOption)
@@ -377,6 +422,10 @@ def _cli_uploadExtension(sc, *args, **kwargs):
 @extension.command('download')
 @click.argument('app_name')
 @click.argument('id_or_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--dir_path', default=Constant.CURRENT_FOLDER,
               help='Path to the directory where will be downloaded the extension',
               cls=_AdvancedOption)
@@ -392,6 +441,10 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 
 @extension.command('list')
 @click.argument('app_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--name', default=None,
               help='The baseName of the extension',
               cls=_AdvancedOption)
@@ -425,6 +478,10 @@ def _cli_listExtension(sc, *args, **kwargs):
 @extension.command('delete')
 @click.argument('app_name')
 @click.argument('id_or_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_deleteExtension(sc, *args, **kwargs):
     """
@@ -455,6 +512,10 @@ def _cli_deleteExtension(sc, *args, **kwargs):
 @click.option('--revision', prompt=True,
               help='Revision of the application',
               cls=_AdvancedOption)
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--desc', default='',
               help='Description of the package',
               cls=_AdvancedOption)
@@ -474,6 +535,10 @@ def _cli_uploadApplicationPackage(sc, *args, **kwargs):
 @package.command('download')
 @click.argument('app_name')
 @click.argument('id_or_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--dir_path', default=Constant.CURRENT_FOLDER,
               help='Path to the directory where will be downloaded the package',
               cls=_AdvancedOption)
@@ -489,6 +554,10 @@ def _cli_downloadApplicationPackage(sc, *args, **kwargs):
 
 @package.command('list')
 @click.argument('app_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.option('--name', default=None,
               help='The baseName of the package',
               cls=_AdvancedOption)
@@ -515,10 +584,13 @@ def _cli_listApplicationPackage(sc, *args, **kwargs):
         print('%-25s\t%-30s\t\t%-30s' % (pkg['_id'], pkg['name'], pkg['meta']['revision'][0:30]))
 
 
-
 @package.command('delete')
 @click.argument('app_name')
 @click.argument('id_or_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_deleteApplicationPackage(sc, *args, **kwargs):
     """
