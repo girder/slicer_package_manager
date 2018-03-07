@@ -28,7 +28,7 @@ arch3="amd64"
 rev3="0.0.1"
 
 function assert_eval {
-    eval $1 #>/dev/null 2>&1
+    eval $1 >/dev/null 2>&1
     if [ $? -eq "$2" ]; then
         echo " ... OK"
     else
@@ -238,6 +238,28 @@ diff dwn/*pkg1* dwn2/*pkg*
 assert $? 0
 echo
 echo "------ TEST PACKAGE ... OK ------"
+echo
+
+echo "########### DRAFT ###########"
+echo
+
+echo "### LIST ###"
+echo
+echo -n "List all the draft release"
+assert_eval "$cli $auth draft list $app1Name" 0
+echo -n "List the older draft release using an offset"
+assert_eval "$cli $auth draft list $app1Name --offset 1" 0
+echo -n "List one draft release using its 'revision'"
+assert_eval "$cli $auth draft list $app1Name --revision 0002" 0
+echo
+
+echo "### DELETE ###"
+echo
+echo -n "Delete Draft release by revision"
+assert_eval "$cli $auth draft delete $app1Name 0002" 0
+echo
+echo "------ TEST DRAFT ... OK ------"
+echo
 
 if ! $DEBUG; then
     echo
