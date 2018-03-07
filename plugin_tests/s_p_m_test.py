@@ -54,7 +54,10 @@ class SlicerPackageManagerTest(base.TestCase):
             creator=self._user)
         self._app = Folder().setMetadata(
             self._app,
-            {'packageNameTemplate': constants.PACKAGE_TEMPLATE_NAME}
+            {
+                'applicationPackageNameTemplate': constants.APPLICATION_PACKAGE_TEMPLATE_NAME,
+                'extensionPackageNameTemplate': constants.EXTENSION_PACKAGE_TEMPLATE_NAME
+            }
         )
         self._draftRelease = Folder().createFolder(
             parent=self._app,
@@ -82,22 +85,22 @@ class SlicerPackageManagerTest(base.TestCase):
             creator=self._user)
         self._release = Folder().setMetadata(self._release, {'revision': '0005'})
         self._extensions = utile.extensions
-        self._extensions['extension1']['name'] = constants.PACKAGE_TEMPLATE_NAME.format(
+        self._extensions['extension1']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
             **self._extensions['extension1']['meta'])
-        self._extensions['extension2']['name'] = constants.PACKAGE_TEMPLATE_NAME.format(
+        self._extensions['extension2']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
             **self._extensions['extension2']['meta'])
-        self._extensions['extension3']['name'] = constants.PACKAGE_TEMPLATE_NAME.format(
+        self._extensions['extension3']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
             **self._extensions['extension3']['meta'])
-        self._extensions['extension4']['name'] = constants.PACKAGE_TEMPLATE_NAME.format(
+        self._extensions['extension4']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
             **self._extensions['extension4']['meta'])
-        self._extensions['extension5']['name'] = constants.PACKAGE_TEMPLATE_NAME.format(
+        self._extensions['extension5']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
             **self._extensions['extension5']['meta'])
         self._packages = utile.packages
-        self._packages['package1']['name'] = constants.PACKAGE_TEMPLATE_NAME.format(
+        self._packages['package1']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
             **self._packages['package1']['meta'])
-        self._packages['package2']['name'] = constants.PACKAGE_TEMPLATE_NAME.format(
+        self._packages['package2']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
             **self._packages['package2']['meta'])
-        self._packages['package3']['name'] = constants.PACKAGE_TEMPLATE_NAME.format(
+        self._packages['package3']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
             **self._packages['package3']['meta'])
 
     def testInitApp(self):
@@ -148,7 +151,11 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(resp.json['name'], self._app['name'])
         self.assertEqual(resp.json['description'], self._app['description'])
         self.assertEqual(
-            resp.json['meta']['packageNameTemplate'], constants.PACKAGE_TEMPLATE_NAME)
+            resp.json['meta']['applicationPackageNameTemplate'],
+            constants.APPLICATION_PACKAGE_TEMPLATE_NAME)
+        self.assertEqual(
+            resp.json['meta']['extensionPackageNameTemplate'],
+            constants.EXTENSION_PACKAGE_TEMPLATE_NAME)
         # List all applications from 'Applications' collection (Default)
         resp = self.request(
             path='/app',
@@ -173,7 +180,11 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(resp.json[0]['name'], self._app['name'])
         self.assertEqual(resp.json[0]['description'], self._app['description'])
         self.assertEqual(
-            resp.json[0]['meta']['packageNameTemplate'], constants.PACKAGE_TEMPLATE_NAME)
+            resp.json[0]['meta']['applicationPackageNameTemplate'],
+            constants.APPLICATION_PACKAGE_TEMPLATE_NAME)
+        self.assertEqual(
+            resp.json[0]['meta']['extensionPackageNameTemplate'],
+            constants.EXTENSION_PACKAGE_TEMPLATE_NAME)
 
         # TODO: Add test with text search
 
@@ -447,7 +458,7 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(updatedExtension['_id'], extension['_id'])
         self.assertEqual(
             updatedExtension['name'],
-            constants.PACKAGE_TEMPLATE_NAME.format(**newParams)
+            constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(**newParams)
         )
         self.assertNotEqual(updatedExtension['meta'], extension['meta'])
 
@@ -632,7 +643,7 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(updatedPackage['_id'], package['_id'])
         self.assertEqual(
             updatedPackage['name'],
-            constants.PACKAGE_TEMPLATE_NAME.format(**newParams)
+            constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(**newParams)
         )
         self.assertNotEqual(updatedPackage['meta'], package['meta'])
 
@@ -958,7 +969,11 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(resp.json['name'], appName)
         self.assertEqual(resp.json['description'], appDescription)
         self.assertEqual(
-            resp.json['meta']['packageNameTemplate'], constants.PACKAGE_TEMPLATE_NAME)
+            resp.json['meta']['applicationPackageNameTemplate'],
+            constants.APPLICATION_PACKAGE_TEMPLATE_NAME)
+        self.assertEqual(
+            resp.json['meta']['extensionPackageNameTemplate'],
+            constants.EXTENSION_PACKAGE_TEMPLATE_NAME)
         # Check if it has created/load the collection
         topLevelFolder = Folder().load(resp.json['parentId'], user=self._user)
         collection = Collection().load(topLevelFolder['parentId'], user=self._user)
