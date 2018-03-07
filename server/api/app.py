@@ -331,16 +331,19 @@ class App(Resource):
         Description('Get all the draft releases from an application.')
         .responseClass('Folder')
         .param('app_id', 'The application\'s ID.', paramType='path')
+        .param('revision', 'The revision of a draft release', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
     @access.user(scope=TokenScope.DATA_READ)
-    def getAllDraftReleases(self, app_id, limit, offset, sort):
+    def getAllDraftReleases(self, app_id, revision, limit, offset, sort):
         """
-        Get a list of all the draft release of an application.
+        Get a list of all the draft release of an application. It's also
+        possible to filter this list by the metadata ``revision``.
 
         :param app_id: Application ID
+        :param revision: Revision of one of the draft release
         :return: List of all release within the application
         """
         user = self.getCurrentUser()
@@ -358,11 +361,14 @@ class App(Resource):
             raise Exception('There is no %s release in this application.'
                             % constants.DRAFT_RELEASE_NAME)
         release = release[0]
-
+        draft_filters = None
+        if revision:
+            draft_filters = {'meta.revision': revision}
         return list(self._model.childFolders(
             release,
             'Folder',
             user=user,
+            filters=draft_filters,
             limit=limit,
             offset=offset,
             sort=sort))
