@@ -130,7 +130,7 @@ echo -n "> $ext5Name"
 assert_eval "$cli $auth extension download $app1Name \"$ext_id5\" --dir_path ./dwn" 0
 echo
 echo "___By NAME___"
-ext_name3="${ext3Name}_${os3}_${arch3}_${rev3}"
+ext_name3="${app_rev3}_${ext3Name}_${os3}_${arch3}_${rev3}"
 echo -n "> $ext3Name"
 assert_eval "$cli $auth extension download $app1Name $ext_name3 --dir_path ./dwn" 0
 echo
