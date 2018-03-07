@@ -197,6 +197,12 @@ def release(sc):
 
 @main.group(context_settings=_CONTEXT_SETTINGS)
 @click.pass_obj
+def draft(sc):
+    pass
+
+
+@main.group(context_settings=_CONTEXT_SETTINGS)
+@click.pass_obj
 def extension(sc):
     pass
 
@@ -233,10 +239,10 @@ def package(sc):
 @click.pass_obj
 def _cli_createApp(sc, *args, **kwargs):
     """
-    Create a new application
+    Create a new application.
     """
-    newApp = sc.createApp(*args, **kwargs)
-    print('%s (%s)\t%s' % (newApp['_id'], newApp['name'], 'CREATED'))
+    application = sc.createApp(*args, **kwargs)
+    print('%s (%s)\t%s' % (application['_id'], application['name'], 'CREATED'))
 
 
 @app.command('list')
@@ -250,12 +256,12 @@ def _cli_createApp(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_listApp(sc, *args, **kwargs):
     """
-    List all the applications
+    List all the applications.
     """
-    apps = sc.listApp(*args, **kwargs)
+    applications = sc.listApp(*args, **kwargs)
     print('%-25s\t%-20s\t%-50s' % ('APPLICATION ID', 'NAME', 'DESCRIPTION'))
     print('%-25s\t%-20s\t%-50s' % ('-' * 25, '-' * 20, '-' * 50))
-    for application in apps:
+    for application in applications:
         print('%-25s\t%-20s\t%-50s' %
               (application['_id'], application['name'], application['description'][0:50]))
 
@@ -269,7 +275,7 @@ def _cli_listApp(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_deleteApp(sc, *args, **kwargs):
     """
-    Delete an application
+    Delete an application.
     """
     application = sc.deleteApp(*args, **kwargs)
     print('%s (%s)\t%s' % (application['name'], application['_id'], 'DELETED'))
@@ -293,10 +299,10 @@ def _cli_deleteApp(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_createRelease(sc, *args, **kwargs):
     """
-    Create a new release
+    Create a new release.
     """
-    newRelease = sc.createRelease(*args, **kwargs)
-    print('%s (%s)\t%s' % (newRelease['name'], newRelease['_id'], 'CREATED'))
+    rls = sc.createRelease(*args, **kwargs)
+    print('%s (%s)\t%s' % (rls['name'], rls['_id'], 'CREATED'))
 
 
 @release.command('list')
@@ -308,60 +314,75 @@ def _cli_createRelease(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_listRelease(sc, *args, **kwargs):
     """
-    List all the release within an application
+    List all the release within an application.
     """
     releases = sc.listRelease(*args, **kwargs)
     print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
     print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
-    for release in releases:
-        if 'meta' in release and 'revision' in release['meta']:
-            revision = release['meta']['revision']
+    for rls in releases:
+        if 'meta' in rls and 'revision' in rls['meta']:
+            revision = rls['meta']['revision']
         else:
             revision = ''
         print('%-25s\t%-20s\t%-15s\t%-50s' % (
-            release['_id'], release['name'], revision, release['description'][0:50]))
-
-
-@release.command('list_draft')
-@click.argument('app_name')
-@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
-              help='ID of an existing collection',
-              show_default=True,
-              cls=_AdvancedOption)
-@click.option('--offset', default=0,
-              help='Offset of the list',
-              cls=_AdvancedOption)
-@click.pass_obj
-def _cli_getRevisions(sc, *args, **kwargs):
-    """
-    List all the revision of the default preview within an application
-    """
-    releases = sc.getRelease(*args, **kwargs)
-    print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
-    print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
-    for release in releases:
-        if 'meta' in release and 'revision' in release['meta']:
-            revision = release['meta']['revision']
-        else:
-            revision = ''
-        print('%-25s\t%-20s\t%-15s\t%-50s' % (
-            release['_id'], release['name'], revision, release['description'][0:50]))
+            rls['_id'], rls['name'], revision, rls['description'][0:50]))
 
 
 @release.command('delete')
 @click.argument('app_name')
 @click.argument('name')
+@click.pass_obj
+def _cli_deleteRelease(sc, *args, **kwargs):
+    """
+    Delete a release.
+    """
+    rls = sc.deleteRelease(*args, **kwargs)
+    print('%s (%s)\t%s' % (rls['name'], rls['_id'], 'DELETED'))
+
+
+@draft.command('list')
+@click.argument('app_name')
+@click.option('--coll_id', default=None, envvar='COLLECTION_ID',
+              help='ID of an existing collection',
+              show_default=True,
+              cls=_AdvancedOption)
+@click.option('--revision', default=None,
+              help='Revision of the draft release',
+              cls=_AdvancedOption)
+@click.option('--offset', default=0,
+              help='Offset of the list',
+              cls=_AdvancedOption)
+@click.pass_obj
+def _cli_listDraftRelease(sc, *args, **kwargs):
+    """
+    List all the revision of the default preview within an application.
+    """
+    releases = sc.listDraftRelease(*args, **kwargs)
+    print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
+    print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
+    for rev in releases:
+        if 'meta' in rev and 'revision' in rev['meta']:
+            revision = rev['meta']['revision']
+        else:
+            revision = ''
+        print('%-25s\t%-20s\t%-15s\t%-50s' % (
+            rev['_id'], rev['name'], revision, rev['description'][0:50]))
+
+
+@draft.command('delete')
+@click.argument('app_name')
+@click.argument('revision')
 @click.option('--coll_id', default=None, envvar='COLLECTION_ID',
               help='ID of an existing collection',
               show_default=True,
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_deleteRelease(sc, *args, **kwargs):
+def _cli_deleteDraftRelease(sc, *args, **kwargs):
     """
-    Delete a release
+    Delete a specific revision within the Draft release.
     """
-    release = sc.deleteRelease(*args, **kwargs)
-    print('%s (%s)\t%s' % (release['name'], release['_id'], 'DELETED'))
+    rls = sc.deleteDraftRelease(*args, **kwargs)
+    print('%s (%s)\t%s' % (rls['name'], rls['_id'], 'DELETED'))
 
 
 @extension.command('upload')
@@ -407,7 +428,7 @@ def _cli_deleteRelease(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_uploadExtension(sc, *args, **kwargs):
     """
-    Upload an extension
+    Upload an extension.
     """
     print('Create the extension %s' % kwargs['name'])
     ext = sc.uploadExtension(*args, **kwargs)
@@ -432,7 +453,7 @@ def _cli_uploadExtension(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_downloadExtension(sc, *args, **kwargs):
     """
-    Download an extension
+    Download an extension.
     """
     print('Start download...')
     ext = sc.downloadExtension(*args, **kwargs)
@@ -466,7 +487,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_listExtension(sc, *args, **kwargs):
     """
-    List all the extension within an application
+    List all the extension within an application.
     """
     extensions = sc.listExtension(*args, **kwargs)
     print('%-25s\t%-30s\t\t%-30s' % ('EXTENSION ID', 'NAME', 'REVISION'))
@@ -485,7 +506,7 @@ def _cli_listExtension(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_deleteExtension(sc, *args, **kwargs):
     """
-    Delete an extension by ID or Name
+    Delete an extension by ID or Name.
     """
     ext = sc.deleteExtension(*args, **kwargs)
     print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'DELETED'))
@@ -522,7 +543,7 @@ def _cli_deleteExtension(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_uploadApplicationPackage(sc, *args, **kwargs):
     """
-    Upload an application package
+    Upload an application package.
     """
     print('Create the application package %s' % kwargs['name'])
     pkg = sc.uploadApplicationPackage(*args, **kwargs)
@@ -545,7 +566,7 @@ def _cli_uploadApplicationPackage(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_downloadApplicationPackage(sc, *args, **kwargs):
     """
-    Download an application package
+    Download an application package.
     """
     print('Start download...')
     pkg = sc.downloadApplicationPackage(*args, **kwargs)
@@ -575,7 +596,7 @@ def _cli_downloadApplicationPackage(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_listApplicationPackage(sc, *args, **kwargs):
     """
-    List all the application package within an application
+    List all the application package within an application.
     """
     packages = sc.listApplicationPackage(*args, **kwargs)
     print('%-25s\t%-30s\t\t%-30s' % ('PACKAGE ID', 'NAME', 'REVISION'))
@@ -594,7 +615,7 @@ def _cli_listApplicationPackage(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_deleteApplicationPackage(sc, *args, **kwargs):
     """
-    Delete an application package by ID or Name
+    Delete an application package by ID or Name.
     """
     pkg = sc.deleteApplicationPackage(*args, **kwargs)
     print('%s (%s)\t%s' % (pkg['name'], pkg['_id'], 'DELETED'))
