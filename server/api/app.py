@@ -18,7 +18,8 @@
 ##############################################################################
 """
 The internal API of Slicer Package Manager Girder plugin. Use these endpoints to
-create new applications, new releases, and upload or download extensions or packages
+create new applications, new releases, and upload or download application and extensions
+packages.
 """
 from bson.objectid import ObjectId
 
@@ -158,7 +159,10 @@ class App(Resource):
         # this can be changed in anytime.
         return self._model.setMetadata(
             app,
-            {'packageNameTemplate': constants.PACKAGE_TEMPLATE_NAME}
+            {
+                'applicationPackageNameTemplate': constants.APPLICATION_PACKAGE_TEMPLATE_NAME,
+                'extensionPackageNameTemplate': constants.EXTENSION_PACKAGE_TEMPLATE_NAME
+            }
         )
 
     @autoDescribeRoute(
@@ -639,7 +643,7 @@ class App(Resource):
         if dependency:
             params['dependency'] = dependency
 
-        name = application['meta']['packageNameTemplate'].format(**params)
+        name = application['meta']['extensionPackageNameTemplate'].format(**params)
         filters = {
             'meta.baseName': baseName,
             'meta.os': os,
@@ -834,7 +838,7 @@ class App(Resource):
             'revision': revision,
         }
 
-        name = application['meta']['packageNameTemplate'].format(**params)
+        name = application['meta']['applicationPackageNameTemplate'].format(**params)
         filters = {
             'meta.baseName': baseName,
             'meta.os': os,
