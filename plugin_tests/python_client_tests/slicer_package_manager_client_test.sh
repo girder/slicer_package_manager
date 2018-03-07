@@ -5,8 +5,11 @@ DEBUG=false
 cli=slicer_package_manager_client
 auth='--username admin --password adminadmin'
 
+collName="Coll1"
+
 app1Name="App1"
 app2Name="App2"
+app3Name="App3"
 releaseName="Release1"
 
 ext1Name="ext1"
@@ -25,7 +28,7 @@ arch3="amd64"
 rev3="0.0.1"
 
 function assert_eval {
-    eval $1 >/dev/null 2>&1
+    eval $1 #>/dev/null 2>&1
     if [ $? -eq "$2" ]; then
         echo " ... OK"
     else
@@ -47,11 +50,13 @@ function assert {
     fi
 }
 
+# Need to delete manually the new collection "Coll1"
 echo "########### CLEAN UP ###########"
 rm -rf dwn dwn2 >/dev/null 2>&1 || true
 rm *.txt >/dev/null 2>&1 || true
 $cli $auth app delete $app1Name >/dev/null 2>&1 || true
-$cli $auth app delete $app2Name >/dev/null 2>&1 || true
+#$cli $auth app delete $app2Name --coll_id $ID >/dev/null 2>&1 || true
+#$cli $auth app delete $app3Name --coll_id $ID >/dev/null 2>&1 || true
 echo
 
 echo "########### APPLICATION ###########"
@@ -59,8 +64,10 @@ echo
 echo "Create applications"
 echo -n ">  $app1Name "
 assert_eval "$cli $auth app create $app1Name --desc \"This is a description for $app1Name\"" 0
-echo -n ">  $app2Name"
-assert_eval "$cli $auth app create $app2Name --desc \"This is a description for $app2Name\"" 0
+echo -n ">  $app2Name "
+assert_eval "$cli $auth app create $app2Name --desc \"This is a description for $app2Name\" --coll_name $collName" 0
+echo -n ">  $app3Name "
+assert_eval "$cli $auth app create $app3Name --coll_name $collName" 0
 # echo
 # echo -n "Try to create an existing application: FAILURE"
 # assert_eval "$cli $auth app create $app2Name" 1 #TODO: Find a way to make that work on CircleCI
@@ -252,8 +259,10 @@ if ! $DEBUG; then
     echo "Delete application"
     echo -n "> $app1Name"
     assert_eval "$cli $auth app delete $app1Name" 0
-    echo -n "> $app2Name"
-    assert_eval "$cli $auth app delete $app2Name" 0
+#    echo -n "> $app2Name"
+#    assert_eval "$cli $auth app delete $app2Name" 0
+#    echo -n "> $app3Name"
+#    assert_eval "$cli $auth app delete $app3Name" 0
     echo
 fi
 echo "---------------------- TEST COMPLETE : SUCCESS ----------------------"
