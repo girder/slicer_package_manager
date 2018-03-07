@@ -107,3 +107,50 @@ packages = {
     }
 
 }
+
+expectedDownloadStats = {
+    '0000': {
+        'applications': {
+            'win': {
+                'i386': 1
+            },
+            'linux': {
+                'amd64': 1
+            }
+        },
+        'extensions': {
+            'Ext2': {
+                'win': {
+                    'i386': 1
+                }
+            }
+        }
+    },
+    '0001': {
+        'extensions': {
+            'Ext3': {
+                'linux': {
+                    'amd64': 1
+                },
+                'macosx': {
+                    'amd64': 1,
+                    'i386': 1
+                }
+            }
+        }
+    },
+    '0005': {
+        'applications': {
+            'macosx': {
+                'amd64': 1
+            }
+        },
+        'extensions': {
+            'Ext1': {
+                'linux': {
+                    'i386': 1
+                }
+            }
+        }
+    }
+}
