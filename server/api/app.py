@@ -48,7 +48,6 @@ class App(Resource):
         self.route('GET', (':app_id', 'downloadstats'), self.getDownloadStats)
         self.route('POST', (':app_id', 'release'), self.createNewRelease)
         self.route('GET', (':app_id', 'release'), self.getReleases)
-        self.route('GET', (':app_id', 'release', 'revision'), self.getAllDraftReleases)
         self.route('DELETE', (':app_id', 'release', ':release_id_or_name'),
                    self.deleteReleaseByIdOrName)
         self.route('POST', (':app_id', 'extension'), self.createOrUpdateExtension)
@@ -57,6 +56,7 @@ class App(Resource):
         self.route('POST', (':app_id', 'package'), self.createOrUpdatePackage)
         self.route('GET', (':app_id', 'package'), self.getPackages)
         self.route('DELETE', (':app_id', 'package', ':pkg_id'), self.deletePackage)
+        self.route('GET', (':app_id', 'draft'), self.getAllDraftReleases)
 
     @autoDescribeRoute(
         Description('Create a new application.')
