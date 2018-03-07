@@ -186,8 +186,6 @@ class SlicerPackageManagerTest(base.TestCase):
             resp.json[0]['meta']['extensionPackageNameTemplate'],
             constants.EXTENSION_PACKAGE_TEMPLATE_NAME)
 
-        # TODO: Add test with text search
-
     def testDeleteApp(self):
         # Create the application without any collection,
         # this should create the new 'Applications' collection
@@ -297,78 +295,10 @@ class SlicerPackageManagerTest(base.TestCase):
             self._draftRevision['meta']['revision'])
 
     def testDeleteReleaseByID(self):
-        # Create the release
-        release = self._createReleaseCheck(
-            name='V3.2.1',
-            app_id=self._app['_id'],
-            app_revision='001',
-            desc='This is a new release')
-        # Get the new release by ID
-        resp = self.request(
-            path='/app/%s/release' % self._app['_id'],
-            params={'release_id_or_name': release['_id']},
-            method='GET',
-            user=self._user,
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['_id'], release['_id'])
-        self.assertEqual(resp.json['name'], release['name'])
-        # Delete the release by ID
-        resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': release['_id']},
-            method='DELETE',
-            user=self._user
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['_id'], release['_id'])
-        # Try to get the release should failed
-        resp = self.request(
-            path='/app/%s/release' % self._app['_id'],
-            params={'release_id_or_name': release['_id']},
-            method='GET',
-            user=self._user,
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json, None)
+        self._deleteRelease('_id')
 
     def testDeleteReleaseByName(self):
-        # Create the release
-        release = self._createReleaseCheck(
-            name='V3.2.1',
-            app_id=self._app['_id'],
-            app_revision='001',
-            desc='This is a new release')
-        # Get the new release by name
-        resp = self.request(
-            path='/app/%s/release' % self._app['_id'],
-            params={'release_id_or_name': release['name']},
-            method='GET',
-            user=self._user,
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['_id'], release['_id'])
-        self.assertEqual(resp.json['name'], release['name'])
-        # Delete the release by name
-        resp = self.request(
-            path='/app/%(app_id)s/release/%(id_or_name)s' % {
-                'app_id': self._app['_id'],
-                'id_or_name': release['name']},
-            method='DELETE',
-            user=self._user
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['_id'], release['_id'])
-        # Try to get the release should failed
-        resp = self.request(
-            path='/app/%s/release' % self._app['_id'],
-            params={'release_id_or_name': release['name']},
-            method='GET',
-            user=self._user,
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json, None)
+        self._deleteRelease('name')
 
     def testDeleteRevisionRelease(self):
         # Create extensions in the "draft" release
@@ -563,7 +493,7 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(len(resp.json), 0)
         self.assertEqual(resp.json, [])
 
-    def testDeleteExtension(self):
+    def testDeleteExtensionPackages(self):
         # Create a new extension in the release "self._release"
         extension = self._createOrUpdatePackage(
             'extension',
@@ -571,33 +501,8 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(extension['name'], self._extensions['extension1']['name'])
         extensions_folder = Folder().load(extension['folderId'], user=self._user)
         self.assertEqual(ObjectId(extensions_folder['parentId']), self._release['_id'])
-        # Get all the extension of the application, this should only be the new one
-        resp = self.request(
-            path='/app/%s/extension' % self._app['_id'],
-            method='GET',
-            user=self._user
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(len(resp.json), 1)
-        self.assertEqual(resp.json[0]['_id'], extension['_id'])
-        # Delete the extension
-        resp = self.request(
-            path='/app/%(app_id)s/extension/%(ext_id)s' % {
-                'app_id': self._app['_id'],
-                'ext_id': extension['_id']},
-            method='DELETE',
-            user=self._user
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['_id'], extension['_id'])
-        # Try to get the extension shouldn't success
-        resp = self.request(
-            path='/app/%s/extension' % self._app['_id'],
-            method='GET',
-            user=self._user
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(len(resp.json), 0)
+        # Get, delete, and try to re-get the package
+        self._deletePackages('extension', extension)
 
     def testUploadAndDownloadPackages(self):
         # Create a new application package in the release "self._release"
@@ -747,40 +652,15 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(len(resp.json), 0)
         self.assertEqual(resp.json, [])
 
-    def testDeletePackages(self):
+    def testDeleteApplicationPackages(self):
         # Create a new application package in the release "self._release"
         package = self._createOrUpdatePackage(
             'package',
             self._packages['package1']['meta'])
         self.assertEqual(package['name'], self._packages['package1']['name'])
         self.assertEqual(ObjectId(package['folderId']), self._release['_id'])
-        # Get all the  application package, this should only be the new one
-        resp = self.request(
-            path='/app/%s/package' % self._app['_id'],
-            method='GET',
-            user=self._user
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(len(resp.json), 1)
-        self.assertEqual(resp.json[0]['_id'], package['_id'])
-        # Delete the package
-        resp = self.request(
-            path='/app/%(app_id)s/package/%(pkg_id)s' % {
-                'app_id': self._app['_id'],
-                'pkg_id': package['_id']},
-            method='DELETE',
-            user=self._user
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(resp.json['_id'], package['_id'])
-        # Try to get the package shouldn't success
-        resp = self.request(
-            path='/app/%s/package' % self._app['_id'],
-            method='GET',
-            user=self._user
-        )
-        self.assertStatusOk(resp)
-        self.assertEqual(len(resp.json), 0)
+        # Get, delete, and try to re-get the package
+        self._deletePackages('package', package)
 
     def testDownloadStats(self):
         extension1 = self._createOrUpdatePackage(
@@ -825,59 +705,14 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(package3['name'], self._packages['package3']['name'])
 
         # Get the downloadStats
-        expectedDownloadStats = {
-            '0000': {
-                'applications': {
-                    'win': {
-                        'i386': 1
-                    },
-                    'linux': {
-                        'amd64': 1
-                    }
-                },
-                'extensions': {
-                    'Ext2': {
-                        'win': {
-                            'i386': 1
-                        }
-                    }
-                }
-            },
-            '0001': {
-                'extensions': {
-                    'Ext3': {
-                        'linux': {
-                            'amd64': 1
-                        },
-                        'macosx': {
-                            'amd64': 1,
-                            'i386': 1
-                        }
-                    }
-                }
-            },
-            '0005': {
-                'applications': {
-                    'macosx': {
-                        'amd64': 1
-                    }
-                },
-                'extensions': {
-                    'Ext1': {
-                        'linux': {
-                            'i386': 1
-                        }
-                    }
-                }
-            }
-        }
+        expectedStats = utile.expectedDownloadStats
         resp = self.request(
             path='/app/%s/downloadstats' % self._app['_id'],
             method='GET',
             user=self._user
         )
         self.assertStatusOk(resp)
-        self.assertDictEqual(resp.json, expectedDownloadStats)
+        self.assertDictEqual(resp.json, expectedStats)
 
         # Download multiple time an extension
         ext4_file = list(File().find({'itemId': ObjectId(extension4['_id'])}))
@@ -888,9 +723,9 @@ class SlicerPackageManagerTest(base.TestCase):
             self._downloadFile(ext4_file[0]['_id'])
             self._downloadFile(ext5_file[0]['_id'])
 
-        expectedDownloadStats['0001']['extensions']['Ext3']['macosx'].update({
-            'amd64': N + expectedDownloadStats['0001']['extensions']['Ext3']['macosx']['amd64'],
-            'i386': N + expectedDownloadStats['0001']['extensions']['Ext3']['macosx']['i386']
+        expectedStats['0001']['extensions']['Ext3']['macosx'].update({
+            'amd64': N + expectedStats['0001']['extensions']['Ext3']['macosx']['amd64'],
+            'i386': N + expectedStats['0001']['extensions']['Ext3']['macosx']['i386']
         })
         resp = self.request(
             path='/app/%s/downloadstats' % self._app['_id'],
@@ -898,7 +733,7 @@ class SlicerPackageManagerTest(base.TestCase):
             user=self._user
         )
         self.assertStatusOk(resp)
-        self.assertDictEqual(resp.json, expectedDownloadStats)
+        self.assertDictEqual(resp.json, expectedStats)
 
         # The download stats aren't affected by deletion of extension or revision
         # in the default release
@@ -935,7 +770,7 @@ class SlicerPackageManagerTest(base.TestCase):
             user=self._user
         )
         self.assertStatusOk(resp)
-        self.assertDictEqual(resp.json, expectedDownloadStats)
+        self.assertDictEqual(resp.json, expectedStats)
 
     # ************************ UTILITIES ************************ #
 
@@ -1006,6 +841,43 @@ class SlicerPackageManagerTest(base.TestCase):
         self.assertEqual(resp.json['description'], desc)
         self.assertEqual(resp.json['meta']['revision'], app_revision)
         return resp.json
+
+    def _deleteRelease(self, identifier):
+        # Create the release
+        release = self._createReleaseCheck(
+            name='V3.2.1',
+            app_id=self._app['_id'],
+            app_revision='001',
+            desc='This is a new release')
+        # Get the new release by name
+        resp = self.request(
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': release[identifier]},
+            method='GET',
+            user=self._user,
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json['_id'], release['_id'])
+        self.assertEqual(resp.json['name'], release['name'])
+        # Delete the release by name
+        resp = self.request(
+            path='/app/%(app_id)s/release/%(id_or_name)s' % {
+                'app_id': self._app['_id'],
+                'id_or_name': release[identifier]},
+            method='DELETE',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json['_id'], release['_id'])
+        # Try to get the release should failed
+        resp = self.request(
+            path='/app/%s/release' % self._app['_id'],
+            params={'release_id_or_name': release[identifier]},
+            method='GET',
+            user=self._user,
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json, None)
 
     def _uploadExternalData(self, item, filePath, fileName=None):
         file = os.path.join(self.dataDir, filePath)
@@ -1093,3 +965,33 @@ class SlicerPackageManagerTest(base.TestCase):
                 file_sha
             )
         return resp.json
+
+    def _deletePackages(self, packageType, pkg):
+        # Get all the  application package, this should only be the new one
+        resp = self.request(
+            path='/app/%s/%s' % (self._app['_id'], packageType),
+            method='GET',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(len(resp.json), 1)
+        self.assertEqual(resp.json[0]['_id'], pkg['_id'])
+        # Delete the package
+        resp = self.request(
+            path='/app/%(app_id)s/%(type)s/%(pkg_id)s' % {
+                'app_id': self._app['_id'],
+                'type': packageType,
+                'pkg_id': pkg['_id']},
+            method='DELETE',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(resp.json['_id'], pkg['_id'])
+        # Try to get the package shouldn't success
+        resp = self.request(
+            path='/app/%s/%s' % (self._app['_id'], packageType),
+            method='GET',
+            user=self._user
+        )
+        self.assertStatusOk(resp)
+        self.assertEqual(len(resp.json), 0)
