@@ -17,4 +17,12 @@ server.models.extension module
     :undoc-members:
     :show-inheritance:
 
+server.models.package module
+----------------------------
+
+.. automodule:: server.models.package
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 

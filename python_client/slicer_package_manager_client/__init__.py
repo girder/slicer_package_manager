@@ -501,13 +501,13 @@ class SlicerPackageClient(GirderClient):
 
         :param app_name: Name of the application
         :param coll_id: Collection ID
-        :param name: Base name of the extension
+        :param name: Base name of the application package
         :param pkg_os: The target operating system of the package
         :param arch: The os chip architecture
         :param revision: Revision of the application
         :param release: Name of the release
         :param limit: Limit of the number of extensions listed
-        :return: A list of extensions filtered by optional parameters
+        :return: A list of application package filtered by optional parameters
         """
         app = self._getApp(app_name=app_name, coll_id=coll_id)
         release_id = None

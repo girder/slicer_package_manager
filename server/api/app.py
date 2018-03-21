@@ -903,24 +903,7 @@ class App(Resource):
     @access.public
     def getDownloadStats(self, app_id):
         """
-        Get all the download count of all extension from an application. This document follow
-        the data structure:
-        `` {
-            "{revision}": {
-                "extension": {
-                    "{baseName}": {
-                        "{os}": {
-                            "{arch}": {downloadCount}
-                        }
-                    }
-                },
-                "application": {
-                    "{os}": {
-                        "{arch}": {downloadCount}
-                    }
-                }
-            }
-        }``
+        Get all the download count of all extension from an application.
 
         :param app_id: Application ID
         :return: The JSON document of all the download statistics of extension from the application
