@@ -5,7 +5,7 @@ User Guide
 The **Slicer Package Manager** is a Girder plugin to easily manage packages or extensions from an Application.
 It is used by the Slicer community to share Slicer extensions by allowing to Upload and Download them.
 Build onto the open source data management platform: **Girder**, the **Slicer Package Manager** use some of the
-concepts_ developed in Girder and embedded new ones as Application, Release or Extension.
+girder_concepts_ developed in Girder and embedded new ones as Application, Release or Extension.
 
 This plugin is designed to be robust, fast, extensible and easy to use.
 
@@ -32,7 +32,9 @@ There are 3 different ways to use the Slicer Package Manager:
     This is the more easy way to use the basic feature of the Slicer Package Manager. These commands allow you to
     easily create or list applications and releases, and also list, upload or download extensions.
 
-.. _concepts: http://girder.readthedocs.io/en/latest/user-guide.html#concepts
+.. _girder_concepts: http://girder.readthedocs.io/en/latest/user-guide.html#concepts
+
+.. _concepts:
 
 Concepts
 --------
@@ -45,8 +47,11 @@ Concepts
     (see `Girder concept <http://girder.readthedocs.io/en/latest/user-guide.html#concepts>`_ to learn more
     about Girder collections and Folder).
 
-    Applications contain one ``extensionNameTemplate`` metadata which is set as
-    ``{app_revision}_{os}_{arch}_{baseName}_{revision}`` by default.
+    Applications contain metadata that organize the application and extension packages following a same name:
+
+    * ``applicationPackageNameTemplate`` (set as ``{baseName}_{os}_{arch}_{revision}`` by default).
+
+    * ``extensionPackageNameTemplate`` (set as ``{app_revision}_{baseName}_{arch}_{os}_{revision}`` by default).
 
     This template name corresponds to the future name of all the uploaded extensions for this specific application.
     Which means that all the extension will have the following name depending on their given metadata when uploaded.
@@ -65,31 +70,78 @@ Concepts
     and the ``app_revision`` set when the upload occurs).
     This default release is the only one which will not have any application ``revision`` store as metadata.
 
+* **Draft**:
+
+    Draft is a simple *Girder Folder* which contain a flat list of **Release** named as the corresponding application
+    revision by default. This 'Draft'folder is used by default when uploading application or extension package (see
+    below).
+
+* **Package**:
+
+    Package (application package) are *Girder Item* which contains only one binary file (the real application package).
+    They are part of an application, and can only be found in a release folder. They are named following the
+    ``applicationPackageNameTemplate`` set on the application they are made for.
+    Each application package contain a bunch of metadata that give us information on which environment the package is
+    made for like : Operating System: ``os``, architecture: ``arch``, application revision: ``revision``,
+    repository url...
+    (see the `list of parameters of Package <http://slicer-package-manager.readthedocs.io/en/latest/server.api.html
+    #server.api.app.App.createOrUpdatePackage>`_ on the server API to have an exhausted list of all the metadata).
+
+    When uploading an application package, some of these metadata are required, and the ``revision`` is used to determine
+    in which release to upload the application package. The release which have the same ``revision`` metadata
+    will be added the application package. If any release within the application has a corresponding revision,
+    the application package will be uploaded directly into the 'draft' release (by default).
+
+    The package file (binary file) during the upload will be kept as it within Girder. So when the extension will be
+    downloaded, the downloaded file will keep the same extension (.bin, .zip, ...). For instance, if the uploaded
+    package is named 'pkg.tar.gz', then each time this application package will be downloaded, the downloaded file will
+    keep the same '.tar.gz' extension.
+
 * **Extension**:
 
-    Extension are *Girder Item* which contains only one binary file (the real extension package).
-    They are part of an application, and can only be found in a release folder. They are named following the
-    ``extensionNameTemplate`` set on the application they are made for.
-    Each extension contain a bunch of metadata that give us information on which environment can use the extension like
-    Operating System: ``os``, architecture: ``arch``, application revision: ``app_revision``, repository url...
-    (see the `list of parameters <http://slicer-package-manager.readthedocs.io/en/latest/server.api.html
-    #server.api.app.App.createOrUpdateExtension>`_ on the server API to have an exhausted list of all the metadata).
+    As an application package, an Extension package is also a *Girder Item*, and has the same behavior. It contain a
+    single binary file. The name of all uploaded extension follow the ``extensionPackageNameTemplate`` metadata stored
+    in the **Application**.
 
+    See the `list of parameters of Extension <http://slicer-package-manager.readthedocs.io/en/latest/server.api.html
+    #server.api.app.App.createOrUpdateExtension>`_ on the server API to have an exhausted list of all the metadata.
 
-    When uploading an extension, some of these metadata are required, and the ``app_revision`` is used to determined
-    in which release to upload the extension. The release which have the same ``revision`` as the given ``app_revision``
-    metadata will be added the extension. If any release within the application has a corresponding revision,
-    the extension will be uploaded directly into the 'draft' release (by default).
-
-    The file extension (binary file) during the upload will be kept as it within Girder. So when the extension will be
-    downloaded, the downloaded file will keep the same extension (.bin, .zip, ...). For instance, if the uploaded
-    extension is named 'ext.tar.gz', then each time this extension will be downloaded, the downloaded file will keep
-    the same '.tar.gz' extension.
 
 Schema of concepts
 ------------------
+::
 
-.. image:: images/slicer_package_manager_models.JPG
+    Applications
+       |--- packages
+       |        |----- Slicer
+       |        |         |----- 1.0
+       |        |         |        |---- Slicer-linux.tar.gz
+       |        |         |        |---- Slicer-macos.dmg
+       |        |         |        |---- Slicer-win.exe
+       |        |         |        |---- extensions
+       |        |         |        |         |---- Extension1
+       |        |         |        |         |---- Extension2
+       |        |         |        |         |---- Extension3
+       |        |         |        |         |---- Extension4
+       .        .         .        .         .
+       .        .         .
+       |        |         |----- 2.0
+       .        .         .        |
+       .        .         .
+       |        |         |----- draft
+       |        |         |        |--- r100
+       |        |         |        |      |---- Slicer-linux.tar.gz
+       |        |         |        |      |---- Slicer-macos.dmg
+       |        |         |        |      |---- Slicer-win.exe
+       |        |         |        |      |----- extensions
+       |        |         |        |      |          |---- Extension1
+       .        .         .        .      .          .
+       .        .         .        .
+       |        |         |        |--- r101
+       .        .         .        .      |
+       .        .
+       |        |
+       |        |------SlicerCustom
 
 
 Download Statistics

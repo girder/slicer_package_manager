@@ -6,9 +6,57 @@
 Welcome to Slicer Package Manager's documentation!
 ====================================================
 
-The **Slicer Package Manager** is a Girder plugin that allows you to manage Slicer package and extension within Girder.
-It provides a simple API to Upload and Download extensions or packages, create new applications,
-and manage releases of your applications.
+The ``Slicer Package Manager`` includes a Girder plugin and a CLI allowing you
+to manage Slicer packages for Slicer-based applications and associated extensions.
+
+In a nutshell:
+
+* :ref:`Data model <concepts>` specific to this project is implemented by organizing data using standard
+  Girder constructs (collection, folder and item) and by associating metadata.
+
+* By default, a top-level collection named ``Applications`` is created with a ``packages`` folder
+  organizing the different application.
+
+* Each application folder contain a ``draft`` folder where unreleased packages are uploaded and one or multiple release folders (e.g 1.0, 2.0, ...).
+
+* Each release folder contain application packages (installers for the different platforms), and an ``extensions`` folder containing a flat list of extension packages.
+
+* Each extension packages is associated with metadata like application revision, extension revision, operating system and architecture,
+
+The diagram below represents the organization::
+
+    Applications
+       |--- packages
+       |        |----- Slicer
+       |        |         |----- 1.0
+       |        |         |        |---- Slicer-linux.tar.gz
+       |        |         |        |---- Slicer-macos.dmg
+       |        |         |        |---- Slicer-win.exe
+       |        |         |        |---- extensions
+       |        |         |        |         |---- Extension1
+       |        |         |        |         |---- Extension2
+       |        |         |        |         |---- Extension3
+       |        |         |        |         |---- Extension4
+       .        .         .        .         .
+       .        .         .
+       |        |         |----- 2.0
+       .        .         .        |
+       .        .         .
+       |        |         |----- draft
+       |        |         |        |--- r100
+       |        |         |        |      |---- Slicer-linux.tar.gz
+       |        |         |        |      |---- Slicer-macos.dmg
+       |        |         |        |      |---- Slicer-win.exe
+       |        |         |        |      |----- extensions
+       |        |         |        |      |          |---- Extension1
+       .        .         .        .      .          .
+       .        .         .        .
+       |        |         |        |--- r101
+       .        .         .        .      |
+       .        .
+       |        |
+       |        |------SlicerCustom
+
 
 What is Girder?
 ---------------
@@ -20,6 +68,11 @@ To know more about Girder let's take a look at the documentation_.
 .. _documentation: http://girder.readthedocs.io
 
 .. _Kitware: https://www.kitware.com
+
+What is a Slicer package?
+---------------------------
+A slicer package is just an installer package for a specific release of Slicer. There is a specific Slicer package
+for each different platform (Windows, MACOSX, Linux).
 
 What is a Slicer Extension?
 ---------------------------
