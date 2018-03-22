@@ -102,7 +102,8 @@ class Extension(Item):
             extraMeta = set(six.viewkeys(doc['meta'])) - base_params
             if extraMeta:
                 extra_params = {'release', 'icon_url', 'development_status', 'category',
-                                'enabled', 'homepage', 'screenshots', 'contributors', 'dependency'}
+                                'enabled', 'homepage', 'screenshots', 'contributors', 'dependency',
+                                'license'}
                 if extraMeta - extra_params:
                     raise ValidationException('Extension has extra fields: %s.' %
                                               ', '.join(sorted(extraMeta)))
