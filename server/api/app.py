@@ -567,6 +567,7 @@ class App(Resource):
                required=False)
         .param('contributors', 'List of contributors of the extension.', required=False)
         .param('dependency', 'List of the required extensions to use this one.', required=False)
+        .param('license', 'The license short description of the extension.', required=False)
         .errorResponse()
     )
     @access.cookie
@@ -574,7 +575,7 @@ class App(Resource):
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
                                 revision, app_revision, packagetype, codebase, description,
                                 release, icon_url, development_status, category, enabled, homepage,
-                                screenshots, contributors, dependency):
+                                screenshots, contributors, dependency, license):
         """
         Create an extension item in a specific release with providing ``release_id`` or in
         the **'draft'** folder by default.
@@ -648,6 +649,8 @@ class App(Resource):
             params['contributors'] = contributors
         if dependency:
             params['dependency'] = dependency
+        if license:
+            params['license'] = license
 
         name = application['meta']['extensionPackageNameTemplate'].format(**params)
         filters = {
