@@ -538,7 +538,7 @@ class App(Resource):
             offset=offset,
             sort=sort))
 
-    @autoDescribeRoute(
+    @autoDescribeRoute(  # noqa: 901
         Description('Create or Update an extension package.')
         .param('app_id', 'The ID of the App.', paramType='path')
         .param('os', 'The target operating system of the package.',
