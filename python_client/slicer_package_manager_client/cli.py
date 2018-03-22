@@ -23,6 +23,8 @@ import platform
 from girder_client import GirderClient
 from . import SlicerPackageClient, __version__, Constant
 
+w = Constant.WIDTH
+
 
 # ---------------- UTILITIES ---------------- #
 
@@ -259,11 +261,13 @@ def _cli_listApp(sc, *args, **kwargs):
     List all the applications.
     """
     applications = sc.listApp(*args, **kwargs)
-    print('%-25s\t%-20s\t%-50s' % ('APPLICATION ID', 'NAME', 'DESCRIPTION'))
-    print('%-25s\t%-20s\t%-50s' % ('-' * 25, '-' * 20, '-' * 50))
+    print('%s\t%s\t%s' % ('APPLICATION ID'.ljust(w), 'NAME'.ljust(w), 'DESCRIPTION'.ljust(w)))
+    print('%s\t%s\t%s' % (('-' * w).ljust(w), ('-' * w).ljust(w), ('-' * w).ljust(w)))
     for application in applications:
-        print('%-25s\t%-20s\t%-50s' %
-              (application['_id'], application['name'], application['description'][0:50]))
+        print('%s\t%s\t%s' % (
+            application['_id'].ljust(w),
+            application['name'].ljust(w),
+            application['description'][0:w].ljust(w)))
 
 
 @app.command('delete')
@@ -317,15 +321,19 @@ def _cli_listRelease(sc, *args, **kwargs):
     List all the release within an application.
     """
     releases = sc.listRelease(*args, **kwargs)
-    print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
-    print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
+    print('%s\t%s\t%s\t%s' % (
+        'RELEASE ID'.ljust(w), 'NAME'.ljust(w), 'REVISION'.ljust(w), 'DESCRIPTION'.ljust(w)))
+    print('{0}\t{0}\t{0}\t{0}'.format(('-' * w).ljust(w)))
     for rls in releases:
         if 'meta' in rls and 'revision' in rls['meta']:
             revision = rls['meta']['revision']
         else:
             revision = ''
-        print('%-25s\t%-20s\t%-15s\t%-50s' % (
-            rls['_id'], rls['name'], revision, rls['description'][0:50]))
+        print('%s\t%s\t%s\t%s' % (
+            rls['_id'].ljust(w),
+            rls['name'].ljust(w),
+            revision.ljust(w),
+            rls['description'][0:w].ljust(w)))
 
 
 @release.command('delete')
@@ -362,15 +370,19 @@ def _cli_listDraftRelease(sc, *args, **kwargs):
     List all the revision of the default preview within an application.
     """
     releases = sc.listDraftRelease(*args, **kwargs)
-    print('%-25s\t%-20s\t%-10s\t%-50s' % ('RELEASE ID', 'NAME', 'REVISION', 'DESCRIPTION'))
-    print('%-25s\t%-20s\t%-10s\t%-50s' % ('-' * 25, '-' * 20, '-' * 10, '-' * 50))
+    print('%s\t%s\t%s\t%s' % (
+        'RELEASE ID'.ljust(w), 'NAME'.ljust(w), 'REVISION'.ljust(w), 'DESCRIPTION'.ljust(w)))
+    print('{0}\t{0}\t{0}\t{0}'.format(('-' * w).ljust(w)))
     for rev in releases:
         if 'meta' in rev and 'revision' in rev['meta']:
             revision = rev['meta']['revision']
         else:
             revision = ''
-        print('%-25s\t%-20s\t%-15s\t%-50s' % (
-            rev['_id'], rev['name'], revision, rev['description'][0:50]))
+        print('%s\t%s\t%s\t%s' % (
+            rev['_id'].ljust(w),
+            rev['name'].ljust(w),
+            revision.ljust(w),
+            rev['description'][0:w].ljust(w)))
 
 
 @draft.command('delete')
@@ -494,10 +506,20 @@ def _cli_listExtension(sc, *args, **kwargs):
     List all the extension within an application.
     """
     extensions = sc.listExtension(*args, **kwargs)
-    print('%-25s\t%-30s\t\t%-30s' % ('EXTENSION ID', 'NAME', 'REVISION'))
-    print('%-25s\t%-30s\t\t%-30s' % ('-' * 25, '-' * 30, '-' * 30))
+    print('%s\t%s\t%s\t%s\t%s' % (
+        'EXTENSION ID'.ljust(w),
+        'NAME'.ljust(w),
+        'REVISION'.ljust(w),
+        'RELEASE NAME'.ljust(w),
+        'APP REVISION'.ljust(w)))
+    print('{0}\t{0}\t{0}\t{0}\t{0}'.format(('-' * w).ljust(w)))
     for ext in extensions:
-        print('%-25s\t%-30s\t\t%-30s' % (ext['_id'], ext['name'], ext['meta']['revision'][0:30]))
+        print('%s\t%s\t%s\t%s\t%s' % (
+            ext['_id'].ljust(w),
+            ext['name'].ljust(w),
+            ext['meta']['revision'][0:w].ljust(w),
+            kwargs['release'].ljust(w),
+            ext['meta']['app_revision'].ljust(w)))
 
 
 @extension.command('delete')
@@ -603,10 +625,21 @@ def _cli_listApplicationPackage(sc, *args, **kwargs):
     List all the application package within an application.
     """
     packages = sc.listApplicationPackage(*args, **kwargs)
-    print('%-25s\t%-30s\t\t%-30s' % ('PACKAGE ID', 'NAME', 'REVISION'))
-    print('%-25s\t%-30s\t\t%-30s' % ('-' * 25, '-' * 30, '-' * 30))
+    print('%s\t%s\t%s\t%s' % ('PACKAGE ID'.ljust(w),
+                              'NAME'.ljust(w),
+                              'REVISION'.ljust(w),
+                              'RELEASE NAME'.ljust(w)))
+    print('{0}\t{0}\t{0}\t{0}'.format(('-' * w).ljust(w)))
     for pkg in packages:
-        print('%-25s\t%-30s\t\t%-30s' % (pkg['_id'], pkg['name'], pkg['meta']['revision'][0:30]))
+        if 'release' in kwargs and kwargs['release']:
+            release_name = kwargs['release']
+        else:
+            rls = sc.getFolder(pkg['folderId'])
+            release_name = rls['name']
+        print('%s\t%s\t%s\t%s' % (pkg['_id'].ljust(w),
+                                  pkg['name'].ljust(w),
+                                  pkg['meta']['revision'][0:w].ljust(w),
+                                  release_name.ljust(w)))
 
 
 @package.command('delete')

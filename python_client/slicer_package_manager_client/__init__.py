@@ -42,6 +42,9 @@ class Constant:
     DRAFT_RELEASE_NAME = 'draft'
     DEFAULT_LIMIT = 50
 
+    # Display
+    WIDTH = 25  # Shouldn't be less than 24
+
 
 class SlicerPackageClient(GirderClient):
     """
@@ -163,8 +166,6 @@ class SlicerPackageClient(GirderClient):
                 parameters={'release_id_or_name': name})
         else:
             releases = self.get('/app/%s/release' % app['_id'])
-            draft_releases = self.get('/app/%s/draft' % app['_id'])
-            releases += draft_releases
         return releases
 
     def deleteRelease(self, app_name, name, coll_id=None):
