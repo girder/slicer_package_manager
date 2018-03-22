@@ -10,7 +10,7 @@ jobs:
     working_directory: /home/circleci/project # as $CIRCLE_WORKING_DIRECTORY
 
     environment:
-      - GIRDER_VERSION: baccb4e11056a59eead9658f2078ae68867237d3
+      - GIRDER_VERSION: de2621335d1ffbc55ed4d2611f42bfbbbd7ad8fa
 
     steps:
       - run:
