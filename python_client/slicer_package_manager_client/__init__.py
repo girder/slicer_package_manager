@@ -187,7 +187,7 @@ class SlicerPackageClient(GirderClient):
     def listDraftRelease(self, app_name, coll_id=None, revision=None, offset=0):
         """
         List all the draft release with an offset option to list only the older.
-        It's also possible to list one release within the Draft releaseby providing
+        It's also possible to list one release within the Draft release by providing
         its specific revision.
 
         :param app_name: Name of the application
