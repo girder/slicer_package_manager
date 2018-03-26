@@ -10,7 +10,7 @@ jobs:
     working_directory: /home/circleci/project # as $CIRCLE_WORKING_DIRECTORY
 
     environment:
-      - GIRDER_VERSION: de2621335d1ffbc55ed4d2611f42bfbbbd7ad8fa
+      - GIRDER_VERSION: 5cac713462c32b9b4704bc89df5638d3ae875d5e
 
     steps:
       - run:
@@ -113,6 +113,7 @@ jobs:
             python config.py
             sleep 50
 
+            pytest --tb=long test_python_client.py
             . slicer_package_manager_client_test.sh
 
           working_directory: girder/plugins/slicer_package_manager/plugin_tests/python_client_tests
