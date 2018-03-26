@@ -24,7 +24,8 @@ install_reqs = [
     'diskcache',
     'requests>=2.4.2',
     'requests_toolbelt',
-    'six'
+    'six',
+    'pytest-vcr'
 ]
 with open('README.rst') as f:
     readme = f.read()
