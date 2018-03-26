@@ -94,6 +94,7 @@ exts = [
 ]
 
 
+@pytest.mark.vcr()
 @pytest.fixture
 def spc(server):
     spc = SlicerPackageClient(apiUrl='http://localhost:8080/api/v1')
@@ -101,6 +102,7 @@ def spc(server):
     yield spc
 
 
+@pytest.mark.vcr()
 @pytest.fixture
 def apps(server, spc):
     app1 = spc.createApp(name=app_name[0], desc='random description 1')
@@ -108,6 +110,7 @@ def apps(server, spc):
     yield [app1, app2]
 
 
+@pytest.mark.vcr()
 @pytest.fixture
 def releases(server, spc):
     rls1 = spc.createRelease(
@@ -123,6 +126,7 @@ def releases(server, spc):
     yield [rls1, rls2]
 
 
+@pytest.mark.vcr()
 @pytest.fixture
 def packages(server, spc, releases, files):
     pkg1 = spc.uploadApplicationPackage(
@@ -157,6 +161,7 @@ def packages(server, spc, releases, files):
     yield [pkg1, pkg2, pkg3]
 
 
+@pytest.mark.vcr()
 @pytest.fixture
 def extensions(server, spc, releases, files):
     ext1 = spc.uploadExtension(
@@ -195,6 +200,7 @@ def extensions(server, spc, releases, files):
     yield [ext1, ext2, ext3]
 
 
+@pytest.mark.vcr()
 @pytest.fixture
 def files():
     f1 = open('file1.txt', 'w+')
@@ -216,6 +222,7 @@ def files():
     os.remove('file3.txt')
 
 
+@pytest.mark.vcr()
 @pytest.yield_fixture(autouse=True)
 def TearDown(server, spc, request):
     yield
@@ -226,6 +233,7 @@ def TearDown(server, spc, request):
             pass
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateApp(server, spc):
     app1 = spc.createApp(name=app_name[2])
@@ -237,6 +245,7 @@ def testCreateApp(server, spc):
     assert 'The Application "%s" already exist.' % app_name[2] in str(excinfo.value)
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListApp(server, spc, apps):
     # List all the app
@@ -251,6 +260,7 @@ def testListApp(server, spc, apps):
     assert app_list[0]['_id'] == apps[0]['_id']
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteApp(server, spc, apps):
     app_list = spc.listApp()
@@ -268,6 +278,7 @@ def testDeleteApp(server, spc, apps):
     assert 'The Application "%s" doesn\'t exist.' % apps[1]['name'] in str(excinfo.value)
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateRelease(server, spc, apps):
     release = spc.createRelease(
@@ -282,6 +293,7 @@ def testCreateRelease(server, spc, apps):
     assert 'The release "%s" already exist.' % rls[0]['name'] in str(excinfo.value)
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListRelease(server, spc, apps, releases):
     # List all the releases
@@ -295,6 +307,7 @@ def testListRelease(server, spc, apps, releases):
     assert release_list['_id'] == releases[0]['_id']
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteRelease(server, spc, apps, releases):
     release_list = spc.listRelease(app_name=apps[0]['name'])
@@ -312,6 +325,7 @@ def testDeleteRelease(server, spc, apps, releases):
     assert 'The release "%s" doesn\'t exist.' % releases[1]['name'] in str(excinfo.value)
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListDraftRelease(server, spc, apps, packages):
     # List all the draft releases
@@ -329,6 +343,7 @@ def testListDraftRelease(server, spc, apps, packages):
     assert draft_list[0]['meta']['revision'] == 'r300'
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteDraftRelease(server, spc, apps, packages):
     draft_list = spc.listDraftRelease(app_name=apps[0]['name'])
@@ -345,6 +360,7 @@ def testDeleteDraftRelease(server, spc, apps, packages):
     assert 'The release with the revision "%s" doesn\'t exist.' % 'r301' in str(excinfo.value)
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
     # Upload
@@ -426,6 +442,7 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
     os.remove('%s.txt' % downloaded_pkg1_name_bis)
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListApplicationPackage(server, spc, apps, releases, packages):
     # List all the application packages
@@ -443,6 +460,7 @@ def testListApplicationPackage(server, spc, apps, releases, packages):
     assert pkg_list[0]['meta']['os'] == 'macosx'
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeletePackage(server, spc, apps, packages):
     pkg_list = spc.listApplicationPackage(app_name=apps[0]['name'])
@@ -461,6 +479,7 @@ def testDeletePackage(server, spc, apps, packages):
     assert 'The package "%s" doesn\'t exist.' % packages[0]['name'] in str(excinfo.value)
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadExtension(server, spc, apps, releases, files):
     pass
@@ -551,6 +570,7 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
     os.remove('%s.txt' % downloaded_ext1_name_bis)
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListExtension(server, spc, apps, extensions):
     # List all the extension packages from draft release
@@ -572,6 +592,7 @@ def testListExtension(server, spc, apps, extensions):
     assert ext_list[0]['meta']['os'] == 'macosx'
 
 
+@pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteExtension(server, spc, apps, extensions):
     ext_list = spc.listExtension(app_name=apps[0]['name'])
