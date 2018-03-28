@@ -359,6 +359,7 @@ class SlicerPackageClient(GirderClient):
 
         if all:
             release_id = None
+            limit = 0
         else:
             release_folder = self.listRelease(app_name, release)
             if release_folder:

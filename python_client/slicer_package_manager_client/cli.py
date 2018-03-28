@@ -19,6 +19,7 @@
 
 import click
 import platform
+from tabulate import tabulate
 
 from girder_client import GirderClient
 from . import SlicerPackageClient, __version__, Constant
@@ -261,13 +262,13 @@ def _cli_listApp(sc, *args, **kwargs):
     List all the applications.
     """
     applications = sc.listApp(*args, **kwargs)
-    print('%s\t%s\t%s' % ('APPLICATION ID'.ljust(w), 'NAME'.ljust(w), 'DESCRIPTION'.ljust(w)))
-    print('%s\t%s\t%s' % (('-' * w).ljust(w), ('-' * w).ljust(w), ('-' * w).ljust(w)))
+    table = []
     for application in applications:
-        print('%s\t%s\t%s' % (
-            application['_id'].ljust(w),
-            application['name'].ljust(w),
-            application['description'][0:w].ljust(w)))
+        table.append([application['name'], application['_id']])
+    print(tabulate(
+        table,
+        headers=['NAME', 'APPLICATION ID'],
+        tablefmt="simple", numalign="left"))
 
 
 @app.command('delete')
@@ -287,12 +288,8 @@ def _cli_deleteApp(sc, *args, **kwargs):
 
 @release.command('create')
 @click.argument('app_name', required=True)
-@click.option('--name', prompt=True,
-              help='Name of the new release',
-              cls=_AdvancedOption)
-@click.option('--revision', prompt=True,
-              help='Revision of the application',
-              cls=_AdvancedOption)
+@click.argument('name', required=True)
+@click.argument('revision', required=True)
 @click.option('--coll_id', default=None, envvar='COLLECTION_ID',
               help='ID of an existing collection',
               show_default=True,
@@ -306,7 +303,7 @@ def _cli_createRelease(sc, *args, **kwargs):
     Create a new release.
     """
     rls = sc.createRelease(*args, **kwargs)
-    print('%s (%s)\t%s' % (rls['name'], rls['_id'], 'CREATED'))
+    print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'CREATED'))
 
 
 @release.command('list')
@@ -321,19 +318,17 @@ def _cli_listRelease(sc, *args, **kwargs):
     List all the release within an application.
     """
     releases = sc.listRelease(*args, **kwargs)
-    print('%s\t%s\t%s\t%s' % (
-        'RELEASE ID'.ljust(w), 'NAME'.ljust(w), 'REVISION'.ljust(w), 'DESCRIPTION'.ljust(w)))
-    print('{0}\t{0}\t{0}\t{0}'.format(('-' * w).ljust(w)))
+    table = []
     for rls in releases:
         if 'meta' in rls and 'revision' in rls['meta']:
             revision = rls['meta']['revision']
         else:
             revision = ''
-        print('%s\t%s\t%s\t%s' % (
-            rls['_id'].ljust(w),
-            rls['name'].ljust(w),
-            revision.ljust(w),
-            rls['description'][0:w].ljust(w)))
+        table.append([revision, rls['name'], rls['_id']])
+    print(tabulate(
+        table,
+        headers=['APP REVISION', 'NAME', 'RELEASE ID'],
+        tablefmt="simple", numalign="left"))
 
 
 @release.command('delete')
@@ -349,7 +344,7 @@ def _cli_deleteRelease(sc, *args, **kwargs):
     Delete a release.
     """
     rls = sc.deleteRelease(*args, **kwargs)
-    print('%s (%s)\t%s' % (rls['name'], rls['_id'], 'DELETED'))
+    print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
 
 
 @draft.command('list')
@@ -370,19 +365,17 @@ def _cli_listDraftRelease(sc, *args, **kwargs):
     List all the revision of the default preview within an application.
     """
     releases = sc.listDraftRelease(*args, **kwargs)
-    print('%s\t%s\t%s\t%s' % (
-        'RELEASE ID'.ljust(w), 'NAME'.ljust(w), 'REVISION'.ljust(w), 'DESCRIPTION'.ljust(w)))
-    print('{0}\t{0}\t{0}\t{0}'.format(('-' * w).ljust(w)))
-    for rev in releases:
-        if 'meta' in rev and 'revision' in rev['meta']:
-            revision = rev['meta']['revision']
+    table = []
+    for rls in releases:
+        if 'meta' in rls and 'revision' in rls['meta']:
+            revision = rls['meta']['revision']
         else:
             revision = ''
-        print('%s\t%s\t%s\t%s' % (
-            rev['_id'].ljust(w),
-            rev['name'].ljust(w),
-            revision.ljust(w),
-            rev['description'][0:w].ljust(w)))
+        table.append([revision, rls['name'], rls['_id']])
+    print(tabulate(
+        table,
+        headers=['APP REVISION', 'NAME', 'RELEASE ID'],
+        tablefmt="simple", numalign="left"))
 
 
 @draft.command('delete')
@@ -398,7 +391,7 @@ def _cli_deleteDraftRelease(sc, *args, **kwargs):
     Delete a specific revision within the Draft release.
     """
     rls = sc.deleteDraftRelease(*args, **kwargs)
-    print('%s (%s)\t%s' % (rls['name'], rls['_id'], 'DELETED'))
+    print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
 
 
 @extension.command('upload')
@@ -506,20 +499,22 @@ def _cli_listExtension(sc, *args, **kwargs):
     List all the extension within an application.
     """
     extensions = sc.listExtension(*args, **kwargs)
-    print('%s\t%s\t%s\t%s\t%s' % (
-        'EXTENSION ID'.ljust(w),
-        'NAME'.ljust(w),
-        'REVISION'.ljust(w),
-        'RELEASE NAME'.ljust(w),
-        'APP REVISION'.ljust(w)))
-    print('{0}\t{0}\t{0}\t{0}\t{0}'.format(('-' * w).ljust(w)))
+    rls_list = sc.listRelease(app_name=kwargs['app_name'], coll_id=kwargs['coll_id'])
+    table = []
     for ext in extensions:
-        print('%s\t%s\t%s\t%s\t%s' % (
-            ext['_id'].ljust(w),
-            ext['name'].ljust(w),
-            ext['meta']['revision'][0:w].ljust(w),
-            kwargs['release'].ljust(w),
-            ext['meta']['app_revision'].ljust(w)))
+        release_name = None
+        for rls in rls_list:
+            if rls['meta']['revision'] == ext['meta']['app_revision']:
+                release_name = rls['name']
+                break
+        if not release_name:
+            release_name = Constant.DRAFT_RELEASE_NAME
+        table.append([ext['meta']['revision'], ext['name'], release_name,
+                      ext['meta']['app_revision'], ext['_id']])
+    print(tabulate(
+        table,
+        headers=['REVISION', 'NAME', 'RELEASE NAME', 'APP REVISION', 'EXTENSION ID'],
+        tablefmt="simple", numalign="left"))
 
 
 @extension.command('delete')
@@ -535,7 +530,7 @@ def _cli_deleteExtension(sc, *args, **kwargs):
     Delete an extension by ID or Name.
     """
     ext = sc.deleteExtension(*args, **kwargs)
-    print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'DELETED'))
+    print('%s %s (%s)\t%s' % (ext['name'], ext['meta']['revision'], ext['_id'], 'DELETED'))
 
 
 @package.command('upload')
@@ -625,21 +620,21 @@ def _cli_listApplicationPackage(sc, *args, **kwargs):
     List all the application package within an application.
     """
     packages = sc.listApplicationPackage(*args, **kwargs)
-    print('%s\t%s\t%s\t%s' % ('PACKAGE ID'.ljust(w),
-                              'NAME'.ljust(w),
-                              'REVISION'.ljust(w),
-                              'RELEASE NAME'.ljust(w)))
-    print('{0}\t{0}\t{0}\t{0}'.format(('-' * w).ljust(w)))
+    rls_list = sc.listRelease(app_name=kwargs['app_name'], coll_id=kwargs['coll_id'])
+    table = []
     for pkg in packages:
-        if 'release' in kwargs and kwargs['release']:
-            release_name = kwargs['release']
-        else:
-            rls = sc.getFolder(pkg['folderId'])
-            release_name = rls['name']
-        print('%s\t%s\t%s\t%s' % (pkg['_id'].ljust(w),
-                                  pkg['name'].ljust(w),
-                                  pkg['meta']['revision'][0:w].ljust(w),
-                                  release_name.ljust(w)))
+        release_name = None
+        for rls in rls_list:
+            if rls['meta']['revision'] == pkg['meta']['revision']:
+                release_name = rls['name']
+                break
+        if not release_name:
+            release_name = Constant.DRAFT_RELEASE_NAME
+        table.append([pkg['meta']['revision'], pkg['name'], release_name, pkg['_id']])
+    print(tabulate(
+        table,
+        headers=['APP REVISION', 'NAME', 'RELEASE NAME', 'PACKAGE ID'],
+        tablefmt="simple", numalign="left"))
 
 
 @package.command('delete')
@@ -655,4 +650,4 @@ def _cli_deleteApplicationPackage(sc, *args, **kwargs):
     Delete an application package by ID or Name.
     """
     pkg = sc.deleteApplicationPackage(*args, **kwargs)
-    print('%s (%s)\t%s' % (pkg['name'], pkg['_id'], 'DELETED'))
+    print('%s %s (%s)\t%s' % (pkg['name'], pkg['meta']['revision'], pkg['_id'], 'DELETED'))
