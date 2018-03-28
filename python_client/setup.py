@@ -25,7 +25,8 @@ install_reqs = [
     'requests>=2.4.2',
     'requests_toolbelt',
     'six',
-    'pytest-vcr'
+    'pytest-vcr',
+    'tabulate'
 ]
 with open('README.rst') as f:
     readme = f.read()

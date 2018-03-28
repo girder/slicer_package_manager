@@ -361,7 +361,7 @@ class App(Resource):
             raise Exception('There is no %s release in this application.'
                             % constants.DRAFT_RELEASE_NAME)
         release = release[0]
-        draft_filters = None
+        draft_filters = {'meta.revision': {'$exists': True}}
         if revision:
             draft_filters = {'meta.revision': revision}
         return list(self._model.childFolders(
@@ -498,7 +498,8 @@ class App(Resource):
                 else:
                     revisions = self._model.childFolders(
                         release,
-                        'Folder')
+                        'Folder',
+                        sort=sort)
                     extensions = []
                     limit_tmp = limit
                     for revision in revisions:
