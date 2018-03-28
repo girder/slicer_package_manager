@@ -80,7 +80,7 @@ echo
 echo "########### RELEASE ###########"
 echo
 echo -n "Create release $releaseName"
-assert_eval "$cli $auth release create $app1Name --name $releaseName --revision 0001 --desc \"This is a description for $releaseName\"" 0
+assert_eval "$cli $auth release create $app1Name $releaseName 0001 --desc \"This is a description for $releaseName\"" 0
 echo -n "List release from 'App1'"
 assert_eval "$cli $auth release list $app1Name" 0
 echo
