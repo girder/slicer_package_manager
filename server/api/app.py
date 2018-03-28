@@ -498,7 +498,8 @@ class App(Resource):
                 else:
                     revisions = self._model.childFolders(
                         release,
-                        'Folder')
+                        'Folder',
+                        sort=sort)
                     extensions = []
                     limit_tmp = limit
                     for revision in revisions:
