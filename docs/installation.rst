@@ -32,9 +32,11 @@ Then to run the server just use the following command::
 
 .. note::
 
-    The ``-d`` option is running the container in deamon mode. Remove it to display the logs on the running containers.
+    The ``-d`` option is running the container in deamon mode. Remove it to display the logs
+    on the running containers.
 
-    To rebuild the container after changing the source code use the ``--build`` option when you run the command.
+    To rebuild the container after changing the source code use the ``--build`` option when
+    you run the command.
 
 .. warning::
 
@@ -43,6 +45,12 @@ Then to run the server just use the following command::
 The Girder application should then be running at http://localhost:8080/ and be already setup:
 
 * Creation of an **Admin User** (username: *admin*, password: *adminadmin*)
-* Creation of a local **Assetstore** (in *~/slicer_package_manager/assetstore*), let's read the Filesystem_ documentation for more detail about it
+* Creation of a local **Assetstore** (in *~/slicer_package_manager/assetstore*),
+  let's read the Filesystem_ documentation for more detail about it
+
+.. note::
+
+    You will have the possibility to create more users and/or change the password of
+    the **Admin User** via the Girder UI.
 
 .. _Filesystem: http://girder.readthedocs.io/en/latest/user-guide.html#assetstores

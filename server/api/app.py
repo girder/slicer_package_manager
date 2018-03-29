@@ -17,7 +17,7 @@
 #  limitations under the License.
 ##############################################################################
 """
-The internal API of Slicer Package Manager Girder plugin. Use these endpoints to
+The internal server API of Slicer Package Manager. Use these endpoints to
 create new applications, new releases, and upload or download application and extensions
 packages.
 """
@@ -255,8 +255,8 @@ class App(Resource):
     def createNewRelease(self, name, app_id, app_revision, description, public):
         """
         Create a new release with the ``name`` within the application. The ``app_revision``
-        will permit to automatically choose this release when uploading an extension
-        with a matching `app_revision`` metadata.
+        will be used to automatically choose this release when uploading an application or
+        extension package with a matching application revision metadata.
 
         :param name: Name of the new release
         :param app_id: Application ID
@@ -578,8 +578,8 @@ class App(Resource):
                                 release, icon_url, development_status, category, enabled, homepage,
                                 screenshots, contributors, dependency, license):
         """
-        Create an extension item in a specific release with providing ``release_id`` or in
-        the **'draft'** folder by default.
+        Create an extension item in a specific release by providing ``release_id`` or in
+        the **draft** folder by default.
         It's also possible to update an existing extension. In this case, it will update the name
         and the metadata of the extension.
 
@@ -816,8 +816,8 @@ class App(Resource):
     def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
                               revision, description):
         """
-        Create a package item in a specific release with providing ``release_id`` or in
-        the **'draft'** folder by default.
+        Create a package item in a specific release by providing ``release_id`` or in
+        the **draft** folder by default.
         It's also possible to update an existing package. In this case, it will update the name
         and the metadata of the package.
 
@@ -907,10 +907,11 @@ class App(Resource):
     @access.public
     def getDownloadStats(self, app_id):
         """
-        Get all the download count of all extension from an application.
+        Get all the download count of all the application and extension packages
+        from an application.
 
         :param app_id: Application ID
-        :return: The JSON document of all the download statistics of extension from the application
+        :return: The JSON document of all the download statistics
         """
         user = self.getCurrentUser()
         application = self._model.load(app_id, user=user)
