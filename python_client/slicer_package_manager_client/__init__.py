@@ -48,19 +48,21 @@ class Constant:
 
 class SlicerPackageClient(GirderClient):
     """
-    The SlicerPackageClient allow to us the GirderClient with specific functions to use the
-    slicer_package_manager plugin of Girder. This allow to manage 3 top level entity:
+    The SlicerPackageClient allows to use the slicer_package_manager plugin of Girder.
+    This allow to manage 5 top level entities:
 
         * Application
         * Release
+        * Draft
+        * Package
         * Extension
 
     It's now possible to choose the collection within create the application. It's also
     possible to get an existing collection by ID for creating the application inside.
 
-    In this case, you must provide the 'coll_id' argument to use all the other
-    command on these application. By default all the command look for application
-    which are under the "Applications" collection.
+    In this case, you must provide the ``coll_id`` argument to be able to use all the
+    commands on these application. By default all the command look for application
+    which are under the *Applications* collection.
     """
 
     def __init__(self, host=None, port=None, apiRoot=None, scheme=None, apiUrl=None,
@@ -73,10 +75,11 @@ class SlicerPackageClient(GirderClient):
                   public=None):
         """
         Create a new application in the collection which correspond to ``coll_id``,
-        by default it will create the application in the collection ``Applications``.
-        The application will contain a ``draft`` release (folder).
-        A template of the name of each future uploaded extension will be set as a metadata of
-        this new application.
+        by default it will create the application in the collection named ``Applications``.
+        The application will contain a ``draft`` folder.
+        Two templates names will be set as a metadata of this new application.
+        One for determine each future uploaded application package and the
+        other to determine each future uploaded extension.
         It's also possible to create a new collection by specifying "coll_name". If this collection
         already exist it will use it.
 
@@ -151,8 +154,8 @@ class SlicerPackageClient(GirderClient):
 
     def listRelease(self, app_name, name=None, coll_id=None):
         """
-        1. List all the release within an application.
-        2. Get the release by name.
+        List all the release within an application. It's also able to get
+        one specific release by name.
 
         :param app_name: Name of the application
         :param name: Name of the release
@@ -186,7 +189,7 @@ class SlicerPackageClient(GirderClient):
 
     def listDraftRelease(self, app_name, coll_id=None, revision=None, offset=0):
         """
-        List all the draft release with an offset option to list only the older.
+        List all the draft release with an offset option to list only the older ones.
         It's also possible to list one release within the Draft release by providing
         its specific revision.
 

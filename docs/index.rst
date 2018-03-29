@@ -21,7 +21,7 @@ In a nutshell:
 
 * Each release folder contain application packages (installers for the different platforms), and an ``extensions`` folder containing a flat list of extension packages.
 
-* Each extension packages is associated with metadata like application revision, extension revision, operating system and architecture,
+* Each extension packages is associated with metadata like application revision, extension revision, operating system and architecture...
 
 The diagram below represents the organization::
 
@@ -78,7 +78,7 @@ What is a Slicer Extension?
 ---------------------------
 
 An extension could be seen as a delivery package bundling together one or more Slicer modules.
-After installing an extension, the associated modules will be presented to the user as built-in ones
+After installing an extension, the associated modules will be presented to the user as built-in ones.
 To know more about Slicer extension let's take a look at the FAQ_.
 
 .. _FAQ: https://www.slicer.org/wiki/Documentation/Nightly/FAQ/Extensions
