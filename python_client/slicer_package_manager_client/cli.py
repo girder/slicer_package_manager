@@ -22,7 +22,7 @@ import platform
 from tabulate import tabulate
 
 from girder_client import GirderClient
-from . import SlicerPackageClient, __version__, Constant
+from . import SlicerPackageManagerError, SlicerPackageClient, __version__, Constant
 
 w = Constant.WIDTH
 
@@ -247,7 +247,7 @@ def _cli_createApp(sc, *args, **kwargs):
     try:
         application = sc.createApp(*args, **kwargs)
         print('%s (%s)\t%s' % (application['_id'], application['name'], 'CREATED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -288,7 +288,7 @@ def _cli_deleteApp(sc, *args, **kwargs):
     try:
         application = sc.deleteApp(*args, **kwargs)
         print('%s (%s)\t%s' % (application['name'], application['_id'], 'DELETED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -311,7 +311,7 @@ def _cli_createRelease(sc, *args, **kwargs):
     try:
         rls = sc.createRelease(*args, **kwargs)
         print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'CREATED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -339,7 +339,7 @@ def _cli_listRelease(sc, *args, **kwargs):
             table,
             headers=['APP REVISION', 'NAME', 'RELEASE ID'],
             tablefmt="simple", numalign="left"))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -358,7 +358,7 @@ def _cli_deleteRelease(sc, *args, **kwargs):
     try:
         rls = sc.deleteRelease(*args, **kwargs)
         print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -392,7 +392,7 @@ def _cli_listDraftRelease(sc, *args, **kwargs):
             table,
             headers=['APP REVISION', 'NAME', 'RELEASE ID'],
             tablefmt="simple", numalign="left"))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -411,7 +411,7 @@ def _cli_deleteDraftRelease(sc, *args, **kwargs):
     try:
         rls = sc.deleteDraftRelease(*args, **kwargs)
         print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -469,7 +469,7 @@ def _cli_uploadExtension(sc, *args, **kwargs):
             print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The extension is now up-to-date'))
         else:
             print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'UPLOADED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -492,7 +492,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
         print('Start download...')
         ext = sc.downloadExtension(*args, **kwargs)
         print('%s (%s)\t%s\t[%s]' % (ext['name'], ext['_id'], 'DOWNLOADED', kwargs['dir_path']))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -543,7 +543,7 @@ def _cli_listExtension(sc, *args, **kwargs):
             table,
             headers=['REVISION', 'NAME', 'RELEASE NAME', 'APP REVISION', 'EXTENSION ID'],
             tablefmt="simple", numalign="left"))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -562,7 +562,7 @@ def _cli_deleteExtension(sc, *args, **kwargs):
     try:
         ext = sc.deleteExtension(*args, **kwargs)
         print('%s %s (%s)\t%s' % (ext['name'], ext['meta']['revision'], ext['_id'], 'DELETED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -606,7 +606,7 @@ def _cli_uploadApplicationPackage(sc, *args, **kwargs):
             print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The package is now up-to-date'))
         else:
             print('%s (%s)\t%s' % (pkg['name'], pkg['_id'], 'UPLOADED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -629,7 +629,7 @@ def _cli_downloadApplicationPackage(sc, *args, **kwargs):
         print('Start download...')
         pkg = sc.downloadApplicationPackage(*args, **kwargs)
         print('%s (%s)\t%s\t[%s]' % (pkg['name'], pkg['_id'], 'DOWNLOADED', kwargs['dir_path']))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -675,7 +675,7 @@ def _cli_listApplicationPackage(sc, *args, **kwargs):
             table,
             headers=['APP REVISION', 'NAME', 'RELEASE NAME', 'PACKAGE ID'],
             tablefmt="simple", numalign="left"))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
 
@@ -694,5 +694,5 @@ def _cli_deleteApplicationPackage(sc, *args, **kwargs):
     try:
         pkg = sc.deleteApplicationPackage(*args, **kwargs)
         print('%s %s (%s)\t%s' % (pkg['name'], pkg['meta']['revision'], pkg['_id'], 'DELETED'))
-    except Exception as exc_info:
+    except SlicerPackageManagerError as exc_info:
         print(exc_info)
