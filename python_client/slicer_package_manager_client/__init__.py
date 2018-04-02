@@ -46,6 +46,10 @@ class Constant:
     WIDTH = 25  # Shouldn't be less than 24
 
 
+class SlicerPackageManagerError(Exception):
+    pass
+
+
 class SlicerPackageClient(GirderClient):
     """
     The SlicerPackageClient allows to use the slicer_package_manager plugin of Girder.
@@ -80,8 +84,8 @@ class SlicerPackageClient(GirderClient):
         Two templates names will be set as a metadata of this new application.
         One for determine each future uploaded application package and the
         other to determine each future uploaded extension.
-        It's also possible to create a new collection by specifying "coll_name". If this collection
-        already exist it will use it.
+        It's also possible to create a new collection by specifying "coll_name".
+        If this collection already exist it will use it.
 
         :param name: name of the new application
         :param desc: Optional description of the application
@@ -93,7 +97,7 @@ class SlicerPackageClient(GirderClient):
         """
         apps = self.listApp(name=name)
         if apps:
-            raise Exception('The Application "%s" already exist.' % name)
+            raise SlicerPackageManagerError('The Application "%s" already exist.' % name)
         return self.post('/app', parameters={
             'name': name,
             'app_description': desc,
@@ -145,7 +149,7 @@ class SlicerPackageClient(GirderClient):
         app = self._getApp(app_name=app_name, coll_id=coll_id)
         releases = self.listRelease(app_name=app_name, name=name)
         if releases:
-            raise Exception('The release "%s" already exist.' % name)
+            raise SlicerPackageManagerError('The release "%s" already exist.' % name)
         return self.post('/app/%s/release' % app['_id'], parameters={
             'name': name,
             'app_revision': revision,
@@ -183,7 +187,7 @@ class SlicerPackageClient(GirderClient):
         app = self._getApp(app_name=app_name, coll_id=coll_id)
         release = self.listRelease(app_name, name)
         if not release:
-            raise Exception('The release "%s" doesn\'t exist.' % name)
+            raise SlicerPackageManagerError('The release "%s" doesn\'t exist.' % name)
         self.delete('/app/%s/release/%s' % (app['_id'], name))
         return release
 
@@ -217,16 +221,18 @@ class SlicerPackageClient(GirderClient):
         app = self._getApp(app_name=app_name, coll_id=coll_id)
         release = self.listDraftRelease(app_name, revision=revision)
         if not release:
-            raise Exception('The release with the revision "%s" doesn\'t exist.' % revision)
+            raise SlicerPackageManagerError(
+                'The release with the revision "%s" doesn\'t exist.' % revision)
         self.delete('/app/%s/release/%s' % (app['_id'], release[0]['name']))
         return release[0]
 
-    def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url, revision,
-                        app_revision, packagetype='', codebase='', desc='', coll_id=None, force=False):
+    def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url,
+                        revision, app_revision, packagetype='', codebase='', desc='',
+                        coll_id=None, force=False):
         """
         Upload an extension by providing a path to the file. It can also be used to update an
-        existing one, in this case the upload is done only if the extension has a different revision
-        than the old one.
+        existing one, in this case the upload is done only if the extension has a different
+        revision than the old one.
 
         :param filepath: The path to the file
         :param app_name: The name of the application
@@ -325,7 +331,8 @@ class SlicerPackageClient(GirderClient):
 
         return extension
 
-    def downloadExtension(self, app_name, id_or_name, coll_id=None, dir_path=Constant.CURRENT_FOLDER):
+    def downloadExtension(self, app_name, id_or_name, coll_id=None,
+                          dir_path=Constant.CURRENT_FOLDER):
         """
         Download an extension by ID and store it in the given option ``dir_path``.
         When we use the extension id in ``id_or_name``, the parameter ``app_name`` is ignored.
@@ -339,8 +346,9 @@ class SlicerPackageClient(GirderClient):
         return self._downloadPackage('extension', app_name=app_name, id_or_name=id_or_name,
                                      dir_path=dir_path, coll_id=coll_id)
 
-    def listExtension(self, app_name, coll_id=None, name=None, ext_os=None, arch=None, app_revision=None,
-                      release=Constant.DRAFT_RELEASE_NAME, limit=Constant.DEFAULT_LIMIT, all=False):
+    def listExtension(self, app_name, coll_id=None, name=None, ext_os=None, arch=None,
+                      app_revision=None, release=Constant.DRAFT_RELEASE_NAME,
+                      limit=Constant.DEFAULT_LIMIT, all=False):
         """
         List all the extension for a specific release and filter them with some optional parameters
         (os, arch, ...). By default the extensions within ``draft`` release are listed.
@@ -368,7 +376,8 @@ class SlicerPackageClient(GirderClient):
             if release_folder:
                 release_id = release_folder['_id']
             else:
-                raise Exception('The release "%s" doesn\'t exist.' % release)
+                raise SlicerPackageManagerError(
+                    'The release "%s" doesn\'t exist.' % release)
 
         extensions = self.get('/app/%s/extension' % app['_id'], parameters={
             'os': ext_os,
@@ -396,8 +405,8 @@ class SlicerPackageClient(GirderClient):
     def uploadApplicationPackage(self, filepath, app_name, pkg_os, arch, name, repo_type,
                                  repo_url, revision, coll_id=None, desc=''):
         """
-        Upload an application package by providing a path to the file. It can also be used to update an
-        existing one.
+        Upload an application package by providing a path to the file.
+        It can also be used to update an existing one.
 
         :param filepath: The path to the file
         :param app_name: The name of the application
@@ -482,7 +491,8 @@ class SlicerPackageClient(GirderClient):
                 return Constant.PACKAGE_NOW_UP_TO_DATE
         return package
 
-    def downloadApplicationPackage(self, app_name, id_or_name, coll_id=None, dir_path=Constant.CURRENT_FOLDER):
+    def downloadApplicationPackage(self, app_name, id_or_name, coll_id=None,
+                                   dir_path=Constant.CURRENT_FOLDER):
         """
         Download an application package by ID and store it in the given option ``dir_path``.
         When we use the package id in ``id_or_name``, the parameter ``app_name`` is ignored.
@@ -496,8 +506,8 @@ class SlicerPackageClient(GirderClient):
         return self._downloadPackage('package', app_name=app_name, id_or_name=id_or_name,
                                      dir_path=dir_path, coll_id=coll_id)
 
-    def listApplicationPackage(self, app_name, coll_id=None, name=None, pkg_os=None, arch=None, revision=None,
-                               release=None, limit=Constant.DEFAULT_LIMIT):
+    def listApplicationPackage(self, app_name, coll_id=None, name=None, pkg_os=None, arch=None,
+                               revision=None, release=None, limit=Constant.DEFAULT_LIMIT):
         """
         List all the application package filtered by some optional parameters (os, arch, ...).
         By default all the application packages are listed.
@@ -521,7 +531,8 @@ class SlicerPackageClient(GirderClient):
             if release_folder:
                 release_id = release_folder['_id']
             else:
-                raise Exception('The release "%s" doesn\'t exist.' % release)
+                raise SlicerPackageManagerError(
+                    'The release "%s" doesn\'t exist.' % release)
 
         pkg = self.get('/app/%s/package' % app['_id'], parameters={
             'os': pkg_os,
@@ -544,7 +555,11 @@ class SlicerPackageClient(GirderClient):
         :param coll_id: Collection ID
         :return: The deleted application package
         """
-        return self._deletePackage('package', app_name=app_name, id_or_name=id_or_name, coll_id=coll_id)
+        return self._deletePackage(
+            'package',
+            app_name=app_name,
+            id_or_name=id_or_name,
+            coll_id=coll_id)
 
     # ---------------- UTILITIES ---------------- #
 
@@ -558,7 +573,8 @@ class SlicerPackageClient(GirderClient):
         """
         apps = self.listApp(name=app_name, coll_id=coll_id)
         if not apps:
-            raise Exception('The Application "%s" doesn\'t exist.' % app_name)
+            raise SlicerPackageManagerError(
+                'The Application "%s" doesn\'t exist.' % app_name)
         return apps[0]
 
     def _downloadPackage(self, package_type, app_name, id_or_name, dir_path, coll_id):
@@ -573,10 +589,12 @@ class SlicerPackageClient(GirderClient):
             if pkg:
                 pkg = pkg[0]
         if not pkg:
-            raise Exception('The %s "%s" doesn\'t exist.' % (package_type, id_or_name))
+            raise SlicerPackageManagerError(
+                'The %s "%s" doesn\'t exist.' % (package_type, id_or_name))
         files = self.get('/item/%s/files' % pkg['_id'])
         if not files:
-            raise Exception('The %s "%s" doesn\'t contain any file.' % (package_type, id_or_name))
+            raise SlicerPackageManagerError(
+                'The %s "%s" doesn\'t contain any file.' % (package_type, id_or_name))
         file = files[0]
         self.downloadFile(
             file['_id'],
@@ -595,7 +613,8 @@ class SlicerPackageClient(GirderClient):
                 '/app/%s/%s' % (app['_id'], package_type),
                 parameters={'%s_name' % package_type: id_or_name})
         if not pkg:
-            raise Exception('The %s "%s" doesn\'t exist.' % (package_type, id_or_name))
+            raise SlicerPackageManagerError(
+                'The %s "%s" doesn\'t exist.' % (package_type, id_or_name))
         pkg = pkg[0]
         self.delete('/app/%s/%s/%s' % (app['_id'], package_type, pkg['_id']))
         return pkg
