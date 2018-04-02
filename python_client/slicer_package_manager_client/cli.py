@@ -244,8 +244,11 @@ def _cli_createApp(sc, *args, **kwargs):
     """
     Create a new application.
     """
-    application = sc.createApp(*args, **kwargs)
-    print('%s (%s)\t%s' % (application['_id'], application['name'], 'CREATED'))
+    try:
+        application = sc.createApp(*args, **kwargs)
+        print('%s (%s)\t%s' % (application['_id'], application['name'], 'CREATED'))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @app.command('list')
@@ -282,8 +285,11 @@ def _cli_deleteApp(sc, *args, **kwargs):
     """
     Delete an application.
     """
-    application = sc.deleteApp(*args, **kwargs)
-    print('%s (%s)\t%s' % (application['name'], application['_id'], 'DELETED'))
+    try:
+        application = sc.deleteApp(*args, **kwargs)
+        print('%s (%s)\t%s' % (application['name'], application['_id'], 'DELETED'))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @release.command('create')
@@ -302,8 +308,11 @@ def _cli_createRelease(sc, *args, **kwargs):
     """
     Create a new release.
     """
-    rls = sc.createRelease(*args, **kwargs)
-    print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'CREATED'))
+    try:
+        rls = sc.createRelease(*args, **kwargs)
+        print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'CREATED'))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @release.command('list')
@@ -317,18 +326,21 @@ def _cli_listRelease(sc, *args, **kwargs):
     """
     List all the release within an application.
     """
-    releases = sc.listRelease(*args, **kwargs)
-    table = []
-    for rls in releases:
-        if 'meta' in rls and 'revision' in rls['meta']:
-            revision = rls['meta']['revision']
-        else:
-            revision = ''
-        table.append([revision, rls['name'], rls['_id']])
-    print(tabulate(
-        table,
-        headers=['APP REVISION', 'NAME', 'RELEASE ID'],
-        tablefmt="simple", numalign="left"))
+    try:
+        releases = sc.listRelease(*args, **kwargs)
+        table = []
+        for rls in releases:
+            if 'meta' in rls and 'revision' in rls['meta']:
+                revision = rls['meta']['revision']
+            else:
+                revision = ''
+            table.append([revision, rls['name'], rls['_id']])
+        print(tabulate(
+            table,
+            headers=['APP REVISION', 'NAME', 'RELEASE ID'],
+            tablefmt="simple", numalign="left"))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @release.command('delete')
@@ -343,8 +355,11 @@ def _cli_deleteRelease(sc, *args, **kwargs):
     """
     Delete a release.
     """
-    rls = sc.deleteRelease(*args, **kwargs)
-    print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
+    try:
+        rls = sc.deleteRelease(*args, **kwargs)
+        print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @draft.command('list')
@@ -364,18 +379,21 @@ def _cli_listDraftRelease(sc, *args, **kwargs):
     """
     List all the revision of the default preview within an application.
     """
-    releases = sc.listDraftRelease(*args, **kwargs)
-    table = []
-    for rls in releases:
-        if 'meta' in rls and 'revision' in rls['meta']:
-            revision = rls['meta']['revision']
-        else:
-            revision = ''
-        table.append([revision, rls['name'], rls['_id']])
-    print(tabulate(
-        table,
-        headers=['APP REVISION', 'NAME', 'RELEASE ID'],
-        tablefmt="simple", numalign="left"))
+    try:
+        releases = sc.listDraftRelease(*args, **kwargs)
+        table = []
+        for rls in releases:
+            if 'meta' in rls and 'revision' in rls['meta']:
+                revision = rls['meta']['revision']
+            else:
+                revision = ''
+            table.append([revision, rls['name'], rls['_id']])
+        print(tabulate(
+            table,
+            headers=['APP REVISION', 'NAME', 'RELEASE ID'],
+            tablefmt="simple", numalign="left"))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @draft.command('delete')
@@ -390,8 +408,11 @@ def _cli_deleteDraftRelease(sc, *args, **kwargs):
     """
     Delete a specific revision within the Draft release.
     """
-    rls = sc.deleteDraftRelease(*args, **kwargs)
-    print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
+    try:
+        rls = sc.deleteDraftRelease(*args, **kwargs)
+        print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @extension.command('upload')
@@ -439,14 +460,17 @@ def _cli_uploadExtension(sc, *args, **kwargs):
     """
     Upload an extension.
     """
-    print('Create the extension %s' % kwargs['name'])
-    ext = sc.uploadExtension(*args, **kwargs)
-    if ext == Constant.EXTENSION_AREADY_UP_TO_DATE:
-        print('Extension "%s" is already up-to-date\t(Extension Item updated)' % kwargs['name'])
-    elif ext == Constant.EXTENSION_NOW_UP_TO_DATE:
-        print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The extension is now up-to-date'))
-    else:
-        print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'UPLOADED'))
+    try:
+        print('Create the extension %s' % kwargs['name'])
+        ext = sc.uploadExtension(*args, **kwargs)
+        if ext == Constant.EXTENSION_AREADY_UP_TO_DATE:
+            print('Extension "%s" is already up-to-date\t(Extension Item updated)' % kwargs['name'])
+        elif ext == Constant.EXTENSION_NOW_UP_TO_DATE:
+            print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The extension is now up-to-date'))
+        else:
+            print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'UPLOADED'))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @extension.command('download')
@@ -464,9 +488,12 @@ def _cli_downloadExtension(sc, *args, **kwargs):
     """
     Download an extension.
     """
-    print('Start download...')
-    ext = sc.downloadExtension(*args, **kwargs)
-    print('%s (%s)\t%s\t[%s]' % (ext['name'], ext['_id'], 'DOWNLOADED', kwargs['dir_path']))
+    try:
+        print('Start download...')
+        ext = sc.downloadExtension(*args, **kwargs)
+        print('%s (%s)\t%s\t[%s]' % (ext['name'], ext['_id'], 'DOWNLOADED', kwargs['dir_path']))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @extension.command('list')
@@ -498,23 +525,26 @@ def _cli_listExtension(sc, *args, **kwargs):
     """
     List all the extension within an application.
     """
-    extensions = sc.listExtension(*args, **kwargs)
-    rls_list = sc.listRelease(app_name=kwargs['app_name'], coll_id=kwargs['coll_id'])
-    table = []
-    for ext in extensions:
-        release_name = None
-        for rls in rls_list:
-            if rls['meta']['revision'] == ext['meta']['app_revision']:
-                release_name = rls['name']
-                break
-        if not release_name:
-            release_name = Constant.DRAFT_RELEASE_NAME
-        table.append([ext['meta']['revision'], ext['name'], release_name,
-                      ext['meta']['app_revision'], ext['_id']])
-    print(tabulate(
-        table,
-        headers=['REVISION', 'NAME', 'RELEASE NAME', 'APP REVISION', 'EXTENSION ID'],
-        tablefmt="simple", numalign="left"))
+    try:
+        extensions = sc.listExtension(*args, **kwargs)
+        rls_list = sc.listRelease(app_name=kwargs['app_name'], coll_id=kwargs['coll_id'])
+        table = []
+        for ext in extensions:
+            release_name = None
+            for rls in rls_list:
+                if rls['meta']['revision'] == ext['meta']['app_revision']:
+                    release_name = rls['name']
+                    break
+            if not release_name:
+                release_name = Constant.DRAFT_RELEASE_NAME
+            table.append([ext['meta']['revision'], ext['name'], release_name,
+                          ext['meta']['app_revision'], ext['_id']])
+        print(tabulate(
+            table,
+            headers=['REVISION', 'NAME', 'RELEASE NAME', 'APP REVISION', 'EXTENSION ID'],
+            tablefmt="simple", numalign="left"))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @extension.command('delete')
@@ -529,8 +559,11 @@ def _cli_deleteExtension(sc, *args, **kwargs):
     """
     Delete an extension by ID or Name.
     """
-    ext = sc.deleteExtension(*args, **kwargs)
-    print('%s %s (%s)\t%s' % (ext['name'], ext['meta']['revision'], ext['_id'], 'DELETED'))
+    try:
+        ext = sc.deleteExtension(*args, **kwargs)
+        print('%s %s (%s)\t%s' % (ext['name'], ext['meta']['revision'], ext['_id'], 'DELETED'))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @package.command('upload')
@@ -566,12 +599,15 @@ def _cli_uploadApplicationPackage(sc, *args, **kwargs):
     """
     Upload an application package.
     """
-    print('Create the application package %s' % kwargs['name'])
-    pkg = sc.uploadApplicationPackage(*args, **kwargs)
-    if pkg == Constant.PACKAGE_NOW_UP_TO_DATE:
-        print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The package is now up-to-date'))
-    else:
-        print('%s (%s)\t%s' % (pkg['name'], pkg['_id'], 'UPLOADED'))
+    try:
+        print('Create the application package %s' % kwargs['name'])
+        pkg = sc.uploadApplicationPackage(*args, **kwargs)
+        if pkg == Constant.PACKAGE_NOW_UP_TO_DATE:
+            print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The package is now up-to-date'))
+        else:
+            print('%s (%s)\t%s' % (pkg['name'], pkg['_id'], 'UPLOADED'))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @package.command('download')
@@ -589,9 +625,12 @@ def _cli_downloadApplicationPackage(sc, *args, **kwargs):
     """
     Download an application package.
     """
-    print('Start download...')
-    pkg = sc.downloadApplicationPackage(*args, **kwargs)
-    print('%s (%s)\t%s\t[%s]' % (pkg['name'], pkg['_id'], 'DOWNLOADED', kwargs['dir_path']))
+    try:
+        print('Start download...')
+        pkg = sc.downloadApplicationPackage(*args, **kwargs)
+        print('%s (%s)\t%s\t[%s]' % (pkg['name'], pkg['_id'], 'DOWNLOADED', kwargs['dir_path']))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @package.command('list')
@@ -619,22 +658,25 @@ def _cli_listApplicationPackage(sc, *args, **kwargs):
     """
     List all the application package within an application.
     """
-    packages = sc.listApplicationPackage(*args, **kwargs)
-    rls_list = sc.listRelease(app_name=kwargs['app_name'], coll_id=kwargs['coll_id'])
-    table = []
-    for pkg in packages:
-        release_name = None
-        for rls in rls_list:
-            if rls['meta']['revision'] == pkg['meta']['revision']:
-                release_name = rls['name']
-                break
-        if not release_name:
-            release_name = Constant.DRAFT_RELEASE_NAME
-        table.append([pkg['meta']['revision'], pkg['name'], release_name, pkg['_id']])
-    print(tabulate(
-        table,
-        headers=['APP REVISION', 'NAME', 'RELEASE NAME', 'PACKAGE ID'],
-        tablefmt="simple", numalign="left"))
+    try:
+        packages = sc.listApplicationPackage(*args, **kwargs)
+        rls_list = sc.listRelease(app_name=kwargs['app_name'], coll_id=kwargs['coll_id'])
+        table = []
+        for pkg in packages:
+            release_name = None
+            for rls in rls_list:
+                if rls['meta']['revision'] == pkg['meta']['revision']:
+                    release_name = rls['name']
+                    break
+            if not release_name:
+                release_name = Constant.DRAFT_RELEASE_NAME
+            table.append([pkg['meta']['revision'], pkg['name'], release_name, pkg['_id']])
+        print(tabulate(
+            table,
+            headers=['APP REVISION', 'NAME', 'RELEASE NAME', 'PACKAGE ID'],
+            tablefmt="simple", numalign="left"))
+    except Exception as exc_info:
+        print(exc_info)
 
 
 @package.command('delete')
@@ -649,5 +691,8 @@ def _cli_deleteApplicationPackage(sc, *args, **kwargs):
     """
     Delete an application package by ID or Name.
     """
-    pkg = sc.deleteApplicationPackage(*args, **kwargs)
-    print('%s %s (%s)\t%s' % (pkg['name'], pkg['meta']['revision'], pkg['_id'], 'DELETED'))
+    try:
+        pkg = sc.deleteApplicationPackage(*args, **kwargs)
+        print('%s %s (%s)\t%s' % (pkg['name'], pkg['meta']['revision'], pkg['_id'], 'DELETED'))
+    except Exception as exc_info:
+        print(exc_info)
