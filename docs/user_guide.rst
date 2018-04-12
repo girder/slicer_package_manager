@@ -163,6 +163,31 @@ Schema of concepts
        |        |
        |        |------SlicerCustom
 
+How to clean up the Draft release folder?
+-----------------------------------------
+
+Every day more than 300 extensions are supposed to be uploaded into the Slicer Package Manager. It's important to be
+able to clean up the old packages occasionally. Here's the process to do it:
+
+The command: ``slicer_package_manager_client draft list <APP_NAME> --offset <N>`` allows to list the oldest draft subfolders
+related to old application revision. Using this command, you will be able to get a list of ``revision`` and then use the
+command ``slicer_package_manager_client draft delete <APP_NAME> <REVISION>`` in a loop to delete them all.
+
+There is also a bash script you can use easily to do that for you. In the directory
+``slicer_package_manager/python_client``, you will find the ``cleanNightly.sh`` script.
+
+To be able to run this script make sure to have the ``slicer_package_manager_client`` installed on your machine, if not
+check the :doc:`commands_shell` documentation.
+
+Then just enter::
+
+    $ ./cleanNightly.sh <API_URL> <API_KEY> <N>
+
+* API_URL: The URL of the distant machine, for instance http://192.168.xxx.xxx/api/v1
+
+* API_KEY: The token that allow you to use the client
+
+* N: Number of draft release you want to keep, all the oldest will be deleted
 
 Download Statistics
 -------------------
