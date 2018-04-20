@@ -594,6 +594,9 @@ def _cli_deleteExtension(sc, *args, **kwargs):
 @click.option('--desc', default='',
               help='Description of the package',
               cls=_AdvancedOption)
+@click.option('--pre_release', 'pre_release', flag_value='pre_release', default=False,
+              help='Boolean to specify if the package is ready to be distributed',
+              cls=_AdvancedOption)
 @click.pass_obj
 def _cli_uploadApplicationPackage(sc, *args, **kwargs):
     """

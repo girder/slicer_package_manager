@@ -403,7 +403,7 @@ class SlicerPackageClient(GirderClient):
         return self._deletePackage('extension', app_name, id_or_name, coll_id)
 
     def uploadApplicationPackage(self, filepath, app_name, pkg_os, arch, name, repo_type,
-                                 repo_url, revision, coll_id=None, desc=''):
+                                 repo_url, revision, coll_id=None, desc='', pre_release=False):
         """
         Upload an application package by providing a path to the file.
         It can also be used to update an existing one.
@@ -418,6 +418,7 @@ class SlicerPackageClient(GirderClient):
         :param revision: The revision of the application
         :param coll_id: Collection ID
         :param desc: The description of the application package
+        :param pre_release: Boolean to specify if the package is ready to be distributed
         :return: The uploaded application package
         """
         def _displayProgress(*args, **kwargs):
@@ -440,7 +441,8 @@ class SlicerPackageClient(GirderClient):
                 'repository_type': repo_type,
                 'repository_url': repo_url,
                 'revision': revision,
-                'description': desc
+                'description': desc,
+                'pre_release': pre_release
             })
 
             # Upload the package

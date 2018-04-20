@@ -809,12 +809,14 @@ class App(Resource):
         .param('repository_url', 'The url of the repository.')
         .param('revision', 'The revision of the application')
         .param('description', 'Text describing the package.', required=False)
+        .param('pre_release', 'Boolean to specify if the package is ready to be distributed',
+               dataType='boolean', required=False)
         .errorResponse()
     )
     @access.cookie
     @access.public
     def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
-                              revision, description):
+                              revision, description, pre_release):
         """
         Create a package item in a specific release by providing ``release_id`` or in
         the **draft** folder by default.
@@ -829,6 +831,7 @@ class App(Resource):
         :param repository_url: The Url of the repository.
         :param revision: The revision of the application.
         :param description: Description of the application package
+        :param pre_release: Boolean to specify if the package is ready to be distributed
         :return: The created/updated package.
         """
         creator = self.getCurrentUser()
@@ -846,6 +849,7 @@ class App(Resource):
             'repository_type': repository_type,
             'repository_url': repository_url,
             'revision': revision,
+            'pre_release': pre_release
         }
 
         name = application['meta']['applicationPackageNameTemplate'].format(**params)
