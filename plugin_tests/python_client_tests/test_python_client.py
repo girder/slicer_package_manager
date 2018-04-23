@@ -542,7 +542,7 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
     os.remove('%s.txt' % downloaded_ext1_name)
     os.remove('../%s.txt' % downloaded_ext2_name)
 
-    # Update an existing package
+    # Update an existing package by changing the revision
     spc.uploadExtension(
         filepath=exts[1]['filepath'],
         app_name=apps[0]['name'],
@@ -559,15 +559,15 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
         app_name=apps[0]['name'], id_or_name=ext1['_id'])
     downloaded_ext1_name_bis = apps[0]['meta']['extensionPackageNameTemplate'].format(
         **params1)
-    assert downloaded_ext1_bis['name'] == downloaded_ext1_name_bis
+    assert downloaded_ext1_bis['name'] != downloaded_ext1_name_bis
     # Compare, the file should have changed
-    downloaded_f1_bis = open('%s.txt' % downloaded_ext1_name_bis, 'r')
+    downloaded_f1_bis = open('%s.txt' % downloaded_ext1_bis['name'], 'r')
     f1_bis = open(files[1], 'r')
     assert downloaded_f1_bis.read() == f1_bis.read()
 
     f1_bis.close()
     downloaded_f1_bis.close()
-    os.remove('%s.txt' % downloaded_ext1_name_bis)
+    os.remove('%s.txt' % downloaded_ext1_bis['name'])
 
 
 @pytest.mark.vcr()
