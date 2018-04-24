@@ -246,7 +246,7 @@ def _cli_createApp(sc, *args, **kwargs):
     """
     try:
         application = sc.createApp(*args, **kwargs)
-        print('%s (%s)\t%s' % (application['_id'], application['name'], 'CREATED'))
+        print('%s (%s) %s' % (application['_id'], application['name'], 'CREATED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -287,7 +287,7 @@ def _cli_deleteApp(sc, *args, **kwargs):
     """
     try:
         application = sc.deleteApp(*args, **kwargs)
-        print('%s (%s)\t%s' % (application['name'], application['_id'], 'DELETED'))
+        print('%s (%s) %s' % (application['name'], application['_id'], 'DELETED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -310,7 +310,7 @@ def _cli_createRelease(sc, *args, **kwargs):
     """
     try:
         rls = sc.createRelease(*args, **kwargs)
-        print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'CREATED'))
+        print('%s %s (%s) %s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'CREATED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -357,7 +357,7 @@ def _cli_deleteRelease(sc, *args, **kwargs):
     """
     try:
         rls = sc.deleteRelease(*args, **kwargs)
-        print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
+        print('%s %s (%s) %s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -410,7 +410,7 @@ def _cli_deleteDraftRelease(sc, *args, **kwargs):
     """
     try:
         rls = sc.deleteDraftRelease(*args, **kwargs)
-        print('%s %s (%s)\t%s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
+        print('%s %s (%s) %s' % (rls['name'], rls['meta']['revision'], rls['_id'], 'DELETED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -466,9 +466,9 @@ def _cli_uploadExtension(sc, *args, **kwargs):
         if ext == Constant.EXTENSION_AREADY_UP_TO_DATE:
             print('Extension "%s" is already up-to-date\t(Extension Item updated)' % kwargs['name'])
         elif ext == Constant.EXTENSION_NOW_UP_TO_DATE:
-            print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The extension is now up-to-date'))
+            print('%s %s %s' % (kwargs['name'], 'UPLOADED', 'The extension is now up-to-date'))
         else:
-            print('%s (%s)\t%s' % (ext['name'], ext['_id'], 'UPLOADED'))
+            print('%s (%s) %s' % (ext['name'], ext['_id'], 'UPLOADED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -491,7 +491,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
     try:
         print('Start download...')
         ext = sc.downloadExtension(*args, **kwargs)
-        print('%s (%s)\t%s\t[%s]' % (ext['name'], ext['_id'], 'DOWNLOADED', kwargs['dir_path']))
+        print('%s (%s) %s [%s]' % (ext['name'], ext['_id'], 'DOWNLOADED', kwargs['dir_path']))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -561,7 +561,7 @@ def _cli_deleteExtension(sc, *args, **kwargs):
     """
     try:
         ext = sc.deleteExtension(*args, **kwargs)
-        print('%s %s (%s)\t%s' % (ext['name'], ext['meta']['revision'], ext['_id'], 'DELETED'))
+        print('%s %s (%s) %s' % (ext['name'], ext['meta']['revision'], ext['_id'], 'DELETED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -606,9 +606,9 @@ def _cli_uploadApplicationPackage(sc, *args, **kwargs):
         print('Create the application package %s' % kwargs['name'])
         pkg = sc.uploadApplicationPackage(*args, **kwargs)
         if pkg == Constant.PACKAGE_NOW_UP_TO_DATE:
-            print('%s\t%s\t%s' % (kwargs['name'], 'UPLOADED', 'The package is now up-to-date'))
+            print('%s %s %s' % (kwargs['name'], 'UPLOADED', 'The package is now up-to-date'))
         else:
-            print('%s (%s)\t%s' % (pkg['name'], pkg['_id'], 'UPLOADED'))
+            print('%s (%s) %s' % (pkg['name'], pkg['_id'], 'UPLOADED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -631,7 +631,7 @@ def _cli_downloadApplicationPackage(sc, *args, **kwargs):
     try:
         print('Start download...')
         pkg = sc.downloadApplicationPackage(*args, **kwargs)
-        print('%s (%s)\t%s\t[%s]' % (pkg['name'], pkg['_id'], 'DOWNLOADED', kwargs['dir_path']))
+        print('%s (%s) %s [%s]' % (pkg['name'], pkg['_id'], 'DOWNLOADED', kwargs['dir_path']))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 
@@ -696,6 +696,6 @@ def _cli_deleteApplicationPackage(sc, *args, **kwargs):
     """
     try:
         pkg = sc.deleteApplicationPackage(*args, **kwargs)
-        print('%s %s (%s)\t%s' % (pkg['name'], pkg['meta']['revision'], pkg['_id'], 'DELETED'))
+        print('%s %s (%s) %s' % (pkg['name'], pkg['meta']['revision'], pkg['_id'], 'DELETED'))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)

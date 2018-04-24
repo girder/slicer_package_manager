@@ -114,6 +114,7 @@ jobs:
             sleep 50
 
             pytest --tb=long test_python_client.py
+            pytest --tb=long test_client_cli.py
             . slicer_package_manager_client_test.sh
 
           working_directory: girder/plugins/slicer_package_manager/plugin_tests/python_client_tests
