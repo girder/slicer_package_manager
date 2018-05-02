@@ -260,6 +260,10 @@ set as metadata on the application folder. The default name is
 ``{baseName}_{arch}_{os}_{revision}``. It can be change at any time on the application
 setting page.
 
+The ``--pre_release`` option is used to specify if the uploaded package is ready for distribution
+or if it needs extra steps before that. In some cases, the package needs to be signed and then
+re-uploaded on the server.
+
 ::
 
     slicer_package_manager_client package upload APP_NAME FILE_PATH [OPTIONS]
@@ -278,6 +282,7 @@ Options:
 * ``--repo_url`` - The repository URL of the application package
 * ``--revision`` - The revision of the application package
 * ``--coll_id`` - ID of an existing collection
+* ``--pre_release`` - Boolean to specify if the package is ready to be distributed
 * ``--desc`` - The description of the new application
 
 
