@@ -3,18 +3,19 @@
 echo
 echo "### Cleaning the Draft folder"
 echo
-echo "* api-url: $1 "
-echo "* api-key: $2 "
 echo "* offset: $3  (Number of Nightly revision to keep)"
 echo
 revisionToDelete=$(slicer_package_manager_client --api-url $1 --api-key $2 draft list Slicer --offset $3 | tail -n +3 | cut -d' ' -f1)
+
+echo "List of resource to delete:"
+echo
 
 for rev in $revisionToDelete
 do
     echo $rev
 done
 
-if [[ ! $4 = "--force" ]]
+if [[ ! $4 = "-y" ]]
 then
   read -p "Do you really want to delete all of these revision? [Yy]" -n 1 -r
   echo
@@ -28,6 +29,7 @@ then
   echo
 fi
 
+echo
 for rev in $revisionToDelete
 do
     slicer_package_manager_client --api-url $1 --api-key $2 draft delete Slicer $rev
