@@ -551,24 +551,25 @@ class App(Resource):
         .param('revision', 'The svn or git revision of the extension.')
         .param('app_revision', 'The revision of the application '
                                'that the extension was built against.')
-        .param('packagetype', 'Installer, data, etc.')
-        .param('codebase', 'The codebase baseName (Ex: Slicer4).')
         .param('description', 'Text describing the extension.')
-        .param('release', 'Release identifier (Ex: 0.0.1, 0.0.2, 0.1).', required=False)
+        .param('packagetype', 'Installer, data, etc.', required=False)
         .param('icon_url', 'The url of the icon for the extension.', required=False)
-        .param('development_status', 'Arbitrary description of the status of the extension '
-               '(stable, active, etc).', required=False)
         .param('category', 'Category under which to place the extension. Subcategories should be '
                'delimited by character. If none is passed, will render under '
                'the Miscellaneous category..', required=False)
-        .param('enabled', 'Boolean indicating if the extension should be automatically enabled '
-               'after its installation.', required=False)
+
         .param('homepage', 'The url of the extension homepage.', required=False)
         .param('screenshots', 'Space-separate list of URLs of screenshots for the extension.',
                required=False)
         .param('contributors', 'List of contributors of the extension.', required=False)
         .param('dependency', 'List of the required extensions to use this one.', required=False)
         .param('license', 'The license short description of the extension.', required=False)
+        .param('development_status', 'Arbitrary description of the status of the extension '
+               '(stable, active, etc).', required=False)
+        .param('enabled', 'Boolean indicating if the extension should be automatically enabled '
+               'after its installation.', required=False)
+        .param('release', 'Release identifier (Ex: 0.0.1, 0.0.2, 0.1).', required=False)
+        .param('codebase', 'The codebase baseName (Ex: Slicer4).', required=False)
         .errorResponse()
     )
     @access.cookie
@@ -628,10 +629,10 @@ class App(Resource):
             'repository_url': repository_url,
             'revision': revision,
             'app_revision': app_revision,
-            'packagetype': packagetype,
-            'codebase': codebase,
             'description': description
         }
+        if packagetype:
+            params['packagetype'] = packagetype
         if release:
             params['release'] = release
         if icon_url:
@@ -652,6 +653,8 @@ class App(Resource):
             params['dependency'] = dependency
         if license:
             params['license'] = license
+        if codebase:
+            params['codebase'] = codebase
 
         name = application['meta']['extensionPackageNameTemplate'].format(**params)
         filters = {

@@ -227,8 +227,9 @@ class SlicerPackageClient(GirderClient):
         return release[0]
 
     def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url,
-                        revision, app_revision, packagetype='', codebase='', desc='',
-                        coll_id=None, force=False):
+                        revision, app_revision, desc='', packagetype='', icon_url='',
+                        category=None, homepage='', screenshots=None, contributors=None,
+                        dependency=None, coll_id=None, force=False):
         """
         Upload an extension by providing a path to the file. It can also be used to update an
         existing one, in this case the upload is done only if the extension has a different
@@ -243,9 +244,14 @@ class SlicerPackageClient(GirderClient):
         :param repo_url: Url of the repository
         :param revision: The revision of the extension
         :param app_revision: The revision of the application supported by the extension
-        :param packagetype: Type of the package
-        :param codebase: Codebase of the extension name
         :param desc: The description of the extension
+        :param packagetype: Type of the package
+        :param icon_url: Url of the extension's logo
+        :param category: Category of the extension
+        :param homepage: Url of the extension's homepage
+        :param screenshots: Space-separate list of URLs of screenshots for the extension.
+        :param contributors: List of contributors of the extension.
+        :param dependency: List of the required extensions to use this one.
         :param coll_id: Collection ID
         :param force: To force update the binary file
         :return: The uploaded extension
@@ -271,9 +277,14 @@ class SlicerPackageClient(GirderClient):
                 'repository_url': repo_url,
                 'revision': revision,
                 'app_revision': app_revision,
+                'description': desc,
                 'packagetype': packagetype,
-                'codebase': codebase,
-                'description': desc
+                'icon_url': icon_url,
+                'category': category,
+                'homepage': homepage,
+                'screenshots': screenshots,
+                'contributors': contributors,
+                'dependency': dependency,
             })
 
             # Upload the extension
@@ -312,9 +323,14 @@ class SlicerPackageClient(GirderClient):
                     'repository_url': repo_url,
                     'revision': revision,
                     'app_revision': app_revision,
+                    'description': desc,
                     'packagetype': packagetype,
-                    'codebase': codebase,
-                    'description': desc
+                    'icon_url': icon_url,
+                    'category': category,
+                    'homepage': homepage,
+                    'screenshots': screenshots,
+                    'contributors': contributors,
+                    'dependency': dependency,
                 })
 
                 files = list(self.listFile(extension['_id']))
