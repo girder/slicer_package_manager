@@ -4,11 +4,9 @@ Slicer package manager Python Client
 Installation
 --------------------------------------
 
-To install with pip::
+Since no package is available on PyPi, you must install from source.
 
-    $ pip install slicer-package-manager
-
-To install from the latest source, first obtain the source code::
+First obtain the source code::
 
     $ git clone https://github.com/girder/slicer_package_manager.git
     $ cd slicer_package_manager/python_client
