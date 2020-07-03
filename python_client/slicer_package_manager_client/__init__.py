@@ -366,10 +366,15 @@ class SlicerPackageClient(GirderClient):
                       app_revision=None, release=Constant.DRAFT_RELEASE_NAME,
                       limit=Constant.DEFAULT_LIMIT, all=False):
         """
-        List all the extension for a specific release and filter them with some optional parameters
-        (os, arch, ...). By default the extensions within ``draft`` release are listed.
-        It's also possible to specify the ``--all`` option to list all the extensions from all
-        the release of an application.
+        List the extension of a specific application ``app_name``.
+
+        By default the extensions within the ``draft`` release are listed.
+
+        Specifying optional parameters like `ext_os` or `arch` allows to return the
+        corresponding subset.
+
+        Passing ``all=True`` option allow to list all the extensions from all the
+        releases of an application.
 
         :param app_name: Name of the application
         :param coll_id: Collection ID
