@@ -1,25 +1,58 @@
-# Build outputs
-build/
-docs/_build
-docs/_output
-girder-*.tar.gz
-node_modules/
-*.egg-info
-
-# Toolchain generated
-__pycache__
-.eslintcache
-/npm-debug.log
-.vagrant
+# Byte-compiled / optimized / DLL files
+__pycache__/
 *.py[cod]
-**/*.retry
+*$py.class
 
-# IDE / OS generated
-.DS_Store
-.idea/
-.PyCharm50/
-.*.swo
-.*.swp
+# C extensions
+*.so
 
-# Dev tools
-docs/*.sh
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# pyenv
+.python-version
+
+# dotenv
+.env
+
+# virtualenv
+.venv
+venv/
+ENV/
+
+# IDE junk
+.idea/*
+*.swp
+.vscode/*
+
+# External data
+tests/.external_data

@@ -1,34 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import os
-
-from girder import events
+from girder import events, plugin
 from girder.constants import AccessType
 from girder.models.item import Item
 from girder.models.folder import Folder
-from girder.utility.plugin_utilities import getPluginDir, registerPluginWebroot
-from girder.utility.webroot import WebrootBase
 from .api.app import App
 from . import constants, utilities
-
-
-class Webroot(WebrootBase):
-    """
-    The webroot endpoint simply serves the main index HTML file.
-    """
-    def __init__(self, templatePath=None):
-        if not templatePath:
-            templatePath = os.path.join(
-                getPluginDir(),
-                'slicer_package_manager',
-                'server',
-                'webroot.mako')
-        super(Webroot, self).__init__(templatePath)
-        self.vars = {
-            'apiRoot': '/api/v1',
-            'staticRoot': '/static',
-            'title': 'Slicer package manager'
-        }
 
 
 def _onDownloadFileComplete(event):
@@ -68,19 +45,21 @@ def _onDownloadFileComplete(event):
                     amount=1)
 
 
-def load(info):
-    info['apiRoot'].app = App()
-    info['serverRoot'].updateHtmlVars({'title': 'Slicer package manager'})
+class GirderPlugin(plugin.GirderPlugin):
+    DISPLAY_NAME = 'Slicer Package Manager'
 
-    # Download statistics
-    events.bind('model.file.download.complete', 'slicer_package_manager', _onDownloadFileComplete)
+    def load(self, info):
+        # add plugin loading logic here
+        info['apiRoot'].app = App()
+        info['serverRoot'].updateHtmlVars({'title': 'Slicer package manager'})
 
-    # Mongo indexes
-    Item().ensureIndex('meta.baseName')
-    Item().ensureIndex('meta.os')
-    Item().ensureIndex('meta.arch')
-    Item().ensureIndex('meta.app_revision')
-    Item().ensureIndex('updated')
-    Folder().ensureIndex('meta.downloadExtensions')
+        # Download statistics
+        events.bind('model.file.download.complete', 'slicer_package_manager', _onDownloadFileComplete)
 
-    registerPluginWebroot(Webroot(), info['name'])
+        # Mongo indexes
+        Item().ensureIndex('meta.baseName')
+        Item().ensureIndex('meta.os')
+        Item().ensureIndex('meta.arch')
+        Item().ensureIndex('meta.app_revision')
+        Item().ensureIndex('updated')
+        Folder().ensureIndex('meta.downloadExtensions')

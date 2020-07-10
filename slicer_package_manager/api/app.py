@@ -424,8 +424,7 @@ class App(Resource):
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
     )
-    @access.cookie
-    @access.public
+    @access.public(cookie=True)
     def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
                       app_revision, baseName, limit, sort, offset=0):
         """
@@ -556,8 +555,7 @@ class App(Resource):
         .param('codebase', 'The codebase baseName (Ex: Slicer4).', required=False)
         .errorResponse()
     )
-    @access.cookie
-    @access.public
+    @access.public(cookie=True)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
                                 revision, app_revision, packagetype, codebase, description,
                                 release, icon_url, development_status, category, enabled, homepage,
@@ -708,8 +706,7 @@ class App(Resource):
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
     )
-    @access.cookie
-    @access.public
+    @access.public(cookie=True)
     def getPackages(self, app_id, package_name, release_id, package_id, os, arch,
                     revision, baseName, limit, offset, sort):
         """
@@ -800,8 +797,7 @@ class App(Resource):
                dataType='boolean', required=False)
         .errorResponse()
     )
-    @access.cookie
-    @access.public
+    @access.public(cookie=True)
     def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
                               revision, description, pre_release):
         """
@@ -894,8 +890,7 @@ class App(Resource):
         .param('app_id', 'The ID of the application.', paramType='path')
         .errorResponse()
     )
-    @access.cookie
-    @access.public
+    @access.public(cookie=True)
     def getDownloadStats(self, app_id):
         """
         Get all the download count of all the application and extension packages
