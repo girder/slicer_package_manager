@@ -221,7 +221,6 @@ def package(sc):
               help='Whether the collection should be publicly visible',
               show_default=True,
               cls=_AdvancedOption)
-
 @click.pass_obj
 def _cli_createApp(sc, *args, **kwargs):
     """
@@ -429,7 +428,7 @@ def _cli_deleteDraftRelease(sc, *args, **kwargs):
               help='Type of the package (Installer, data...)',
               cls=_AdvancedOption)
 @click.option('--icon_url', default='',
-              help='Url of the extension\'s logo',
+              help="Url of the extension's logo",
               cls=_AdvancedOption)
 @click.option('--category', default=None,
               help='Category of the extension',

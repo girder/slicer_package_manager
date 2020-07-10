@@ -745,7 +745,7 @@ class SlicerPackageManagerTest(base.TestCase):
         ext5_file = list(File().find({'itemId': ObjectId(extension5['_id'])}))
 
         N = 5
-        for idx in range(N):
+        for _idx in range(N):
             self._downloadFile(ext4_file[0]['_id'])
             self._downloadFile(ext5_file[0]['_id'])
 

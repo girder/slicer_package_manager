@@ -226,11 +226,11 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Create a new release.')
         .responseClass('Folder')
-        .notes('The application\'s revision is stored as metadata of the new release.')
-        .param('name', 'The release\'s name.')
-        .param('app_id', 'The application\'s ID which contain the release', paramType='path')
-        .param('app_revision', 'The application\'s revision which correspond to the release')
-        .param('description', 'The application\'s description.', required=False)
+        .notes("The application's revision is stored as metadata of the new release.")
+        .param('name', "The release's name.")
+        .param('app_id', "The application's ID which contain the release", paramType='path')
+        .param('app_revision', "The application's revision which correspond to the release")
+        .param('description', "The application's description.", required=False)
         .param('public', 'Whether the release should be publicly visible.',
                required=False, dataType='boolean', default=True)
         .errorResponse()
@@ -267,8 +267,8 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Get all the releases from an application.')
         .responseClass('Folder')
-        .param('app_id', 'The application\'s ID.', paramType='path')
-        .param('release_id_or_name', 'The release\'s ID or name.', required=False)
+        .param('app_id', "The application's ID.", paramType='path')
+        .param('release_id_or_name', "The release's ID or name.", required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
@@ -314,7 +314,7 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Get all the draft releases from an application.')
         .responseClass('Folder')
-        .param('app_id', 'The application\'s ID.', paramType='path')
+        .param('app_id', "The application's ID.", paramType='path')
         .param('revision', 'The revision of a draft release', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
@@ -361,7 +361,7 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Delete a release by ID or name.')
         .modelParam('app_id', model=Folder, level=AccessType.ADMIN)
-        .param('release_id_or_name', 'The release\'s ID or name.', paramType='path')
+        .param('release_id_or_name', "The release's ID or name.", paramType='path')
         .param('progress', 'Whether to record progress on this task.',
                required=False, dataType='boolean', default=False)
         .errorResponse('ID was invalid.')
