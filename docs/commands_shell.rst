@@ -54,8 +54,8 @@ Then you can start using the API that allow you to easily create applications, m
 upload and download packages, see :ref:`slicer_package_manager_client` documentation
 for more details.
 
-.. _api-key: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
-.. _documentation: http://girder.readthedocs.io/en/latest/user-guide.html#api-keys
+.. _api-key: https://girder.readthedocs.io/en/latest/user-guide.html#api-keys
+.. _documentation: https://girder.readthedocs.io/en/latest/user-guide.html#api-keys
 
 .. _slicer_package_manager_client:
 

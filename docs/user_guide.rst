@@ -12,7 +12,7 @@ Draft, Package or Extension.
 This plugin is designed to be robust, fast, extensible and easy to use.
 
 The server side is built in Python under the open source
-`Apache License, version  2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
+`Apache License, version  2.0 <https://www.apache.org/licenses/LICENSE-2.0.html>`_.
 
 How to use the Slicer Package Manager?
 ----------------------------------------
@@ -35,7 +35,7 @@ There are 3 different ways to use the Slicer Package Manager:
     These commands allow you to easily create, list, or delete applications and releases,
     and also list, upload, download or delete application or extension packages.
 
-.. _girder concepts: http://girder.readthedocs.io/en/latest/user-guide.html#concepts
+.. _girder concepts: https://girder.readthedocs.io/en/latest/user-guide.html#concepts
 
 .. _concepts:
 
@@ -48,7 +48,7 @@ Concepts
     all the different releases, application and extensions packages of your application.
     By default when you create a new application, it will automatically be created within
     the default Girder collection 'Applications'
-    (see `Girder concept <http://girder.readthedocs.io/en/latest/user-guide.html#concepts>`_
+    (see `Girder concept <https://girder.readthedocs.io/en/latest/user-guide.html#concepts>`_
     to learn more about Girder collections and Folder).
 
     Applications contain metadata that organize the application and extension packages
@@ -97,7 +97,7 @@ Concepts
     Each application package contain a bunch of metadata that give us information on which
     environment the package is made for like : Operating System: ``os``, architecture: ``arch``,
     application revision: ``revision``, repository url... (see the
-    `list of parameters of Package <http://slicer-package-manager.readthedocs.io/en/latest/
+    `list of parameters of Package <https://slicer-package-manager.readthedocs.io/en/latest/
     server.api.html#server.api.app.App.createOrUpdatePackage>`_ on the server API to have an
     exhausted list of all the metadata).
 
@@ -123,7 +123,7 @@ Concepts
     uploaded extension follow the ``extensionPackageNameTemplate`` metadata stored in the
     **Application**.
 
-    See the `list of parameters of Extension <http://slicer-package-manager.readthedocs.io/en/latest/server.api.html
+    See the `list of parameters of Extension <https://slicer-package-manager.readthedocs.io/en/latest/server.api.html
     #server.api.app.App.createOrUpdateExtension>`_ on the server API to have an exhausted list of all the metadata.
 
 

@@ -24,5 +24,5 @@ for development.
 Miscellaneous
 -------------
 
-The documentation is accessible at http://girder.readthedocs.org/en/latest/slicer-package-python-client.html.
+The documentation is accessible at https://slicer-package-manager.readthedocs.io/en/latest/commands_shell.html#slicer-package-manager-client.
 

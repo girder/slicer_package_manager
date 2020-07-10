@@ -72,7 +72,7 @@ Girder is a free and open source web-based **data management platform** develope
 What does that mean? Girder is both a standalone application and a platform for building new web services.
 To know more about Girder let's take a look at the documentation_.
 
-.. _documentation: http://girder.readthedocs.io
+.. _documentation: https://girder.readthedocs.io
 
 .. _Kitware: https://www.kitware.com
 

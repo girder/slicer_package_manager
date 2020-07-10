@@ -53,4 +53,4 @@ The Girder application should then be running at http://localhost:8080/ and be a
     You will have the possibility to create more users and/or change the password of
     the **Admin User** via the Girder UI.
 
-.. _Filesystem: http://girder.readthedocs.io/en/latest/user-guide.html#assetstores
+.. _Filesystem: https://girder.readthedocs.io/en/latest/user-guide.html#assetstores

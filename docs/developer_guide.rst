@@ -7,7 +7,7 @@ Since **Slicer Package Manager** is part of Girder plugins, it's also split in 2
 * Front-end/client side (a vue.js-based UI)
 
 To have a better idea of how contributing on a plugin within the Girder community,
-let's read the `Plugin Development documentation <http://girder.readthedocs.io/en/
+let's read the `Plugin Development documentation <https://girder.readthedocs.io/en/
 latest/plugin-development.html>`_.
 
 
@@ -15,7 +15,7 @@ Developer Installation
 ----------------------
 
 You can either install the Slicer Package Manager natively on your machine or inside it's own
-`virtual environment <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_.
+`virtual environment <https://docs.python-guide.org/en/latest/dev/virtualenvs/>`_.
 
 Virtual environment
 ^^^^^^^^^^^^^^^^^^^
@@ -26,8 +26,7 @@ packages::
 
     $ sudo pip install -U virtualenv pip
 
-Now create a virtual environment using the `virtualenv command <http://virtualenv.readthedocs.io/
-en/latest/userguide/>`_. You can place the virtual environment directory wherever you want, but
+Now create a virtual environment using the `virtualenv command <https://virtualenv.readthedocs.io/en/latest/user_guide.html>`_. You can place the virtual environment directory wherever you want, but
 it should not be moved. The following command will generate a new directory called
 ``slicer_package_manager_env`` in your home directory::
 
@@ -88,14 +87,14 @@ If you are front-end development of Slicer package manager plugin, use::
 Server side development
 -----------------------
 
-See the `Server Development documentation <http://girder.readthedocs.io/en/latest/development.html
+See the `Server Development documentation <https://girder.readthedocs.io/en/latest/development.html
 #server-development>`_ to know more about the good development practise in Girder
 
 
 Client side development
 -----------------------
 
-See the `Client Development documentation <http://girder.readthedocs.io/en/latest/development.html
+See the `Client Development documentation <https://girder.readthedocs.io/en/latest/development.html
 #client-development>`_ to know more about the good development practise in Girder
 
 
@@ -109,7 +108,7 @@ and ``circular complexity``).
 The python client use click_, a command line library for Python.
 
 .. _flake8: https://pypi.python.org/pypi/flake8
-.. _click: http://click.pocoo.org
+.. _click: https://click.pocoo.org
 
 
 Testing
@@ -125,7 +124,7 @@ Server Side Testing
 ^^^^^^^^^^^^^^^^^^^
 
 As part of Girder, server test are done using `pytest <https://docs.pytest.org/en/latest/>`_.
-Let's read the `server test documentation <http://girder.readthedocs.io/en/latest/development.html
+Let's read the `server test documentation <https://girder.readthedocs.io/en/latest/development.html
 #server-side-testing>`_ to know more about Girder testing.
 
 .. _python_client_testing:
@@ -134,7 +133,7 @@ Python Client Testing
 ^^^^^^^^^^^^^^^^^^^^^
 
 The Python Client use `pytest <https://docs.pytest.org/en/latest/>`_ to test its API. It also
-uses a tool named `pytest-vcr <http://pytest-vcr.readthedocs.io/en/latest/>`_ to record the
+uses a tool named `pytest-vcr <https://pytest-vcr.readthedocs.io/en/latest/>`_ to record the
 server responses and be able to test the client within CircleCI.
 
 .. note::
@@ -193,7 +192,7 @@ Regenerate Documentation Locally
 
 When developing new feature it's very important to add some documentation to explain the community
 what is it and how to use it. The Slicer Package Manager Documentation is build thanks to
-`Sphinx <http://www.sphinx-doc.org/en/master/>`_, an open source documentation generator.
+`Sphinx <https://www.sphinx-doc.org/en/master/>`_, an open source documentation generator.
 
 
 Here is some tools very useful to rapidly see what is result of your documentation.

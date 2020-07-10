@@ -9,7 +9,7 @@ Slicer Package Manager
     :alt: Build Status
 
 .. |Documentation| image:: https://readthedocs.org/projects/slicer-package-manager/badge/?version=latest
-    :target: http://slicer-package-manager.readthedocs.io/en/latest/?badge=latest
+    :target: https://slicer-package-manager.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
 The ``Slicer Package Manager`` includes a REST API service and CLI built on `Girder`_ for downloading, uploading
@@ -19,7 +19,7 @@ and organizing application and extension packages for both `3D Slicer`_ and `3D 
 .. _3D Slicer: https://slicer.org
 .. _3D Slicer-based: https://github.com/KitwareMedical/SlicerCustomAppTemplate
 
-Documentation is available at http://slicer-package-manager.readthedocs.io
+Documentation is available at https://slicer-package-manager.readthedocs.io
 
 In a nutshell:
 

@@ -19,7 +19,7 @@ setup(
     long_description=readme,
     author='Kitware, Inc.',
     author_email='kitware@kitware.com',
-    url='http://girder.readthedocs.org/en/latest/slicer-package-python-client.html',
+    url='https://slicer-package-manager.readthedocs.io/en/latest/commands_shell.html#slicer-package-manager-client',
     license='Apache 2.0',
     classifiers=[
         'Development Status :: 3 - Alpha',
