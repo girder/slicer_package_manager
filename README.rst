@@ -1,17 +1,46 @@
+======================
+Slicer Package Manager
+======================
 
-Slicer Package Manager |CircleCI| |Documentation|
-===================================================
+|CircleCI| |Documentation|
 
-External plugin of Girder that allow the management of Slicer packages and extensions
-(before handled by the data management platform Midas).
+.. |CircleCI| image:: https://circleci.com/gh/girder/slicer_package_manager.svg?style=svg
+    :target: https://circleci.com/gh/girder/slicer_package_manager
+    :alt: Build Status
 
-The Slicer Package Manager include a CLI allowing you
-to manage Slicer packages for Slicer-based applications and associated extensions.
+.. |Documentation| image:: https://readthedocs.org/projects/slicer-package-manager/badge/?version=latest
+    :target: http://slicer-package-manager.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
-If you need to learn more about the Slicer Package Manager, the documentation is available at
-http://slicer-package-manager.readthedocs.io/en/latest/.
+The ``Slicer Package Manager`` includes a REST API service and CLI built on `Girder`_ for downloading, uploading
+and organizing application and extension packages for both `3D Slicer`_ and `3D Slicer-based`_ applications.
 
-And to have a better idea of how is structured the Slicer package manager plugin within Girder, here is a diagram::
+.. _Girder: https://github.com/girder/girder
+.. _3D Slicer: https://slicer.org
+.. _3D Slicer-based: https://github.com/KitwareMedical/SlicerCustomAppTemplate
+
+Documentation is available at http://slicer-package-manager.readthedocs.io
+
+In a nutshell:
+
+* `Data model`_ specific to this project is implemented by organizing data using standard
+  Girder constructs (collection, folder and item) and by associating metadata.
+
+* By default, a top-level collection named ``Applications`` is created with a ``packages`` folder
+  organizing the different application.
+
+* Each application folder contain a ``draft`` folder where unreleased packages are uploaded and one or multiple
+  release folders (e.g 1.0, 2.0, ...).
+
+* Each release folder contain application packages (installers for the different platforms), and an ``extensions``
+  folder containing a flat list of extension packages.
+
+* Each extension packages is associated with metadata like application revision, extension revision, operating system
+  and architecture.
+
+.. _Data Model: https://slicer-package-manager.readthedocs.io/en/latest/user_guide.html#concepts
+
+The diagram below represents the organization::
 
     Applications
        |--- packages
@@ -44,11 +73,3 @@ And to have a better idea of how is structured the Slicer package manager plugin
        .        .
        |        |
        |        |------SlicerCustom
-
-.. |CircleCI| image:: https://circleci.com/gh/girder/slicer_package_manager.svg?style=svg
-    :target: https://circleci.com/gh/girder/slicer_package_manager
-    :alt: Build Status
-
-.. |Documentation| image:: https://readthedocs.org/projects/slicer-package-manager/badge/?version=latest
-    :target: http://slicer-package-manager.readthedocs.io/en/latest/?badge=latest
-    :alt: Documentation Status

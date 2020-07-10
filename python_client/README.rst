@@ -1,8 +1,8 @@
 Slicer package manager Python Client
-======================================
+====================================
 
 Installation
---------------------------------------
+------------
 
 Since no package is available on PyPi, you must install from source.
 
@@ -22,7 +22,7 @@ or::
 for development.
 
 Miscellaneous
---------------------------------------
+-------------
 
 The documentation is accessible at http://girder.readthedocs.org/en/latest/slicer-package-python-client.html.
 

@@ -6,8 +6,12 @@
 Welcome to Slicer Package Manager's documentation!
 ====================================================
 
-The ``Slicer Package Manager`` includes a Girder plugin and a CLI allowing you
-to manage Slicer packages for Slicer-based applications and associated extensions.
+The ``Slicer Package Manager`` includes a REST API service and CLI built on `Girder`_ for downloading, uploading
+and organizing application and extension packages for both `3D Slicer`_ and `3D Slicer-based`_ applications.
+
+.. _Girder: https://github.com/girder/girder
+.. _3D Slicer: https://slicer.org
+.. _3D Slicer-based: https://github.com/KitwareMedical/SlicerCustomAppTemplate
 
 In a nutshell:
 
@@ -17,11 +21,14 @@ In a nutshell:
 * By default, a top-level collection named ``Applications`` is created with a ``packages`` folder
   organizing the different application.
 
-* Each application folder contain a ``draft`` folder where unreleased packages are uploaded and one or multiple release folders (e.g 1.0, 2.0, ...).
+* Each application folder contain a ``draft`` folder where unreleased packages are uploaded and one or multiple
+  release folders (e.g 1.0, 2.0, ...).
 
-* Each release folder contain application packages (installers for the different platforms), and an ``extensions`` folder containing a flat list of extension packages.
+* Each release folder contain application packages (installers for the different platforms), and an ``extensions``
+  folder containing a flat list of extension packages.
 
-* Each extension packages is associated with metadata like application revision, extension revision, operating system and architecture...
+* Each extension packages is associated with metadata like application revision, extension revision, operating system
+  and architecture...
 
 The diagram below represents the organization::
 
