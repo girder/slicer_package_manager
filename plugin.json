@@ -1,6 +1,0 @@
-{
-    "name": "Slicer package manager",
-    "description": "External plugin to host the Slicer packages  and extension Catalog",
-    "url": "https://github.com/girder/slicer_package_manager",
-    "version": "0.0.1"
-}

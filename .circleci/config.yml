@@ -1,171 +1,55 @@
-version: 2
-
+---
+version: 2.1
 jobs:
-
-  build:
+  test:
     docker:
-      - image: circleci/python:2.7
-      - image: mongo:3.6
-
-    working_directory: /home/circleci/project # as $CIRCLE_WORKING_DIRECTORY
-
-    environment:
-      - GIRDER_VERSION: 5cac713462c32b9b4704bc89df5638d3ae875d5e
+      - image: girder/girder_test:latest
+      - image: circleci/mongo:4.0-ram
+        command: ["mongod", "--storageEngine", "ephemeralForTest", "--dbpath", "/dev/shm/mongo"]
 
     steps:
+      - checkout
       - run:
-          name: Install Node.js
-          command: |
-            curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-            sudo npm install -g npm
-      - run:
-          name: Install Girder dependencies
-          command: sudo apt-get install -y cmake
+          name: Run server tests
+          command: tox
 
-      - run:
-          name: Clone Girder
-          #command: git clone --depth 1 --branch $GIRDER_VERSION -- https://github.com/girder/girder.git girder
-          command: |
-            git clone https://github.com/girder/girder.git girder
-            git -C girder checkout $GIRDER_VERSION
+  test-cli:
+    docker:
+      - image: circleci/python:3.8
+      - image: circleci/mongo:4.0-ram
+        command: ["mongod", "--storageEngine", "ephemeralForTest", "--dbpath", "/dev/shm/mongo"]
 
+    steps:
+      - checkout
       - run:
-          name: Create and activate virtualenv
-          command: |
-            virtualenv venv
-            echo "source $CIRCLE_WORKING_DIRECTORY/venv/bin/activate" >> $BASH_ENV
-
+          name: Install pytest_girder
+          command: pip install pytest_girder
       - run:
-          name: Install Girder
-          command: |
-            pip install -e .
-            pip install -r ./requirements-dev.txt
-          # pytest_girder requires that install be run from this directory
-          working_directory: girder
-
-      - checkout:
-          path: girder/plugins/slicer_package_manager
-
+          name: Install server plugin
+          command: pip install .
       - run:
-          name: Install slicer_package_manager
-          command: girder-install plugin girder/plugins/slicer_package_manager
-
-      - restore_cache:
-          key: npm-{{ arch }}-{{ checksum "girder/package.json" }}-{{ checksum "girder/plugins/slicer_package_manager/plugin.json" }}
-
-      - run:
-          name: Build Girder web client
-          command: girder-install web --dev --plugins=slicer_package_manager
-          environment:
-            - npm_config_cache: /home/circleci/project/npm_cache
-      - save_cache:
-          paths: npm_cache
-          key: npm-{{ arch }}-{{ checksum "girder/package.json" }}-{{ checksum "girder/plugins/slicer_package_manager/plugin.json" }}
-
-      - run:
-          name: Create Girder build directory
-          command: mkdir girder_build
-      - run:
-          name: Run CMake
-          command: |
-            cmake -DPYTHON_COVERAGE:BOOL=ON -DCOVERAGE_MINIMUM_PASS:STRING=40 -DPYTHON_VERSION:STRING=2.7 \
-            -DRUN_CORE_TESTS:BOOL=OFF -DTEST_PLUGINS:STRING="slicer_package_manager" $CIRCLE_WORKING_DIRECTORY/girder
-            make
-          working_directory: girder_build
-
-      - run:
-          name: Run CTest
-          command: ctest -V -R slicer_package_manager
-          working_directory: girder_build
-
-      - run:
-          name: Install python_client
+          name: Install CLI
           command: pip install -e .
-          working_directory: girder/clients/python
-
+          working_directory: python_client
       - run:
-          name: Install slicer_package_manager_client
-          command: pip install -e .
-          working_directory: girder/plugins/slicer_package_manager/python_client
+          name: Run CLI tests
+          command: pytest --tb=long
+          working_directory: plugin_tests
 
-      - run:
-          name: Start & configure the server and run python client Tests
-          command: |
-            girder-server &
-            echo "SLEEPING"
-            exit=0
-            num=0
-            while [ $exit -ne 1 ]; do
-              sleep 10
-              if curl -X GET --header 'Accept: application/json' \
-              --header 'Girder-Token: xHoENAkEUNo8Ye0N33Kccm9ihdEQlJv8AkLmagAEsGNxXPoixXUTu2XrWsPAltkz' \
-              'http://127.0.0.1:8080/api/v1/system/check?mode=basic'; then
-                exit=1
-              fi;
-              num=$(($num + 10))
-              if (($num > 100)); then
-                echo "TIMEOUT"
-                exit 1
-              fi;
-            done
-            echo "SERVER READY"
-            python config.py
-            sleep 50
-
-            pytest --tb=long test_python_client.py
-            pytest --tb=long test_client_cli.py
-            . slicer_package_manager_client_test.sh
-
-          working_directory: girder/plugins/slicer_package_manager/plugin_tests/python_client_tests
-
-      - setup_remote_docker
-
-      - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="17.03.0-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            sudo mv /tmp/docker/* /usr/bin
-
-      - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/bin
-
-      - run:
-          name: Build the image and run the docker container
-          command: docker-compose up -d
-          working_directory: girder/plugins/slicer_package_manager
-
-      - run:
-          name: Loop until the Girder server is ready to be used
-          command: |
-            echo "SLEEPING"
-            exit=0
-            num=0
-            while [ $exit -ne 1 ]; do
-              sleep 120
-              if docker exec slicerpackagemanager_girder_1 curl -X GET --header 'Accept: application/json' \
-              --header 'Girder-Token: xHoENAkEUNo8Ye0N33Kccm9ihdEQlJv8AkLmagAEsGNxXPoixXUTu2XrWsPAltkz' \
-              'http://0.0.0.0:8080/api/v1/system/check?mode=basic'; then
-                exit=1
-              fi;
-              num=$(($num + 120))
-              if (($num > 600)); then
-                echo "TIMEOUT"
-                exit 1
-              fi;
-             done
-             echo "SERVER READY"
-
-      - run:
-          name: Stop the docker container
-          command: |
-            cd girder/plugins/slicer_package_manager
-
-            docker-compose stop
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - test
+      - test-cli
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - test
+      - test-cli

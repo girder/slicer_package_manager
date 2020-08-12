@@ -1,0 +1,5 @@
+bson
+pip>=9
+pytest
+tox
+virtualenv

@@ -10,16 +10,18 @@
 #
 #  docker exec -ti $(docker-compose ps -q NAME) /bin/bash
 #
-FROM girder/girder:latest
+FROM girder/girder:3.1.0-py3
 MAINTAINER Kitware, Inc. <kitware@kitware.com>
 
 RUN pip install girder-client ansible
 RUN ansible-galaxy install girder.girder
 
-COPY server /girder/plugins/slicer_package_manager/server/
-COPY web_client /girder/plugins/slicer_package_manager/web_client/
-COPY plugin.cmake /girder/plugins/slicer_package_manager/
-COPY plugin.json /girder/plugins/slicer_package_manager/
-COPY README.rst /girder/plugins/slicer_package_manager/
+COPY MANIFEST.in /slicer_package_manager/MANIFEST.in
+COPY README.rst /slicer_package_manager/README.rst
+COPY setup.cfg /slicer_package_manager/setup.cfg
+COPY setup.py /slicer_package_manager/setup.py
+COPY slicer_package_manager /slicer_package_manager/slicer_package_manager
 
-RUN girder-install web --dev --plugins slicer_package_manager
+RUN pip install /slicer_package_manager
+
+RUN girder build

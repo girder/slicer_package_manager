@@ -282,7 +282,7 @@ interactions:
       Girder-Token: [SlL4xpfTsxZu6F5ZBYdOnozeG0oW6ao8ZqINwJxt5yMUfGxHp4IO3XwbI8VN7mx3]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://localhost:8080/api/v1/item/5ae9c74aa5d3e302ff8d7666/files
+    uri: http://localhost:8080/api/v1/item/5ae9c74aa5d3e302ff8d7666/files?id=5ae9c74aa5d3e302ff8d7666&offset=0&limit=50
   response:
     body: {string: '[]'}
     headers:
@@ -2280,7 +2280,7 @@ interactions:
       Girder-Token: [pOLeWvqldyYUfBGJCWmiQbuNaBnvYpChYyIfBnf6KDcf6dBFS5afBH7HsW123P8Q]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://localhost:8080/api/v1/item/5ae9c74aa5d3e302ff8d7669/files
+    uri: http://localhost:8080/api/v1/item/5ae9c74aa5d3e302ff8d7669/files?id=5ae9c74aa5d3e302ff8d7669&offset=0&limit=50
   response:
     body: {string: '[]'}
     headers:
@@ -4278,7 +4278,7 @@ interactions:
       Girder-Token: [IN7oF9poVQuHQiWZ6wUwsIHkT533wk6FQGrK2CyzOyMUTfABWzUQpcloCly8AZCA]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://localhost:8080/api/v1/item/5ae9c74aa5d3e302ff8d766c/files
+    uri: http://localhost:8080/api/v1/item/5ae9c74aa5d3e302ff8d766c/files?id=5ae9c74aa5d3e302ff8d766c&offset=0&limit=50
   response:
     body: {string: '[]'}
     headers:
