@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import versioneer
+
 from setuptools import setup, find_packages
 
 with open('README.rst') as readme_file:
@@ -31,7 +33,8 @@ setup(
     name='slicer_package_manager',
     packages=find_packages(exclude=['test', 'test.*']),
     url='https://github.com/girder/slicer_package_manager',
-    version='0.1.0',
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     zip_safe=False,
     entry_points={
         'girder.plugin': [

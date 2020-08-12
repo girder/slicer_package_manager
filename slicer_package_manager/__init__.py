@@ -7,6 +7,10 @@ from girder.models.folder import Folder
 from .api.app import App
 from . import constants, utilities
 
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
+
 
 def _onDownloadFileComplete(event):
     item = Item().load(event.info['file']['itemId'], level=AccessType.READ)
