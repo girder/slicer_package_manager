@@ -1404,7 +1404,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb870657dd0639692b66/draft?offset=0
+    uri: http://localhost:8080/api/v1//app/6099bb870657dd0639692b66/draft?limit=50&offset=0
   response:
     body:
       string: '[{"_id": "6099bb880657dd0639692b70", "access": {"groups": [], "users":
@@ -1491,7 +1491,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb870657dd0639692b66/draft?offset=1
+    uri: http://localhost:8080/api/v1//app/6099bb870657dd0639692b66/draft?limit=50&offset=1
   response:
     body:
       string: '[{"_id": "6099bb870657dd0639692b6c", "access": {"groups": [], "users":
@@ -1572,7 +1572,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb870657dd0639692b66/draft?revision=r300&offset=0
+    uri: http://localhost:8080/api/v1//app/6099bb870657dd0639692b66/draft?revision=r300&limit=50&offset=0
   response:
     body:
       string: '[{"_id": "6099bb870657dd0639692b6c", "access": {"groups": [], "users":

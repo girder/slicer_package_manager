@@ -175,22 +175,27 @@ class SlicerPackageClient(GirderClient):
         self.delete('/app/%s/release/%s' % (app['_id'], name))
         return release
 
-    def listDraftRelease(self, app_name, coll_id=None, revision=None, offset=0):
+    def listDraftRelease(self, app_name, coll_id=None, revision=None, limit=Constant.DEFAULT_LIMIT, offset=0):
         """
-        List all the draft release with an offset option to list only the older ones.
+        List the draft releases with an offset option to list only the older ones.
+
+        By default only the first N releases are listed. Setting ``limit`` parameter to `0`
+        removes this restriction.
+
         It's also possible to list one release within the Draft release by providing
         its specific revision.
 
         :param app_name: Name of the application
         :param coll_id: Collection ID
         :param revision: Revision of the release
+        :param limit: Limit of the number of draft releases listed (see :const:`Constant.DEFAULT_LIMIT`)
         :param offset: offset to list only older revisions
         :return: The list of draft release
         """
         app = self._getApp(app_name=app_name, coll_id=coll_id)
         return self.get(
             '/app/%s/draft' % app['_id'],
-            parameters={'revision': revision, 'offset': offset}
+            parameters={'revision': revision, 'limit': limit, 'offset': offset}
         )
 
     def deleteDraftRelease(self, app_name, revision, coll_id=None):

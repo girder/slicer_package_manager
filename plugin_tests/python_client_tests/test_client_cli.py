@@ -331,6 +331,17 @@ def testlistDraftCLI(server, packages):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
+def testListDraftWithLimitCLI(server, packages):
+    cmd = list(CLI_COMMON_ARGS)
+    cmd.extend(['draft', 'list', APPS[0], '--limit', '1'])
+    res = _cli_runner_invoke(main, cmd)
+    assert res.exit_code == 0
+    assert re.search(r"%s *%s *\w{24}" % ('r003', 'r003'), res.output)
+    assert not re.search(r"%s *%s *\w{24}" % ('r002', 'r002'), res.output)
+
+
+@pytest.mark.vcr()
+@pytest.mark.plugin('slicer_package_manager')
 def testDeleteDraftCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['draft', 'delete', APPS[0], 'r002'])

@@ -1625,7 +1625,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/609ef298ce219e6bff5148e0/draft?offset=0
+    uri: http://localhost:8080/api/v1//app/609ef298ce219e6bff5148e0/draft?limit=50&offset=0
   response:
     body:
       string: '[{"_id": "609ef29ace219e6bff5148ee", "access": {"groups": [], "users":
