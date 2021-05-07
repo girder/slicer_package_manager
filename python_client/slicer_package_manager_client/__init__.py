@@ -350,9 +350,10 @@ class SlicerPackageClient(GirderClient):
                       app_revision=None, release=Constant.DRAFT_RELEASE_NAME,
                       limit=Constant.DEFAULT_LIMIT, all=False):
         """
-        List the extension of a specific application ``app_name``.
+        List the extensions of a specific application ``app_name``.
 
-        By default the extensions within the ``draft`` release are listed.
+        By default only the first N extensions within the ``draft`` release are listed. Setting ``limit``
+        parameter to `0` removes this restriction.
 
         Specifying optional parameters like `ext_os` or `arch` allows to return the
         corresponding subset.
@@ -367,7 +368,7 @@ class SlicerPackageClient(GirderClient):
         :param arch: The os chip architecture
         :param app_revision: Revision of the application
         :param release: Name of the release
-        :param limit: Limit of the number of extensions listed
+        :param limit: Limit of the number of extensions listed (see :const:`Constant.DEFAULT_LIMIT`)
         :param all: Boolean that allow to list extensions from all the release
         :return: A list of extensions filtered by optional parameters
         """
@@ -516,8 +517,11 @@ class SlicerPackageClient(GirderClient):
     def listApplicationPackage(self, app_name, coll_id=None, name=None, pkg_os=None, arch=None,
                                revision=None, release=None, limit=Constant.DEFAULT_LIMIT):
         """
-        List all the application package filtered by some optional parameters (os, arch, ...).
-        By default all the application packages are listed.
+        List the application packages filtered by some optional parameters (os, arch, ...).
+
+        By default only the first N application packages are listed. Setting the ``limit`` parameter
+        to `0` removes this restriction.
+
         It's also possible to specify the ``--release`` option to list all the package from a
         specific release.
 
@@ -528,7 +532,7 @@ class SlicerPackageClient(GirderClient):
         :param arch: The os chip architecture
         :param revision: Revision of the application
         :param release: Name of the release
-        :param limit: Limit of the number of extensions listed
+        :param limit: Limit of the number of applications listed (see :const:`Constant.DEFAULT_LIMIT`)
         :return: A list of application package filtered by optional parameters
         """
         app = self._getApp(app_name=app_name, coll_id=coll_id)
