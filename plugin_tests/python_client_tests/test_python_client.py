@@ -4,7 +4,7 @@ import time
 import os
 import pytest
 
-from slicer_package_manager_client import SlicerPackageClient
+from slicer_package_manager_client import SlicerPackageClient, SlicerPackageManagerError
 
 
 app_name = ['App', 'App1', 'App2']
@@ -215,7 +215,7 @@ def TearDown(server, spc, request):
     for idx in range(len(app_name)):
         try:
             spc.deleteApp(name=app_name[idx])
-        except Exception:
+        except SlicerPackageManagerError:
             pass
 
 
