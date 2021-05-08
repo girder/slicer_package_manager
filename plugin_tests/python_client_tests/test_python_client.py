@@ -209,7 +209,7 @@ def files():
 
 
 @pytest.mark.vcr()
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def TearDown(server, spc, request):
     yield
     for idx in range(len(app_name)):
