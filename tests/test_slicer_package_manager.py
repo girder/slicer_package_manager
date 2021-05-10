@@ -993,7 +993,7 @@ def testDownloadStats(server, fsAssetstore, external_data):
         user=_user
     )
     assertStatusOk(resp)
-    resp.json == expectedStats
+    assert resp.json == expectedStats
 
 
 def _createApplicationCheck(server, appName, appDescription, collId=None,
