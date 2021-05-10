@@ -16,27 +16,29 @@ interactions:
     uri: http://localhost:8080/api/v1/user/authentication
   response:
     body:
-      string: '{"authToken": {"expires": "2018-10-29T14:12:19.655297+00:00", "scope":
-        ["core.user_auth"], "token": "Mbmheaj1fiTil14EA0lH4fmVG99uh0C1EBQ5xDgbavnRB2ZYcjroHay8KDXdH5Ru"},
-        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5ab5422344e48104c10bcc26",
-        "_modelType": "user", "admin": true, "created": "2018-03-23T18:06:27.126000+00:00",
-        "email": "admin@email.com", "emailVerified": false, "firstName": "Admin",
-        "groupInvites": [], "groups": [], "lastName": "Admin", "login": "admin", "public":
-        true, "size": 0, "status": "enabled"}}'
+      string: '{"authToken": {"expires": "2021-11-06T23:01:52.994174+00:00", "scope":
+        ["core.user_auth"], "token": "qGvVZL1BeA9dYlEbIcuyJPH4GxAGbTXbFDFxI8w1WLuNNEfMA7DIEul4ilFMKB7B"},
+        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5f081a506e4717a84202fd10",
+        "_modelType": "user", "admin": true, "created": "2020-07-10T07:35:43.980000+00:00",
+        "email": "admin@admin.com", "emailVerified": false, "firstName": "admin",
+        "groupInvites": [], "groups": [], "lastName": "admin", "login": "admin", "otp":
+        false, "public": true, "size": 0, "status": "enabled"}}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '542'
+      - '556'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:19 GMT
+      - Mon, 10 May 2021 23:01:52 GMT
+      Girder-Request-Uid:
+      - f8aa59a3-b919-4b73-ba51-dbc1101818ee
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
       Set-Cookie:
-      - girderToken=Mbmheaj1fiTil14EA0lH4fmVG99uh0C1EBQ5xDgbavnRB2ZYcjroHay8KDXdH5Ru;
-        expires=Mon, 29 Oct 2018 14:12:19 GMT; Path=/
+      - girderToken=qGvVZL1BeA9dYlEbIcuyJPH4GxAGbTXbFDFxI8w1WLuNNEfMA7DIEul4ilFMKB7B;
+        expires=Sat, 06 Nov 2021 23:01:52 GMT; Path=/
     status:
       code: 200
       message: OK
@@ -50,7 +52,7 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - Mbmheaj1fiTil14EA0lH4fmVG99uh0C1EBQ5xDgbavnRB2ZYcjroHay8KDXdH5Ru
+      - qGvVZL1BeA9dYlEbIcuyJPH4GxAGbTXbFDFxI8w1WLuNNEfMA7DIEul4ilFMKB7B
       User-Agent:
       - python-requests/2.18.4
     method: GET
@@ -66,9 +68,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:19 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - 4c6a4550-117a-4eca-96c8-ec83c4cdf3c7
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -84,33 +88,34 @@ interactions:
       Content-Length:
       - '0'
       Girder-Token:
-      - Mbmheaj1fiTil14EA0lH4fmVG99uh0C1EBQ5xDgbavnRB2ZYcjroHay8KDXdH5Ru
+      - qGvVZL1BeA9dYlEbIcuyJPH4GxAGbTXbFDFxI8w1WLuNNEfMA7DIEul4ilFMKB7B
       User-Agent:
       - python-requests/2.18.4
     method: POST
     uri: http://localhost:8080/api/v1//app?name=App
   response:
     body:
-      string: '{"_id": "5ae9c743a5d3e302ff8d7657", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:19.685931+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app",
+      string: '{"_id": "6099bb610657dd0639692aae", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.013374+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:19.689531+00:00"}'
+        "name": "App", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.016206+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '721'
+      - '660'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:19 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - e7b980c5-dacd-4652-9b40-13504fced122
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -131,27 +136,29 @@ interactions:
     uri: http://localhost:8080/api/v1/user/authentication
   response:
     body:
-      string: '{"authToken": {"expires": "2018-10-29T14:12:19.988937+00:00", "scope":
-        ["core.user_auth"], "token": "ohogfoShvyu7wa834ITxbnm5yrAPWnFJNIkUCuhi1PRkbNFJndQjKxj7mrpjCmMa"},
-        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5ab5422344e48104c10bcc26",
-        "_modelType": "user", "admin": true, "created": "2018-03-23T18:06:27.126000+00:00",
-        "email": "admin@email.com", "emailVerified": false, "firstName": "Admin",
-        "groupInvites": [], "groups": [], "lastName": "Admin", "login": "admin", "public":
-        true, "size": 0, "status": "enabled"}}'
+      string: '{"authToken": {"expires": "2021-11-06T23:01:53.257591+00:00", "scope":
+        ["core.user_auth"], "token": "6m1w6yMjRtyfH5UFL6E1rvaEYNbtjBn31mTxgM73I0SoR5BIivreynZGLZ4WvNuN"},
+        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5f081a506e4717a84202fd10",
+        "_modelType": "user", "admin": true, "created": "2020-07-10T07:35:43.980000+00:00",
+        "email": "admin@admin.com", "emailVerified": false, "firstName": "admin",
+        "groupInvites": [], "groups": [], "lastName": "admin", "login": "admin", "otp":
+        false, "public": true, "size": 0, "status": "enabled"}}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '542'
+      - '556'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:19 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - 20e3269b-4854-499c-9e36-39688ec87a33
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
       Set-Cookie:
-      - girderToken=ohogfoShvyu7wa834ITxbnm5yrAPWnFJNIkUCuhi1PRkbNFJndQjKxj7mrpjCmMa;
-        expires=Mon, 29 Oct 2018 14:12:19 GMT; Path=/
+      - girderToken=6m1w6yMjRtyfH5UFL6E1rvaEYNbtjBn31mTxgM73I0SoR5BIivreynZGLZ4WvNuN;
+        expires=Sat, 06 Nov 2021 23:01:53 GMT; Path=/
     status:
       code: 200
       message: OK
@@ -165,7 +172,7 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - ohogfoShvyu7wa834ITxbnm5yrAPWnFJNIkUCuhi1PRkbNFJndQjKxj7mrpjCmMa
+      - 6m1w6yMjRtyfH5UFL6E1rvaEYNbtjBn31mTxgM73I0SoR5BIivreynZGLZ4WvNuN
       User-Agent:
       - python-requests/2.18.4
     method: GET
@@ -181,9 +188,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - c25c137a-da5e-4f03-b3e0-a46bbc667f2d
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -199,33 +208,34 @@ interactions:
       Content-Length:
       - '0'
       Girder-Token:
-      - ohogfoShvyu7wa834ITxbnm5yrAPWnFJNIkUCuhi1PRkbNFJndQjKxj7mrpjCmMa
+      - 6m1w6yMjRtyfH5UFL6E1rvaEYNbtjBn31mTxgM73I0SoR5BIivreynZGLZ4WvNuN
       User-Agent:
       - python-requests/2.18.4
     method: POST
     uri: http://localhost:8080/api/v1//app?name=App1
   response:
     body:
-      string: '{"_id": "5ae9c744a5d3e302ff8d7659", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:20.022894+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app1",
+      string: '{"_id": "6099bb610657dd0639692ab0", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.277942+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app1",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App1", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:20.025861+00:00"}'
+        "name": "App1", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.280286+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '723'
+      - '662'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - bb05b89e-d0ee-4c97-b69f-f374217a1b21
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -246,27 +256,29 @@ interactions:
     uri: http://localhost:8080/api/v1/user/authentication
   response:
     body:
-      string: '{"authToken": {"expires": "2018-10-29T14:12:20.347363+00:00", "scope":
-        ["core.user_auth"], "token": "Cc1HRsCFaoJV7HTaPIFgy3hCtrpYvVvSphYvTLN2okFb7RJjQF0XSC2eXZe5v8zg"},
-        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5ab5422344e48104c10bcc26",
-        "_modelType": "user", "admin": true, "created": "2018-03-23T18:06:27.126000+00:00",
-        "email": "admin@email.com", "emailVerified": false, "firstName": "Admin",
-        "groupInvites": [], "groups": [], "lastName": "Admin", "login": "admin", "public":
-        true, "size": 0, "status": "enabled"}}'
+      string: '{"authToken": {"expires": "2021-11-06T23:01:53.522234+00:00", "scope":
+        ["core.user_auth"], "token": "phRPMjR1mQiqOPFDQdAAD8xXrOCGJMIfScbh5RVHUbNJzmp571Wt6UWFJAIOoghi"},
+        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5f081a506e4717a84202fd10",
+        "_modelType": "user", "admin": true, "created": "2020-07-10T07:35:43.980000+00:00",
+        "email": "admin@admin.com", "emailVerified": false, "firstName": "admin",
+        "groupInvites": [], "groups": [], "lastName": "admin", "login": "admin", "otp":
+        false, "public": true, "size": 0, "status": "enabled"}}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '542'
+      - '556'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - a0b98a57-c1d1-4471-8e07-45253951dd1c
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
       Set-Cookie:
-      - girderToken=Cc1HRsCFaoJV7HTaPIFgy3hCtrpYvVvSphYvTLN2okFb7RJjQF0XSC2eXZe5v8zg;
-        expires=Mon, 29 Oct 2018 14:12:20 GMT; Path=/
+      - girderToken=phRPMjR1mQiqOPFDQdAAD8xXrOCGJMIfScbh5RVHUbNJzmp571Wt6UWFJAIOoghi;
+        expires=Sat, 06 Nov 2021 23:01:53 GMT; Path=/
     status:
       code: 200
       message: OK
@@ -280,33 +292,34 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - Cc1HRsCFaoJV7HTaPIFgy3hCtrpYvVvSphYvTLN2okFb7RJjQF0XSC2eXZe5v8zg
+      - phRPMjR1mQiqOPFDQdAAD8xXrOCGJMIfScbh5RVHUbNJzmp571Wt6UWFJAIOoghi
       User-Agent:
       - python-requests/2.18.4
     method: GET
     uri: http://localhost:8080/api/v1//app?name=App
   response:
     body:
-      string: '[{"_id": "5ae9c743a5d3e302ff8d7657", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:19.685000+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app",
+      string: '[{"_id": "6099bb610657dd0639692aae", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.013000+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:19.689000+00:00"}]'
+        "name": "App", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.016000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '723'
+      - '662'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - 7893b0cf-6b68-4e95-a7d4-002ab51abb43
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -320,33 +333,34 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - Cc1HRsCFaoJV7HTaPIFgy3hCtrpYvVvSphYvTLN2okFb7RJjQF0XSC2eXZe5v8zg
+      - phRPMjR1mQiqOPFDQdAAD8xXrOCGJMIfScbh5RVHUbNJzmp571Wt6UWFJAIOoghi
       User-Agent:
       - python-requests/2.18.4
     method: GET
     uri: http://localhost:8080/api/v1//app?name=App
   response:
     body:
-      string: '[{"_id": "5ae9c743a5d3e302ff8d7657", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:19.685000+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app",
+      string: '[{"_id": "6099bb610657dd0639692aae", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.013000+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:19.689000+00:00"}]'
+        "name": "App", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.016000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '723'
+      - '662'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - 0f6bc0ad-b527-4afc-83cb-2d33a65f4bd4
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -360,11 +374,11 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - Cc1HRsCFaoJV7HTaPIFgy3hCtrpYvVvSphYvTLN2okFb7RJjQF0XSC2eXZe5v8zg
+      - phRPMjR1mQiqOPFDQdAAD8xXrOCGJMIfScbh5RVHUbNJzmp571Wt6UWFJAIOoghi
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/5ae9c743a5d3e302ff8d7657/release?release_id_or_name=Release1
+    uri: http://localhost:8080/api/v1//app/6099bb610657dd0639692aae/release?release_id_or_name=Release1
   response:
     body:
       string: 'null'
@@ -376,9 +390,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - f17b074b-c0ac-4b64-a2d0-f75b84b17571
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -394,32 +410,33 @@ interactions:
       Content-Length:
       - '0'
       Girder-Token:
-      - Cc1HRsCFaoJV7HTaPIFgy3hCtrpYvVvSphYvTLN2okFb7RJjQF0XSC2eXZe5v8zg
+      - phRPMjR1mQiqOPFDQdAAD8xXrOCGJMIfScbh5RVHUbNJzmp571Wt6UWFJAIOoghi
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/5ae9c743a5d3e302ff8d7657/release?name=Release1&app_revision=r001
+    uri: http://localhost:8080/api/v1//app/6099bb610657dd0639692aae/release?name=Release1&app_revision=r001
   response:
     body:
-      string: '{"_id": "5ae9c744a5d3e302ff8d765b", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:20.411680+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "release1",
+      string: '{"_id": "6099bb610657dd0639692ab2", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.564647+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "release1",
         "meta": {"revision": "r001"}, "name": "Release1", "parentCollection": "folder",
-        "parentId": "5ae9c743a5d3e302ff8d7657", "public": true, "size": 0, "updated":
-        "2018-05-02T14:12:20.413731+00:00"}'
+        "parentId": "6099bb610657dd0639692aae", "public": true, "size": 0, "updated":
+        "2021-05-10T23:01:53.566124+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '596'
+      - '535'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - 093f888b-5d2e-4aca-9a13-3f557e3cda14
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -440,27 +457,29 @@ interactions:
     uri: http://localhost:8080/api/v1/user/authentication
   response:
     body:
-      string: '{"authToken": {"expires": "2018-10-29T14:12:20.723533+00:00", "scope":
-        ["core.user_auth"], "token": "TdHi3sOPjjfMUaDqUz4e14Cfhr47pCVtg1yzVlSUxl74zQaSkU1FNyIlZlmoWx88"},
-        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5ab5422344e48104c10bcc26",
-        "_modelType": "user", "admin": true, "created": "2018-03-23T18:06:27.126000+00:00",
-        "email": "admin@email.com", "emailVerified": false, "firstName": "Admin",
-        "groupInvites": [], "groups": [], "lastName": "Admin", "login": "admin", "public":
-        true, "size": 0, "status": "enabled"}}'
+      string: '{"authToken": {"expires": "2021-11-06T23:01:53.808896+00:00", "scope":
+        ["core.user_auth"], "token": "tR8J40zQyAiG9DIlrETUXknpyyKxiZ04O8AvQChVOTPy4kNORhrquaYhAPTodMYY"},
+        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5f081a506e4717a84202fd10",
+        "_modelType": "user", "admin": true, "created": "2020-07-10T07:35:43.980000+00:00",
+        "email": "admin@admin.com", "emailVerified": false, "firstName": "admin",
+        "groupInvites": [], "groups": [], "lastName": "admin", "login": "admin", "otp":
+        false, "public": true, "size": 0, "status": "enabled"}}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '542'
+      - '556'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - 0c2584af-d1ee-466f-9cca-e89023978760
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
       Set-Cookie:
-      - girderToken=TdHi3sOPjjfMUaDqUz4e14Cfhr47pCVtg1yzVlSUxl74zQaSkU1FNyIlZlmoWx88;
-        expires=Mon, 29 Oct 2018 14:12:20 GMT; Path=/
+      - girderToken=tR8J40zQyAiG9DIlrETUXknpyyKxiZ04O8AvQChVOTPy4kNORhrquaYhAPTodMYY;
+        expires=Sat, 06 Nov 2021 23:01:53 GMT; Path=/
     status:
       code: 200
       message: OK
@@ -474,33 +493,34 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - TdHi3sOPjjfMUaDqUz4e14Cfhr47pCVtg1yzVlSUxl74zQaSkU1FNyIlZlmoWx88
+      - tR8J40zQyAiG9DIlrETUXknpyyKxiZ04O8AvQChVOTPy4kNORhrquaYhAPTodMYY
       User-Agent:
       - python-requests/2.18.4
     method: GET
     uri: http://localhost:8080/api/v1//app?name=App
   response:
     body:
-      string: '[{"_id": "5ae9c743a5d3e302ff8d7657", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:19.685000+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app",
+      string: '[{"_id": "6099bb610657dd0639692aae", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.013000+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:19.689000+00:00"}]'
+        "name": "App", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.016000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '723'
+      - '662'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - 86565f88-055e-42ed-92ae-8fc54cfaefbd
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -514,32 +534,33 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - TdHi3sOPjjfMUaDqUz4e14Cfhr47pCVtg1yzVlSUxl74zQaSkU1FNyIlZlmoWx88
+      - tR8J40zQyAiG9DIlrETUXknpyyKxiZ04O8AvQChVOTPy4kNORhrquaYhAPTodMYY
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/5ae9c743a5d3e302ff8d7657/release
+    uri: http://localhost:8080/api/v1//app/6099bb610657dd0639692aae/release
   response:
     body:
-      string: '[{"_id": "5ae9c744a5d3e302ff8d765b", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:20.411000+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "release1",
+      string: '[{"_id": "6099bb610657dd0639692ab2", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.564000+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "release1",
         "meta": {"revision": "r001"}, "name": "Release1", "parentCollection": "folder",
-        "parentId": "5ae9c743a5d3e302ff8d7657", "public": true, "size": 0, "updated":
-        "2018-05-02T14:12:20.413000+00:00"}]'
+        "parentId": "6099bb610657dd0639692aae", "public": true, "size": 0, "updated":
+        "2021-05-10T23:01:53.566000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '598'
+      - '537'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - df4b58e6-dfc2-4bc8-8452-7a2d8ff1f4af
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -560,27 +581,29 @@ interactions:
     uri: http://localhost:8080/api/v1/user/authentication
   response:
     body:
-      string: '{"authToken": {"expires": "2018-10-29T14:12:21.076316+00:00", "scope":
-        ["core.user_auth"], "token": "aqhI3041den2VI6qjaPrwnQ21IxfyT0bdm2jzESfaBu8YusnNJbf0ItwYxFxO45M"},
-        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5ab5422344e48104c10bcc26",
-        "_modelType": "user", "admin": true, "created": "2018-03-23T18:06:27.126000+00:00",
-        "email": "admin@email.com", "emailVerified": false, "firstName": "Admin",
-        "groupInvites": [], "groups": [], "lastName": "Admin", "login": "admin", "public":
-        true, "size": 0, "status": "enabled"}}'
+      string: '{"authToken": {"expires": "2021-11-06T23:01:54.076925+00:00", "scope":
+        ["core.user_auth"], "token": "91rZMmoxWxXTzThkVLYaQ8kex3DqPPVQTNFjtV0NQtawUFmuCXetXQud3VFQYAYi"},
+        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5f081a506e4717a84202fd10",
+        "_modelType": "user", "admin": true, "created": "2020-07-10T07:35:43.980000+00:00",
+        "email": "admin@admin.com", "emailVerified": false, "firstName": "admin",
+        "groupInvites": [], "groups": [], "lastName": "admin", "login": "admin", "otp":
+        false, "public": true, "size": 0, "status": "enabled"}}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '542'
+      - '556'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:20 GMT
+      - Mon, 10 May 2021 23:01:53 GMT
+      Girder-Request-Uid:
+      - 13dd9a66-644e-4ff8-a397-476d6ed4b7aa
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
       Set-Cookie:
-      - girderToken=aqhI3041den2VI6qjaPrwnQ21IxfyT0bdm2jzESfaBu8YusnNJbf0ItwYxFxO45M;
-        expires=Mon, 29 Oct 2018 14:12:21 GMT; Path=/
+      - girderToken=91rZMmoxWxXTzThkVLYaQ8kex3DqPPVQTNFjtV0NQtawUFmuCXetXQud3VFQYAYi;
+        expires=Sat, 06 Nov 2021 23:01:54 GMT; Path=/
     status:
       code: 200
       message: OK
@@ -594,33 +617,34 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - aqhI3041den2VI6qjaPrwnQ21IxfyT0bdm2jzESfaBu8YusnNJbf0ItwYxFxO45M
+      - 91rZMmoxWxXTzThkVLYaQ8kex3DqPPVQTNFjtV0NQtawUFmuCXetXQud3VFQYAYi
       User-Agent:
       - python-requests/2.18.4
     method: GET
     uri: http://localhost:8080/api/v1//app?name=App
   response:
     body:
-      string: '[{"_id": "5ae9c743a5d3e302ff8d7657", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:19.685000+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app",
+      string: '[{"_id": "6099bb610657dd0639692aae", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.013000+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:19.689000+00:00"}]'
+        "name": "App", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.016000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '723'
+      - '662'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:21 GMT
+      - Mon, 10 May 2021 23:01:54 GMT
+      Girder-Request-Uid:
+      - edd77292-a0d1-4b79-b0e3-e014c6614749
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -636,33 +660,34 @@ interactions:
       Content-Length:
       - '0'
       Girder-Token:
-      - aqhI3041den2VI6qjaPrwnQ21IxfyT0bdm2jzESfaBu8YusnNJbf0ItwYxFxO45M
+      - 91rZMmoxWxXTzThkVLYaQ8kex3DqPPVQTNFjtV0NQtawUFmuCXetXQud3VFQYAYi
       User-Agent:
       - python-requests/2.18.4
     method: DELETE
-    uri: http://localhost:8080/api/v1//app/5ae9c743a5d3e302ff8d7657
+    uri: http://localhost:8080/api/v1//app/6099bb610657dd0639692aae
   response:
     body:
-      string: '{"_id": "5ae9c743a5d3e302ff8d7657", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:19.685000+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app",
+      string: '{"_id": "6099bb610657dd0639692aae", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.013000+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:19.689000+00:00"}'
+        "name": "App", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.016000+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '721'
+      - '660'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:21 GMT
+      - Mon, 10 May 2021 23:01:54 GMT
+      Girder-Request-Uid:
+      - 5fdf5860-9a08-47ae-8e09-9c9415649687
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -683,27 +708,29 @@ interactions:
     uri: http://localhost:8080/api/v1/user/authentication
   response:
     body:
-      string: '{"authToken": {"expires": "2018-10-29T14:12:21.423374+00:00", "scope":
-        ["core.user_auth"], "token": "Dz8RUcMLI7TyE9I7NJ4lGznJ4BNTfJZWS5sj3kewUT9pjXuXZbUtBVlBC0lQkjow"},
-        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5ab5422344e48104c10bcc26",
-        "_modelType": "user", "admin": true, "created": "2018-03-23T18:06:27.126000+00:00",
-        "email": "admin@email.com", "emailVerified": false, "firstName": "Admin",
-        "groupInvites": [], "groups": [], "lastName": "Admin", "login": "admin", "public":
-        true, "size": 0, "status": "enabled"}}'
+      string: '{"authToken": {"expires": "2021-11-06T23:01:54.341734+00:00", "scope":
+        ["core.user_auth"], "token": "UlihXuxEnrNIOMXu5b8RtJxRLflWHP2qPV5HYrRpm5BolMCAeAht3I2FVgstAyAX"},
+        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5f081a506e4717a84202fd10",
+        "_modelType": "user", "admin": true, "created": "2020-07-10T07:35:43.980000+00:00",
+        "email": "admin@admin.com", "emailVerified": false, "firstName": "admin",
+        "groupInvites": [], "groups": [], "lastName": "admin", "login": "admin", "otp":
+        false, "public": true, "size": 0, "status": "enabled"}}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '542'
+      - '556'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:21 GMT
+      - Mon, 10 May 2021 23:01:54 GMT
+      Girder-Request-Uid:
+      - 9145257f-8105-43e3-933c-d5e809a875e7
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
       Set-Cookie:
-      - girderToken=Dz8RUcMLI7TyE9I7NJ4lGznJ4BNTfJZWS5sj3kewUT9pjXuXZbUtBVlBC0lQkjow;
-        expires=Mon, 29 Oct 2018 14:12:21 GMT; Path=/
+      - girderToken=UlihXuxEnrNIOMXu5b8RtJxRLflWHP2qPV5HYrRpm5BolMCAeAht3I2FVgstAyAX;
+        expires=Sat, 06 Nov 2021 23:01:54 GMT; Path=/
     status:
       code: 200
       message: OK
@@ -717,33 +744,34 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - Dz8RUcMLI7TyE9I7NJ4lGznJ4BNTfJZWS5sj3kewUT9pjXuXZbUtBVlBC0lQkjow
+      - UlihXuxEnrNIOMXu5b8RtJxRLflWHP2qPV5HYrRpm5BolMCAeAht3I2FVgstAyAX
       User-Agent:
       - python-requests/2.18.4
     method: GET
     uri: http://localhost:8080/api/v1//app?name=App1
   response:
     body:
-      string: '[{"_id": "5ae9c744a5d3e302ff8d7659", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:20.022000+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app1",
+      string: '[{"_id": "6099bb610657dd0639692ab0", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.277000+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app1",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App1", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:20.025000+00:00"}]'
+        "name": "App1", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.280000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '725'
+      - '664'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:21 GMT
+      - Mon, 10 May 2021 23:01:54 GMT
+      Girder-Request-Uid:
+      - 3157c094-f532-423d-8558-a2f69835fb90
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -759,33 +787,34 @@ interactions:
       Content-Length:
       - '0'
       Girder-Token:
-      - Dz8RUcMLI7TyE9I7NJ4lGznJ4BNTfJZWS5sj3kewUT9pjXuXZbUtBVlBC0lQkjow
+      - UlihXuxEnrNIOMXu5b8RtJxRLflWHP2qPV5HYrRpm5BolMCAeAht3I2FVgstAyAX
       User-Agent:
       - python-requests/2.18.4
     method: DELETE
-    uri: http://localhost:8080/api/v1//app/5ae9c744a5d3e302ff8d7659
+    uri: http://localhost:8080/api/v1//app/6099bb610657dd0639692ab0
   response:
     body:
-      string: '{"_id": "5ae9c744a5d3e302ff8d7659", "access": {"groups": [], "users":
-        [{"flags": [], "id": "5a36eb8744e4810bc20efc66", "level": 2}, {"flags": [],
-        "id": "5ab5422344e48104c10bcc26", "level": 2}]}, "baseParentId": "5a57b6a3f99f330b585e6f50",
-        "baseParentType": "collection", "created": "2018-05-02T14:12:20.022000+00:00",
-        "creatorId": "5ab5422344e48104c10bcc26", "description": "", "lowerName": "app1",
+      string: '{"_id": "6099bb610657dd0639692ab0", "access": {"groups": [], "users":
+        [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
+        "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:01:53.277000+00:00",
+        "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "app1",
         "meta": {"applicationPackageNameTemplate": "{baseName}_{os}_{arch}_{revision}",
         "extensionPackageNameTemplate": "{app_revision}_{baseName}_{os}_{arch}_{revision}"},
-        "name": "App1", "parentCollection": "folder", "parentId": "5a9919f944e48102a1e3577b",
-        "public": true, "size": 0, "updated": "2018-05-02T14:12:20.025000+00:00"}'
+        "name": "App1", "parentCollection": "folder", "parentId": "609995b20657dd063969294e",
+        "public": true, "size": 0, "updated": "2021-05-10T23:01:53.280000+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '723'
+      - '662'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:21 GMT
+      - Mon, 10 May 2021 23:01:54 GMT
+      Girder-Request-Uid:
+      - fef6b085-f06f-4513-8ba0-9b14c998218e
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
@@ -806,27 +835,29 @@ interactions:
     uri: http://localhost:8080/api/v1/user/authentication
   response:
     body:
-      string: '{"authToken": {"expires": "2018-10-29T14:12:21.783809+00:00", "scope":
-        ["core.user_auth"], "token": "S0tU88iB2AvQ5pgi975RPYdW2sm5vDZ9Ymxg97TVb5TzlOWynd6Lp9UNuf2cPjUo"},
-        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5ab5422344e48104c10bcc26",
-        "_modelType": "user", "admin": true, "created": "2018-03-23T18:06:27.126000+00:00",
-        "email": "admin@email.com", "emailVerified": false, "firstName": "Admin",
-        "groupInvites": [], "groups": [], "lastName": "Admin", "login": "admin", "public":
-        true, "size": 0, "status": "enabled"}}'
+      string: '{"authToken": {"expires": "2021-11-06T23:01:54.606380+00:00", "scope":
+        ["core.user_auth"], "token": "ZePsCKtvirYAT7iPncQ5xGwzSEjJFdNNDS4tktTRrTjVYp18WsYqzjE85B896O79"},
+        "message": "Login succeeded.", "user": {"_accessLevel": 2, "_id": "5f081a506e4717a84202fd10",
+        "_modelType": "user", "admin": true, "created": "2020-07-10T07:35:43.980000+00:00",
+        "email": "admin@admin.com", "emailVerified": false, "firstName": "admin",
+        "groupInvites": [], "groups": [], "lastName": "admin", "login": "admin", "otp":
+        false, "public": true, "size": 0, "status": "enabled"}}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
       Content-Length:
-      - '542'
+      - '556'
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:21 GMT
+      - Mon, 10 May 2021 23:01:54 GMT
+      Girder-Request-Uid:
+      - b9f7d6a4-8740-47c2-b1e7-f17aff3b6a52
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
       Set-Cookie:
-      - girderToken=S0tU88iB2AvQ5pgi975RPYdW2sm5vDZ9Ymxg97TVb5TzlOWynd6Lp9UNuf2cPjUo;
-        expires=Mon, 29 Oct 2018 14:12:21 GMT; Path=/
+      - girderToken=ZePsCKtvirYAT7iPncQ5xGwzSEjJFdNNDS4tktTRrTjVYp18WsYqzjE85B896O79;
+        expires=Sat, 06 Nov 2021 23:01:54 GMT; Path=/
     status:
       code: 200
       message: OK
@@ -840,7 +871,7 @@ interactions:
       Connection:
       - keep-alive
       Girder-Token:
-      - S0tU88iB2AvQ5pgi975RPYdW2sm5vDZ9Ymxg97TVb5TzlOWynd6Lp9UNuf2cPjUo
+      - ZePsCKtvirYAT7iPncQ5xGwzSEjJFdNNDS4tktTRrTjVYp18WsYqzjE85B896O79
       User-Agent:
       - python-requests/2.18.4
     method: GET
@@ -856,9 +887,11 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 02 May 2018 14:12:21 GMT
+      - Mon, 10 May 2021 23:01:54 GMT
+      Girder-Request-Uid:
+      - 8ee25b37-e03e-4422-9177-0a4c18636ca7
       Server:
-      - Girder 2.5.0
+      - Girder 3.1.4
     status:
       code: 200
       message: OK
