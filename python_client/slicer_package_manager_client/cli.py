@@ -217,9 +217,9 @@ def package(sc):
               help='Description of the new collection',
               show_default=True,
               cls=_AdvancedOption)
-@click.option('--public', flag_value='public', default=None,
-              help='Whether the collection should be publicly visible',
-              show_default=True,
+@click.option('--public/--private', is_flag=True, default=None,
+              help='Whether the collection should be publicly visible [default: public]',
+              show_default=False,
               cls=_AdvancedOption)
 @click.pass_obj
 def _cli_createApp(sc, *args, **kwargs):
@@ -513,7 +513,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 @click.option('--limit', default=Constant.DEFAULT_LIMIT,
               help='The limit number of listed extensions ',
               cls=_AdvancedOption)
-@click.option('--all', 'all', flag_value='all',
+@click.option('--all', is_flag=True,
               default=False,
               help='List all the extension of the application',
               cls=_AdvancedOption)
@@ -591,7 +591,7 @@ def _cli_deleteExtension(sc, *args, **kwargs):
 @click.option('--desc', default='',
               help='Description of the package',
               cls=_AdvancedOption)
-@click.option('--pre_release', 'pre_release', flag_value='pre_release', default=False,
+@click.option('--pre_release', is_flag=True, default=None,
               help='Boolean to specify if the package is ready to be distributed',
               cls=_AdvancedOption)
 @click.pass_obj
