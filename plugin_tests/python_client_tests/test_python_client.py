@@ -11,12 +11,16 @@ APPS = ['App', 'App1', 'App2']
 
 RELEASES = [
     {
+        'app_name': APPS[0],
         'name': 'Release',
-        'revision': 'r000'
+        'revision': 'r000',
+        'desc': 'random description 1',
     },
     {
+        'app_name': APPS[0],
         'name': 'Release1',
-        'revision': 'r001'
+        'revision': 'r001',
+        'desc': 'random description 2',
     }
 ]
 
@@ -32,6 +36,7 @@ DRAFT_RELEASES = [
 PACKAGES = [
     {
         'filepath': './file1.txt',
+        'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'amd64',
         'baseName': 'pkg1',
@@ -41,6 +46,7 @@ PACKAGES = [
     },
     {
         'filepath': './file2.txt',
+        'app_name': APPS[0],
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'pkg2',
@@ -50,6 +56,7 @@ PACKAGES = [
     },
     {
         'filepath': './file3.txt',
+        'app_name': APPS[0],
         'os': 'win',
         'arch': 'i386',
         'baseName': 'pkg3',
@@ -62,6 +69,7 @@ PACKAGES = [
 EXTENSIONS = [
     {
         'filepath': './file1.txt',
+        'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'amd64',
         'baseName': 'ext1',
@@ -72,6 +80,7 @@ EXTENSIONS = [
     },
     {
         'filepath': './file2.txt',
+        'app_name': APPS[0],
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'ext2',
@@ -82,6 +91,7 @@ EXTENSIONS = [
     },
     {
         'filepath': './file3.txt',
+        'app_name': APPS[0],
         'os': 'win',
         'arch': 'i386',
         'baseName': 'ext3',
@@ -113,15 +123,15 @@ def apps(server, spc):
 @pytest.fixture
 def releases(server, spc):
     rls1 = spc.createRelease(
-        app_name=APPS[0],
+        app_name=RELEASES[0]['app_name'],
         name=RELEASES[0]['name'],
         revision=RELEASES[0]['revision'],
-        desc='random description 1')
+        desc=RELEASES[0]['desc'])
     rls2 = spc.createRelease(
-        app_name=APPS[0],
+        app_name=RELEASES[1]['app_name'],
         name=RELEASES[1]['name'],
         revision=RELEASES[1]['revision'],
-        desc='random description 2')
+        desc=RELEASES[1]['desc'])
     yield [rls1, rls2]
 
 
@@ -130,7 +140,7 @@ def releases(server, spc):
 def packages(server, spc, releases, files):
     pkg1 = spc.uploadApplicationPackage(
         filepath=PACKAGES[0]['filepath'],
-        app_name=APPS[0],
+        app_name=PACKAGES[0]['app_name'],
         pkg_os=PACKAGES[0]['os'],
         arch=PACKAGES[0]['arch'],
         name=PACKAGES[0]['baseName'],
@@ -140,7 +150,7 @@ def packages(server, spc, releases, files):
     time.sleep(0.1)
     pkg2 = spc.uploadApplicationPackage(
         filepath=PACKAGES[1]['filepath'],
-        app_name=APPS[0],
+        app_name=PACKAGES[1]['app_name'],
         pkg_os=PACKAGES[1]['os'],
         arch=PACKAGES[1]['arch'],
         name=PACKAGES[1]['baseName'],
@@ -150,13 +160,13 @@ def packages(server, spc, releases, files):
     time.sleep(0.1)
     pkg3 = spc.uploadApplicationPackage(
         filepath=PACKAGES[2]['filepath'],
-        app_name=APPS[0],
+        app_name=PACKAGES[2]['app_name'],
         pkg_os=PACKAGES[2]['os'],
         arch=PACKAGES[2]['arch'],
         name=PACKAGES[2]['baseName'],
         repo_type=PACKAGES[2]['repo_type'],
         repo_url=PACKAGES[2]['repo_url'],
-        revision=RELEASES[0]['revision'])
+        revision=PACKAGES[2]['revision'])
     yield [pkg1, pkg2, pkg3]
 
 
@@ -165,7 +175,7 @@ def packages(server, spc, releases, files):
 def extensions(server, spc, releases, files):
     ext1 = spc.uploadExtension(
         filepath=EXTENSIONS[0]['filepath'],
-        app_name=APPS[0],
+        app_name=EXTENSIONS[0]['app_name'],
         ext_os=EXTENSIONS[0]['os'],
         arch=EXTENSIONS[0]['arch'],
         name=EXTENSIONS[0]['baseName'],
@@ -176,7 +186,7 @@ def extensions(server, spc, releases, files):
     time.sleep(0.1)
     ext2 = spc.uploadExtension(
         filepath=EXTENSIONS[1]['filepath'],
-        app_name=APPS[0],
+        app_name=EXTENSIONS[1]['app_name'],
         ext_os=EXTENSIONS[1]['os'],
         arch=EXTENSIONS[1]['arch'],
         name=EXTENSIONS[1]['baseName'],
@@ -187,13 +197,13 @@ def extensions(server, spc, releases, files):
     time.sleep(0.1)
     ext3 = spc.uploadExtension(
         filepath=EXTENSIONS[2]['filepath'],
-        app_name=APPS[0],
+        app_name=EXTENSIONS[2]['app_name'],
         ext_os=EXTENSIONS[2]['os'],
         arch=EXTENSIONS[2]['arch'],
         name=EXTENSIONS[2]['baseName'],
         repo_type=EXTENSIONS[2]['repo_type'],
         repo_url=EXTENSIONS[2]['repo_url'],
-        app_revision=RELEASES[0]['revision'],
+        app_revision=EXTENSIONS[2]['app_revision'],
         revision=EXTENSIONS[2]['revision'])
 
     yield [ext1, ext2, ext3]

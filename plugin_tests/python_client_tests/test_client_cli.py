@@ -11,10 +11,12 @@ APPS = ['App', 'App1', 'App2']
 
 RELEASES = [
     {
+        'app_name': APPS[0],
         'name': 'Release',
         'revision': 'r000'
     },
     {
+        'app_name': APPS[0],
         'name': 'Release1',
         'revision': 'r001'
     }
@@ -29,6 +31,7 @@ DRAFT_RELEASES = [
 PACKAGES = [
     {
         'filepath': './file1.txt',
+        'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'i386',
         'revision': DRAFT_RELEASES[0]['revision'],
@@ -38,6 +41,7 @@ PACKAGES = [
     },
     {
         'filepath': './file2.txt',
+        'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'amd64',
         'revision': DRAFT_RELEASES[0]['revision'],
@@ -47,6 +51,7 @@ PACKAGES = [
     },
     {
         'filepath': './file3.txt',
+        'app_name': APPS[0],
         'os': 'win',
         'arch': 'i386',
         'revision': DRAFT_RELEASES[0]['revision'],
@@ -59,6 +64,7 @@ PACKAGES = [
 EXTENSIONS = [
     {
         'filepath': './file1.txt',
+        'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'i386',
         'revision': '000',
@@ -69,6 +75,7 @@ EXTENSIONS = [
     },
     {
         'filepath': './file2.txt',
+        'app_name': APPS[0],
         'os': 'linux',
         'arch': 'amd64',
         'revision': '001',
@@ -79,6 +86,7 @@ EXTENSIONS = [
     },
     {
         'filepath': './file3.txt',
+        'app_name': APPS[0],
         'os': 'win',
         'arch': 'amd64',
         'revision': '000',
@@ -133,7 +141,7 @@ def apps(server, runner, spc):
 @pytest.fixture
 def rl(server, runner, spc):
     cmd = list(spc)
-    cmd.extend(['release', 'create', APPS[0], RELEASES[1]['name'], RELEASES[1]['revision']])
+    cmd.extend(['release', 'create', RELEASES[1]['app_name'], RELEASES[1]['name'], RELEASES[1]['revision']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) CREATED" % (RELEASES[1]['name'], RELEASES[1]['revision']), res.output)
@@ -166,7 +174,7 @@ def files():
 @pytest.fixture
 def pkg(server, runner, spc, apps, files):
     cmd = list(spc)
-    cmd.extend(['package', 'upload', APPS[0], './file1.txt',
+    cmd.extend(['package', 'upload', PACKAGES[0]['app_name'], './file1.txt',
                 '--os', PACKAGES[0]['os'],
                 '--arch', PACKAGES[0]['arch'],
                 '--name', PACKAGES[0]['name'],
@@ -179,7 +187,7 @@ def pkg(server, runner, spc, apps, files):
         getPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])), res.output)
 
     cmd = list(spc)
-    cmd.extend(['package', 'upload', APPS[0], './file2.txt',
+    cmd.extend(['package', 'upload', PACKAGES[1]['app_name'], './file2.txt',
                 '--os', PACKAGES[1]['os'],
                 '--arch', PACKAGES[1]['arch'],
                 '--name', PACKAGES[1]['name'],
@@ -192,7 +200,7 @@ def pkg(server, runner, spc, apps, files):
         getPkgName(PACKAGES[1]['name'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])), res.output)
 
     cmd = list(spc)
-    cmd.extend(['package', 'upload', APPS[0], './file3.txt',
+    cmd.extend(['package', 'upload', PACKAGES[2]['app_name'], './file3.txt',
                 '--os', PACKAGES[2]['os'],
                 '--arch', PACKAGES[2]['arch'],
                 '--name', PACKAGES[2]['name'],
@@ -211,7 +219,7 @@ def ext(server, runner, spc, apps, files):
     cmd = list(spc)
     name1 = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                        EXTENSIONS[0]['app_revision'])
-    cmd.extend(['extension', 'upload', APPS[0], './file1.txt',
+    cmd.extend(['extension', 'upload', EXTENSIONS[0]['app_name'], './file1.txt',
                 '--os', EXTENSIONS[0]['os'],
                 '--arch', EXTENSIONS[0]['arch'],
                 '--name', EXTENSIONS[0]['name'],
@@ -226,7 +234,7 @@ def ext(server, runner, spc, apps, files):
     cmd = list(spc)
     name2 = getPkgName(EXTENSIONS[1]['name'], EXTENSIONS[1]['os'], EXTENSIONS[1]['arch'], EXTENSIONS[1]['revision'],
                        EXTENSIONS[1]['app_revision'])
-    cmd.extend(['extension', 'upload', APPS[0], './file2.txt'])
+    cmd.extend(['extension', 'upload', EXTENSIONS[1]['app_name'], './file2.txt'])
     options = ['--os', EXTENSIONS[1]['os'],
                '--arch', EXTENSIONS[1]['arch'],
                '--name', EXTENSIONS[1]['name'],
@@ -241,7 +249,7 @@ def ext(server, runner, spc, apps, files):
 
     cmd = list(spc)
     name3 = getPkgName(EXTENSIONS[2]['name'], EXTENSIONS[2]['os'], EXTENSIONS[2]['arch'], EXTENSIONS[2]['revision'])
-    cmd.extend(['extension', 'upload', APPS[0], './file3.txt'])
+    cmd.extend(['extension', 'upload', EXTENSIONS[2]['app_name'], './file3.txt'])
     options = ['--os', EXTENSIONS[2]['os'],
                '--arch', EXTENSIONS[2]['arch'],
                '--name', EXTENSIONS[2]['name'],
@@ -296,7 +304,7 @@ def testDeleteAppCLI(server, runner, spc, apps):
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateReleaseCLI(server, runner, spc, apps):
     cmd = list(spc)
-    cmd.extend(['release', 'create', APPS[0], RELEASES[0]['name'], RELEASES[0]['revision']])
+    cmd.extend(['release', 'create', RELEASES[0]['app_name'], RELEASES[0]['name'], RELEASES[0]['revision']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) CREATED" % (RELEASES[0]['name'], RELEASES[0]['revision']), res.output)
@@ -310,7 +318,7 @@ def testCreateReleaseCLI(server, runner, spc, apps):
 @pytest.mark.plugin('slicer_package_manager')
 def testListReleaseCLI(server, runner, spc, apps, rl):
     cmd = list(spc)
-    cmd.extend(['release', 'list', APPS[0]])
+    cmd.extend(['release', 'list', RELEASES[1]['app_name']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s *%s *\w{24}" % (RELEASES[1]['revision'], RELEASES[1]['name']), res.output)
@@ -320,7 +328,7 @@ def testListReleaseCLI(server, runner, spc, apps, rl):
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteReleaseCLI(server, runner, spc, apps, rl):
     cmd = list(spc)
-    cmd.extend(['release', 'delete', APPS[0], RELEASES[1]['name']])
+    cmd.extend(['release', 'delete', RELEASES[1]['app_name'], RELEASES[1]['name']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) DELETED" % (RELEASES[1]['name'], RELEASES[1]['revision']), res.output)
@@ -351,7 +359,7 @@ def testDeleteDraftCLI(server, runner, spc, pkg):
 def testUploadPackagesCLI(server, runner, spc, apps, files):
     cmd = list(spc)
     name1 = getPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
-    cmd.extend(['package', 'upload', APPS[0], './file1.txt',
+    cmd.extend(['package', 'upload', PACKAGES[0]['app_name'], './file1.txt',
                 '--os', PACKAGES[0]['os'],
                 '--arch', PACKAGES[0]['arch'],
                 '--name', PACKAGES[0]['name'],
@@ -364,7 +372,7 @@ def testUploadPackagesCLI(server, runner, spc, apps, files):
 
     cmd = list(spc)
     name2 = getPkgName(PACKAGES[1]['name'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])
-    cmd.extend(['package', 'upload', APPS[0], './file2.txt',
+    cmd.extend(['package', 'upload', PACKAGES[1]['app_name'], './file2.txt',
                 '--os', PACKAGES[1]['os'],
                 '--arch', PACKAGES[1]['arch'],
                 '--name', PACKAGES[1]['name'],
@@ -377,7 +385,7 @@ def testUploadPackagesCLI(server, runner, spc, apps, files):
 
     cmd = list(spc)
     name3 = getPkgName(PACKAGES[2]['name'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
-    cmd.extend(['package', 'upload', APPS[0], './file3.txt',
+    cmd.extend(['package', 'upload', PACKAGES[2]['app_name'], './file3.txt',
                 '--os', PACKAGES[2]['os'],
                 '--arch', PACKAGES[2]['arch'],
                 '--name', PACKAGES[2]['name'],
@@ -409,7 +417,7 @@ def testListPackagesCLI(server, runner, spc, pkg):
 def testDeletePackagesCLI(server, runner, spc, pkg):
     cmd = list(spc)
     name = getPkgName(PACKAGES[2]['name'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
-    cmd.extend(['package', 'delete', APPS[0], name])
+    cmd.extend(['package', 'delete', PACKAGES[2]['app_name'], name])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) DELETED" % (name, PACKAGES[2]['revision']), res.output)
@@ -420,7 +428,7 @@ def testDeletePackagesCLI(server, runner, spc, pkg):
 def testDownloadPackagesCLI(server, runner, spc, pkg):
     cmd = list(spc)
     name = getPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
-    cmd.extend(['package', 'download', APPS[0], name])
+    cmd.extend(['package', 'download', PACKAGES[0]['app_name'], name])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) DOWNLOADED \[.*]" % name, res.output)
@@ -433,7 +441,7 @@ def testUploadExtensionsCLI(server, runner, spc, apps, files):
     cmd = list(spc)
     name1 = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                        EXTENSIONS[0]['app_revision'])
-    cmd.extend(['extension', 'upload', APPS[0], './file1.txt',
+    cmd.extend(['extension', 'upload', EXTENSIONS[0]['app_name'], './file1.txt',
                 '--os', EXTENSIONS[0]['os'],
                 '--arch', EXTENSIONS[0]['arch'],
                 '--name', EXTENSIONS[0]['name'],
@@ -448,7 +456,7 @@ def testUploadExtensionsCLI(server, runner, spc, apps, files):
     cmd = list(spc)
     name2 = getPkgName(EXTENSIONS[1]['name'], EXTENSIONS[1]['os'], EXTENSIONS[1]['arch'], EXTENSIONS[1]['revision'],
                        EXTENSIONS[1]['app_revision'])
-    cmd.extend(['extension', 'upload', APPS[0], './file2.txt',
+    cmd.extend(['extension', 'upload', EXTENSIONS[1]['app_name'], './file2.txt',
                 '--os', EXTENSIONS[1]['os'],
                 '--arch', EXTENSIONS[1]['arch'],
                 '--name', EXTENSIONS[1]['name'],
@@ -488,7 +496,7 @@ def testDeleteExtensionsCLI(server, runner, spc, ext):
     cmd = list(spc)
     name = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                       EXTENSIONS[0]['app_revision'])
-    cmd.extend(['extension', 'delete', APPS[0], name])
+    cmd.extend(['extension', 'delete', EXTENSIONS[0]['app_name'], name])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) DELETED" % (name, EXTENSIONS[0]['revision']), res.output)
@@ -500,7 +508,7 @@ def testDownloadExtensionsCLI(server, runner, spc, ext):
     cmd = list(spc)
     name = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                       EXTENSIONS[0]['app_revision'])
-    cmd.extend(['extension', 'download', APPS[0], name])
+    cmd.extend(['extension', 'download', EXTENSIONS[0]['app_name'], name])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) DOWNLOADED \[.*]" % name, res.output)
