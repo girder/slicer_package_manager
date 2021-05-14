@@ -122,91 +122,60 @@ def apps(server, spc):
 @pytest.mark.vcr()
 @pytest.fixture
 def releases(server, spc):
-    rls1 = spc.createRelease(
-        app_name=RELEASES[0]['app_name'],
-        name=RELEASES[0]['name'],
-        revision=RELEASES[0]['revision'],
-        desc=RELEASES[0]['desc'])
-    rls2 = spc.createRelease(
-        app_name=RELEASES[1]['app_name'],
-        name=RELEASES[1]['name'],
-        revision=RELEASES[1]['revision'],
-        desc=RELEASES[1]['desc'])
-    yield [rls1, rls2]
+
+    def _create(release):
+        return spc.createRelease(
+            app_name=release['app_name'],
+            name=release['name'],
+            revision=release['revision'],
+            desc=release['desc'])
+
+    yield [_create(RELEASES[0]), _create(RELEASES[1])]
 
 
 @pytest.mark.vcr()
 @pytest.fixture
 def packages(server, spc, releases, files):
-    pkg1 = spc.uploadApplicationPackage(
-        filepath=PACKAGES[0]['filepath'],
-        app_name=PACKAGES[0]['app_name'],
-        pkg_os=PACKAGES[0]['os'],
-        arch=PACKAGES[0]['arch'],
-        name=PACKAGES[0]['baseName'],
-        repo_type=PACKAGES[0]['repo_type'],
-        repo_url=PACKAGES[0]['repo_url'],
-        revision='r300')
-    time.sleep(0.1)
-    pkg2 = spc.uploadApplicationPackage(
-        filepath=PACKAGES[1]['filepath'],
-        app_name=PACKAGES[1]['app_name'],
-        pkg_os=PACKAGES[1]['os'],
-        arch=PACKAGES[1]['arch'],
-        name=PACKAGES[1]['baseName'],
-        repo_type=PACKAGES[1]['repo_type'],
-        repo_url=PACKAGES[1]['repo_url'],
-        revision='r301')
-    time.sleep(0.1)
-    pkg3 = spc.uploadApplicationPackage(
-        filepath=PACKAGES[2]['filepath'],
-        app_name=PACKAGES[2]['app_name'],
-        pkg_os=PACKAGES[2]['os'],
-        arch=PACKAGES[2]['arch'],
-        name=PACKAGES[2]['baseName'],
-        repo_type=PACKAGES[2]['repo_type'],
-        repo_url=PACKAGES[2]['repo_url'],
-        revision=PACKAGES[2]['revision'])
-    yield [pkg1, pkg2, pkg3]
+
+    def _upload(package, revision):
+        pkg = spc.uploadApplicationPackage(
+            filepath=package['filepath'],
+            app_name=package['app_name'],
+            pkg_os=package['os'],
+            arch=package['arch'],
+            name=package['baseName'],
+            repo_type=package['repo_type'],
+            repo_url=package['repo_url'],
+            revision=revision)
+        time.sleep(0.1)
+        return pkg
+
+    yield [
+        _upload(PACKAGES[0], 'r300'),
+        _upload(PACKAGES[1], 'r301'),
+        _upload(PACKAGES[2], PACKAGES[2]['revision'])
+    ]
 
 
 @pytest.mark.vcr()
 @pytest.fixture
 def extensions(server, spc, releases, files):
-    ext1 = spc.uploadExtension(
-        filepath=EXTENSIONS[0]['filepath'],
-        app_name=EXTENSIONS[0]['app_name'],
-        ext_os=EXTENSIONS[0]['os'],
-        arch=EXTENSIONS[0]['arch'],
-        name=EXTENSIONS[0]['baseName'],
-        repo_type=EXTENSIONS[0]['repo_type'],
-        repo_url=EXTENSIONS[0]['repo_url'],
-        app_revision=EXTENSIONS[0]['app_revision'],
-        revision=EXTENSIONS[0]['revision'])
-    time.sleep(0.1)
-    ext2 = spc.uploadExtension(
-        filepath=EXTENSIONS[1]['filepath'],
-        app_name=EXTENSIONS[1]['app_name'],
-        ext_os=EXTENSIONS[1]['os'],
-        arch=EXTENSIONS[1]['arch'],
-        name=EXTENSIONS[1]['baseName'],
-        repo_type=EXTENSIONS[1]['repo_type'],
-        repo_url=EXTENSIONS[1]['repo_url'],
-        app_revision=EXTENSIONS[1]['app_revision'],
-        revision=EXTENSIONS[1]['revision'])
-    time.sleep(0.1)
-    ext3 = spc.uploadExtension(
-        filepath=EXTENSIONS[2]['filepath'],
-        app_name=EXTENSIONS[2]['app_name'],
-        ext_os=EXTENSIONS[2]['os'],
-        arch=EXTENSIONS[2]['arch'],
-        name=EXTENSIONS[2]['baseName'],
-        repo_type=EXTENSIONS[2]['repo_type'],
-        repo_url=EXTENSIONS[2]['repo_url'],
-        app_revision=EXTENSIONS[2]['app_revision'],
-        revision=EXTENSIONS[2]['revision'])
 
-    yield [ext1, ext2, ext3]
+    def _upload(extension):
+        ext = spc.uploadExtension(
+            filepath=extension['filepath'],
+            app_name=extension['app_name'],
+            ext_os=extension['os'],
+            arch=extension['arch'],
+            name=extension['baseName'],
+            repo_type=extension['repo_type'],
+            repo_url=extension['repo_url'],
+            app_revision=extension['app_revision'],
+            revision=extension['revision'])
+        time.sleep(0.1)
+        return ext
+
+    yield [_upload(EXTENSIONS[0]), _upload(EXTENSIONS[1]), _upload(EXTENSIONS[2])]
 
 
 @pytest.mark.vcr()
