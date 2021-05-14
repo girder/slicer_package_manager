@@ -433,7 +433,6 @@ def testDeletePackage(server, spc, apps, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadExtension(server, spc, apps, releases, files):
-    pass
     # Upload
     ext1 = spc.uploadExtension(
         filepath=EXTENSIONS[0]['filepath'],
