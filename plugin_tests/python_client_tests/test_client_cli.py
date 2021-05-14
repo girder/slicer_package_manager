@@ -113,7 +113,7 @@ def _cli_upload_package(package):
                 '--revision', package['revision'],
                 '--repo_type', package['repo_type'],
                 '--repo_url', package['repo_url']])
-    return [CliRunner().invoke(main, cmd), getAppPkgName(package)]
+    return CliRunner().invoke(main, cmd)
 
 
 def _cli_upload_extension(extension):
@@ -126,7 +126,7 @@ def _cli_upload_extension(extension):
                 '--app_revision', extension['app_revision'],
                 '--repo_type', extension['repo_type'],
                 '--repo_url', extension['repo_url']])
-    return [CliRunner().invoke(main, cmd), getExtPkgName(extension)]
+    return CliRunner().invoke(main, cmd)
 
 
 @pytest.mark.vcr()
@@ -169,15 +169,15 @@ def releases(server):
 @pytest.mark.vcr()
 @pytest.fixture
 def packages(server, apps, files):
-    res = _cli_upload_package(PACKAGES[0])[0]
+    res = _cli_upload_package(PACKAGES[0])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[0])), res.output)
 
-    res = _cli_upload_package(PACKAGES[1])[0]
+    res = _cli_upload_package(PACKAGES[1])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[1])), res.output)
 
-    res = _cli_upload_package(PACKAGES[2])[0]
+    res = _cli_upload_package(PACKAGES[2])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[2])), res.output)
 
@@ -185,17 +185,17 @@ def packages(server, apps, files):
 @pytest.mark.vcr()
 @pytest.fixture
 def extensions(server, apps, files):
-    [res, name1] = _cli_upload_extension(EXTENSIONS[0])
+    res = _cli_upload_extension(EXTENSIONS[0])
     assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name1), res.output)
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[0])), res.output)
 
-    [res, name2] = _cli_upload_extension(EXTENSIONS[1])
+    res = _cli_upload_extension(EXTENSIONS[1])
     assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name2), res.output)
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[1])), res.output)
 
-    [res, name3] = _cli_upload_extension(EXTENSIONS[2])
+    res = _cli_upload_extension(EXTENSIONS[2])
     assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name3), res.output)
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[2])), res.output)
 
 
 @pytest.mark.vcr()
@@ -301,17 +301,17 @@ def testDeleteDraftCLI(server, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadPackagesCLI(server, apps, files):
-    [res, name1] = _cli_upload_package(PACKAGES[0])
+    res = _cli_upload_package(PACKAGES[0])
     assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name1), res.output)
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getAppPkgName(PACKAGES[0])), res.output)
 
-    [res, name2] = _cli_upload_package(PACKAGES[1])
+    res = _cli_upload_package(PACKAGES[1])
     assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name2), res.output)
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getAppPkgName(PACKAGES[1])), res.output)
 
-    [res, name3] = _cli_upload_package(PACKAGES[2])
+    res = _cli_upload_package(PACKAGES[2])
     assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name3), res.output)
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getAppPkgName(PACKAGES[2])), res.output)
 
 
 @pytest.mark.vcr()
@@ -358,13 +358,13 @@ def testDownloadPackagesCLI(server, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadExtensionsCLI(server, apps, files):
-    [res, name1] = _cli_upload_extension(EXTENSIONS[0])
+    res = _cli_upload_extension(EXTENSIONS[0])
     assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name1), res.output)
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[0])), res.output)
 
-    [res, name2] = _cli_upload_extension(EXTENSIONS[1])
+    res = _cli_upload_extension(EXTENSIONS[1])
     assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name2), res.output)
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[1])), res.output)
 
 
 @pytest.mark.vcr()
