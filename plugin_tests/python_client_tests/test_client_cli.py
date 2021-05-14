@@ -37,7 +37,7 @@ PACKAGES = [
         'revision': DRAFT_RELEASES[0]['revision'],
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg1.git',
-        'name': 'pkg1'
+        'baseName': 'pkg1'
     },
     {
         'filepath': './file2.txt',
@@ -47,7 +47,7 @@ PACKAGES = [
         'revision': DRAFT_RELEASES[0]['revision'],
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg2.git',
-        'name': 'pkg2'
+        'baseName': 'pkg2'
     },
     {
         'filepath': './file3.txt',
@@ -57,7 +57,7 @@ PACKAGES = [
         'revision': DRAFT_RELEASES[0]['revision'],
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg3.git',
-        'name': 'pkg3'
+        'baseName': 'pkg3'
     }
 ]
 
@@ -70,7 +70,7 @@ EXTENSIONS = [
         'revision': '000',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext1.git',
-        'name': 'ext1',
+        'baseName': 'ext1',
         'app_revision': RELEASES[0]['revision']
     },
     {
@@ -81,7 +81,7 @@ EXTENSIONS = [
         'revision': '001',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext2.git',
-        'name': 'ext2',
+        'baseName': 'ext2',
         'app_revision': RELEASES[0]['revision']
     },
     {
@@ -92,7 +92,7 @@ EXTENSIONS = [
         'revision': '000',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext3.git',
-        'name': 'ext3',
+        'baseName': 'ext3',
         'app_revision': DRAFT_RELEASES[0]['revision']
     }
 ]
@@ -104,13 +104,13 @@ CLI_COMMON_ARGS = [
 ]
 
 def _cli_upload_package(package):
-    expected_package_name = getAppPkgName(package['name'], package['os'], package['arch'], package['revision'])
+    expected_package_name = getAppPkgName(package['baseName'], package['os'], package['arch'], package['revision'])
 
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['package', 'upload', package['app_name'], package['filepath'],
                 '--os', package['os'],
                 '--arch', package['arch'],
-                '--name', package['name'],
+                '--name', package['baseName'],
                 '--revision', package['revision'],
                 '--repo_type', package['repo_type'],
                 '--repo_url', package['repo_url']])
@@ -120,11 +120,11 @@ def _cli_upload_package(package):
 def _cli_upload_extension(extension):
     cmd = list(CLI_COMMON_ARGS)
     expected_package_name = getExtPkgName(
-        extension['name'], extension['os'], extension['arch'], extension['revision'], extension['app_revision'])
+        extension['baseName'], extension['os'], extension['arch'], extension['revision'], extension['app_revision'])
     cmd.extend(['extension', 'upload', extension['app_name'], extension['filepath'],
                 '--os', extension['os'],
                 '--arch', extension['arch'],
-                '--name', extension['name'],
+                '--name', extension['baseName'],
                 '--revision', extension['revision'],
                 '--app_revision', extension['app_revision'],
                 '--repo_type', extension['repo_type'],
@@ -175,19 +175,19 @@ def packages(server, apps, files):
     res = _cli_upload_package(PACKAGES[0])[0]
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (
-        getAppPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
+        getAppPkgName(PACKAGES[0]['baseName'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
     ), res.output)
 
     res = _cli_upload_package(PACKAGES[1])[0]
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (
-        getAppPkgName(PACKAGES[1]['name'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])
+        getAppPkgName(PACKAGES[1]['baseName'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])
     ), res.output)
 
     res = _cli_upload_package(PACKAGES[2])[0]
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (
-        getAppPkgName(PACKAGES[2]['name'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
+        getAppPkgName(PACKAGES[2]['baseName'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
     ), res.output)
 
 
@@ -327,9 +327,9 @@ def testUploadPackagesCLI(server, apps, files):
 @pytest.mark.plugin('slicer_package_manager')
 def testListPackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
-    name1 = getAppPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
-    name2 = getAppPkgName(PACKAGES[1]['name'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])
-    name3 = getAppPkgName(PACKAGES[2]['name'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
+    name1 = getAppPkgName(PACKAGES[0]['baseName'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
+    name2 = getAppPkgName(PACKAGES[1]['baseName'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])
+    name3 = getAppPkgName(PACKAGES[2]['baseName'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
     cmd.extend(['package', 'list', APPS[0]])
     res = CliRunner().invoke(main, cmd)
     assert res.exit_code == 0
@@ -342,7 +342,7 @@ def testListPackagesCLI(server, packages):
 @pytest.mark.plugin('slicer_package_manager')
 def testDeletePackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
-    name = getAppPkgName(PACKAGES[2]['name'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
+    name = getAppPkgName(PACKAGES[2]['baseName'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
     cmd.extend(['package', 'delete', PACKAGES[2]['app_name'], name])
     res = CliRunner().invoke(main, cmd)
     assert res.exit_code == 0
@@ -353,7 +353,7 @@ def testDeletePackagesCLI(server, packages):
 @pytest.mark.plugin('slicer_package_manager')
 def testDownloadPackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
-    name = getAppPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
+    name = getAppPkgName(PACKAGES[0]['baseName'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
     cmd.extend(['package', 'download', PACKAGES[0]['app_name'], name])
     res = CliRunner().invoke(main, cmd)
     assert res.exit_code == 0
@@ -377,11 +377,11 @@ def testUploadExtensionsCLI(server, apps, files):
 @pytest.mark.plugin('slicer_package_manager')
 def testListExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
-    name1 = getExtPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
+    name1 = getExtPkgName(EXTENSIONS[0]['baseName'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                           EXTENSIONS[0]['app_revision'])
-    name2 = getExtPkgName(EXTENSIONS[1]['name'], EXTENSIONS[1]['os'], EXTENSIONS[1]['arch'], EXTENSIONS[1]['revision'],
+    name2 = getExtPkgName(EXTENSIONS[1]['baseName'], EXTENSIONS[1]['os'], EXTENSIONS[1]['arch'], EXTENSIONS[1]['revision'],
                           EXTENSIONS[1]['app_revision'])
-    name3 = getExtPkgName(EXTENSIONS[2]['name'], EXTENSIONS[2]['os'], EXTENSIONS[2]['arch'], EXTENSIONS[2]['revision'],
+    name3 = getExtPkgName(EXTENSIONS[2]['baseName'], EXTENSIONS[2]['os'], EXTENSIONS[2]['arch'], EXTENSIONS[2]['revision'],
                           EXTENSIONS[2]['app_revision'])
     cmd.extend(['extension', 'list', APPS[0], '--all'])
     res = CliRunner().invoke(main, cmd)
@@ -398,7 +398,7 @@ def testListExtensionsCLI(server, extensions):
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
-    name = getExtPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
+    name = getExtPkgName(EXTENSIONS[0]['baseName'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                          EXTENSIONS[0]['app_revision'])
     cmd.extend(['extension', 'delete', EXTENSIONS[0]['app_name'], name])
     res = CliRunner().invoke(main, cmd)
@@ -410,7 +410,7 @@ def testDeleteExtensionsCLI(server, extensions):
 @pytest.mark.plugin('slicer_package_manager')
 def testDownloadExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
-    name = getExtPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
+    name = getExtPkgName(EXTENSIONS[0]['baseName'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                          EXTENSIONS[0]['app_revision'])
     cmd.extend(['extension', 'download', EXTENSIONS[0]['app_name'], name])
     res = CliRunner().invoke(main, cmd)
