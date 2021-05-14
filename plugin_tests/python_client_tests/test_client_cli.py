@@ -143,28 +143,6 @@ def releases(server):
 
 @pytest.mark.vcr()
 @pytest.fixture
-def files():
-    f1 = open('file1.txt', 'w+')
-    f1.write('Content of the file number 1')
-    f1.close()
-
-    f2 = open('file2.txt', 'w+')
-    f2.write('Content of the file number 2')
-    f2.close()
-
-    f3 = open('file3.txt', 'w+')
-    f3.write('Content of the file number 3')
-    f3.close()
-
-    yield ['file1.txt', 'file2.txt', 'file3.txt']
-
-    os.remove('file1.txt')
-    os.remove('file2.txt')
-    os.remove('file3.txt')
-
-
-@pytest.mark.vcr()
-@pytest.fixture
 def packages(server, apps, files):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['package', 'upload', PACKAGES[0]['app_name'], './file1.txt',
