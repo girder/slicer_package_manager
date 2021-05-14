@@ -132,7 +132,7 @@ def apps(server):
 
 @pytest.mark.vcr()
 @pytest.fixture
-def rl(server):
+def releases(server):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'create', RELEASES[1]['app_name'], RELEASES[1]['name'], RELEASES[1]['revision']])
     res = CliRunner().invoke(main, cmd)
@@ -165,7 +165,7 @@ def files():
 
 @pytest.mark.vcr()
 @pytest.fixture
-def pkg(server, apps, files):
+def packages(server, apps, files):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['package', 'upload', PACKAGES[0]['app_name'], './file1.txt',
                 '--os', PACKAGES[0]['os'],
@@ -208,7 +208,7 @@ def pkg(server, apps, files):
 
 @pytest.mark.vcr()
 @pytest.fixture
-def ext(server, apps, files):
+def extensions(server, apps, files):
     cmd = list(CLI_COMMON_ARGS)
     name1 = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                        EXTENSIONS[0]['app_revision'])
@@ -309,7 +309,7 @@ def testCreateReleaseCLI(server, apps):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testListReleaseCLI(server, apps, rl):
+def testListReleaseCLI(server, apps, releases):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'list', RELEASES[1]['app_name']])
     res = CliRunner().invoke(main, cmd)
@@ -319,7 +319,7 @@ def testListReleaseCLI(server, apps, rl):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteReleaseCLI(server, apps, rl):
+def testDeleteReleaseCLI(server, apps, releases):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'delete', RELEASES[1]['app_name'], RELEASES[1]['name']])
     res = CliRunner().invoke(main, cmd)
@@ -329,7 +329,7 @@ def testDeleteReleaseCLI(server, apps, rl):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testlistDraftCLI(server, pkg):
+def testlistDraftCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['draft', 'list', APPS[0]])
     res = CliRunner().invoke(main, cmd)
@@ -339,7 +339,7 @@ def testlistDraftCLI(server, pkg):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteDraftCLI(server, pkg):
+def testDeleteDraftCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['draft', 'delete', APPS[0], 'r002'])
     res = CliRunner().invoke(main, cmd)
@@ -392,7 +392,7 @@ def testUploadPackagesCLI(server, apps, files):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testListPackagesCLI(server, pkg):
+def testListPackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     name1 = getPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
     name2 = getPkgName(PACKAGES[1]['name'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])
@@ -407,7 +407,7 @@ def testListPackagesCLI(server, pkg):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testDeletePackagesCLI(server, pkg):
+def testDeletePackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     name = getPkgName(PACKAGES[2]['name'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
     cmd.extend(['package', 'delete', PACKAGES[2]['app_name'], name])
@@ -418,7 +418,7 @@ def testDeletePackagesCLI(server, pkg):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testDownloadPackagesCLI(server, pkg):
+def testDownloadPackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     name = getPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
     cmd.extend(['package', 'download', PACKAGES[0]['app_name'], name])
@@ -464,7 +464,7 @@ def testUploadExtensionsCLI(server, apps, files):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testListExtensionsCLI(server, ext):
+def testListExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
     name1 = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                        EXTENSIONS[0]['app_revision'])
@@ -485,7 +485,7 @@ def testListExtensionsCLI(server, ext):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteExtensionsCLI(server, ext):
+def testDeleteExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
     name = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                       EXTENSIONS[0]['app_revision'])
@@ -497,7 +497,7 @@ def testDeleteExtensionsCLI(server, ext):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
-def testDownloadExtensionsCLI(server, ext):
+def testDownloadExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
     name = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                       EXTENSIONS[0]['app_revision'])
