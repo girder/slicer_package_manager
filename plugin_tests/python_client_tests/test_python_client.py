@@ -331,6 +331,7 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         revision=releases[0]['meta']['revision'])
     assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
 
+    # Upload
     pkg2 = spc.uploadApplicationPackage(
         filepath=PACKAGES[1]['filepath'],
         app_name=apps[0]['name'],
@@ -348,6 +349,8 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
     downloaded_pkg1_name = apps[0]['meta']['applicationPackageNameTemplate'].format(
         **PACKAGES[0])
     assert downloaded_pkg1['name'] == downloaded_pkg1_name
+
+    # Download
     downloaded_pkg2 = spc.downloadApplicationPackage(
         app_name=apps[0]['name'], id_or_name=pkg2['_id'])
     downloaded_pkg2_name = apps[0]['meta']['applicationPackageNameTemplate'].format(
@@ -355,18 +358,11 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
     assert downloaded_pkg2['name'] == downloaded_pkg2_name
 
     # Compare downloaded files
-    downloaded_f1 = open('%s.txt' % downloaded_pkg1_name, 'r')
-    f1 = open(files[0], 'r')
-    assert downloaded_f1.read() == f1.read()
+    with open('%s.txt' % downloaded_pkg1_name, 'r') as downloaded_f1, open(files[0], 'r') as f1:
+        assert downloaded_f1.read() == f1.read()
 
-    downloaded_f2 = open('%s.txt' % downloaded_pkg2_name, 'r')
-    f2 = open(files[1], 'r')
-    assert downloaded_f2.read() == f2.read()
-
-    f1.close()
-    downloaded_f1.close()
-    f2.close()
-    downloaded_f2.close()
+    with open('%s.txt' % downloaded_pkg2_name, 'r') as downloaded_f2, open(files[1], 'r') as f2:
+        assert downloaded_f2.read() == f2.read()
 
     os.remove('%s.txt' % downloaded_pkg1_name)
     os.remove('%s.txt' % downloaded_pkg2_name)
@@ -382,19 +378,18 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         repo_url=PACKAGES[0]['repo_url'],
         revision=releases[0]['meta']['revision'])
     assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
+
     # Download
     downloaded_pkg1_bis = spc.downloadApplicationPackage(
         app_name=apps[0]['name'], id_or_name=pkg1['_id'])
     downloaded_pkg1_name_bis = apps[0]['meta']['applicationPackageNameTemplate'].format(
         **PACKAGES[0])
     assert downloaded_pkg1_bis['name'] == downloaded_pkg1_name_bis
-    # Compare, the file should have changed
-    downloaded_f1_bis = open('%s.txt' % downloaded_pkg1_name_bis, 'r')
-    f1_bis = open(files[1], 'r')
-    assert downloaded_f1_bis.read() == f1_bis.read()
 
-    f1_bis.close()
-    downloaded_f1_bis.close()
+    # Compare, the file should have changed
+    with open('%s.txt' % downloaded_pkg1_name_bis, 'r') as downloaded_f1_bis, open(files[1], 'r') as f1_bis:
+        assert downloaded_f1_bis.read() == f1_bis.read()
+
     os.remove('%s.txt' % downloaded_pkg1_name_bis)
 
 
@@ -452,6 +447,7 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
         revision=EXTENSIONS[0]['revision'])
     assert ext1['meta']['baseName'] == EXTENSIONS[0]['baseName']
 
+    # Upload
     ext2 = spc.uploadExtension(
         filepath=EXTENSIONS[1]['filepath'],
         app_name=apps[0]['name'],
@@ -472,6 +468,7 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
     downloaded_ext1_name = apps[0]['meta']['extensionPackageNameTemplate'].format(
         **params1)
     assert downloaded_ext1['name'] == downloaded_ext1_name
+
     # Download using a different dir_path
     downloaded_ext2 = spc.downloadExtension(
         app_name=apps[0]['name'], id_or_name=ext2['_id'], dir_path='../')
@@ -482,18 +479,11 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
     assert downloaded_ext2['name'] == downloaded_ext2_name
 
     # Compare downloaded files
-    downloaded_f1 = open('%s.txt' % downloaded_ext1_name, 'r')
-    f1 = open(files[0], 'r')
-    assert downloaded_f1.read() == f1.read()
+    with open('%s.txt' % downloaded_ext1_name, 'r') as downloaded_f1, open(files[0], 'r') as f1:
+        assert downloaded_f1.read() == f1.read()
 
-    downloaded_f2 = open('../%s.txt' % downloaded_ext2_name, 'r')
-    f2 = open(files[1], 'r')
-    assert downloaded_f2.read() == f2.read()
-
-    f1.close()
-    downloaded_f1.close()
-    f2.close()
-    downloaded_f2.close()
+    with open('../%s.txt' % downloaded_ext2_name, 'r') as downloaded_f2, open(files[1], 'r') as f2:
+        assert downloaded_f2.read() == f2.read()
 
     os.remove('%s.txt' % downloaded_ext1_name)
     os.remove('../%s.txt' % downloaded_ext2_name)
@@ -510,19 +500,18 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
         app_revision=releases[0]['meta']['revision'],
         revision='newRev')
     assert ext1['meta']['baseName'] == EXTENSIONS[0]['baseName']
+
     # Download
     downloaded_ext1_bis = spc.downloadExtension(
         app_name=apps[0]['name'], id_or_name=ext1['_id'])
     downloaded_ext1_name_bis = apps[0]['meta']['extensionPackageNameTemplate'].format(
         **params1)
     assert downloaded_ext1_bis['name'] != downloaded_ext1_name_bis
-    # Compare, the file should have changed
-    downloaded_f1_bis = open('%s.txt' % downloaded_ext1_bis['name'], 'r')
-    f1_bis = open(files[1], 'r')
-    assert downloaded_f1_bis.read() == f1_bis.read()
 
-    f1_bis.close()
-    downloaded_f1_bis.close()
+    # Compare, the file should have changed
+    with open('%s.txt' % downloaded_ext1_bis['name'], 'r') as downloaded_f1_bis, open(files[1], 'r') as f1_bis:
+        assert downloaded_f1_bis.read() == f1_bis.read()
+
     os.remove('%s.txt' % downloaded_ext1_bis['name'])
 
 
