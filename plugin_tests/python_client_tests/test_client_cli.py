@@ -9,62 +9,73 @@ from slicer_package_manager_client.cli import main
 
 APPS = ['App', 'App1', 'App2']
 
-RELEASES = [{
-    'name': 'Release',
-    'revision': 'r000'
-}, {
-    'name': 'Release1',
-    'revision': 'r001'
-}]
+RELEASES = [
+    {
+        'name': 'Release',
+        'revision': 'r000'
+    },
+    {
+        'name': 'Release1',
+        'revision': 'r001'
+    }
+]
 
-PACKAGES = [{
-    'os': 'macosx',
-    'arch': 'i386',
-    'revision': 'r002',
-    'repo_type': 'git',
-    'repo_url': 'git@github.com:pkg1.git',
-    'name': 'pkg1'
-}, {
-    'os': 'macosx',
-    'arch': 'amd64',
-    'revision': 'r002',
-    'repo_type': 'git',
-    'repo_url': 'git@github.com:pkg2.git',
-    'name': 'pkg2'
-}, {
-    'os': 'win',
-    'arch': 'i386',
-    'revision': 'r002',
-    'repo_type': 'git',
-    'repo_url': 'git@github.com:pkg3.git',
-    'name': 'pkg3'
-}]
+PACKAGES = [
+    {
+        'os': 'macosx',
+        'arch': 'i386',
+        'revision': 'r002',
+        'repo_type': 'git',
+        'repo_url': 'git@github.com:pkg1.git',
+        'name': 'pkg1'
+    },
+    {
+        'os': 'macosx',
+        'arch': 'amd64',
+        'revision': 'r002',
+        'repo_type': 'git',
+        'repo_url': 'git@github.com:pkg2.git',
+        'name': 'pkg2'
+    },
+    {
+        'os': 'win',
+        'arch': 'i386',
+        'revision': 'r002',
+        'repo_type': 'git',
+        'repo_url': 'git@github.com:pkg3.git',
+        'name': 'pkg3'
+    }
+]
 
-EXTENSIONS = [{
-    'os': 'macosx',
-    'arch': 'i386',
-    'revision': '000',
-    'repo_type': 'git',
-    'repo_url': 'git@github.com:ext1.git',
-    'name': 'ext1',
-    'app_revision': 'r000'
-}, {
-    'os': 'linux',
-    'arch': 'amd64',
-    'revision': '001',
-    'repo_type': 'git',
-    'repo_url': 'git@github.com:ext2.git',
-    'name': 'ext2',
-    'app_revision': 'r000'
-}, {
-    'os': 'win',
-    'arch': 'amd64',
-    'revision': '000',
-    'repo_type': 'git',
-    'repo_url': 'git@github.com:ext3.git',
-    'name': 'ext3',
-    'app_revision': 'r002'
-}]
+EXTENSIONS = [
+    {
+        'os': 'macosx',
+        'arch': 'i386',
+        'revision': '000',
+        'repo_type': 'git',
+        'repo_url': 'git@github.com:ext1.git',
+        'name': 'ext1',
+        'app_revision': 'r000'
+    },
+    {
+        'os': 'linux',
+        'arch': 'amd64',
+        'revision': '001',
+        'repo_type': 'git',
+        'repo_url': 'git@github.com:ext2.git',
+        'name': 'ext2',
+        'app_revision': 'r000'
+    },
+    {
+        'os': 'win',
+        'arch': 'amd64',
+        'revision': '000',
+        'repo_type': 'git',
+        'repo_url': 'git@github.com:ext3.git',
+        'name': 'ext3',
+        'app_revision': 'r002'
+    }
+]
 
 
 @pytest.mark.vcr()

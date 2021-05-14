@@ -9,13 +9,16 @@ from slicer_package_manager_client import SlicerPackageClient, SlicerPackageMana
 
 APPS = ['App', 'App1', 'App2']
 
-RELEASES = [{
-    'name': 'Release',
-    'revision': 'r000'
-}, {
-    'name': 'Release1',
-    'revision': 'r001'
-}]
+RELEASES = [
+    {
+        'name': 'Release',
+        'revision': 'r000'
+    },
+    {
+        'name': 'Release1',
+        'revision': 'r001'
+    }
+]
 
 PACKAGES = [
     {
