@@ -154,30 +154,39 @@ def files():
 @pytest.fixture
 def pkg(server, runner, spc, apps, files):
     cmd = list(spc)
-    cmd.extend(['package', 'upload', APPS[0], './file1.txt', '--os', PACKAGES[0]['os'],
-                '--arch', PACKAGES[0]['arch'], '--name', PACKAGES[0]['name'], '--revision',
-                PACKAGES[0]['revision'], '--repo_type', PACKAGES[0]['repo_type'], '--repo_url',
-                PACKAGES[0]['repo_url']])
+    cmd.extend(['package', 'upload', APPS[0], './file1.txt',
+                '--os', PACKAGES[0]['os'],
+                '--arch', PACKAGES[0]['arch'],
+                '--name', PACKAGES[0]['name'],
+                '--revision', PACKAGES[0]['revision'],
+                '--repo_type', PACKAGES[0]['repo_type'],
+                '--repo_url', PACKAGES[0]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (
         getPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])), res.output)
 
     cmd = list(spc)
-    cmd.extend(['package', 'upload', APPS[0], './file2.txt', '--os', PACKAGES[1]['os'],
-                '--arch', PACKAGES[1]['arch'], '--name', PACKAGES[1]['name'], '--revision',
-                PACKAGES[1]['revision'], '--repo_type', PACKAGES[1]['repo_type'], '--repo_url',
-                PACKAGES[1]['repo_url']])
+    cmd.extend(['package', 'upload', APPS[0], './file2.txt',
+                '--os', PACKAGES[1]['os'],
+                '--arch', PACKAGES[1]['arch'],
+                '--name', PACKAGES[1]['name'],
+                '--revision', PACKAGES[1]['revision'],
+                '--repo_type', PACKAGES[1]['repo_type'],
+                '--repo_url', PACKAGES[1]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (
         getPkgName(PACKAGES[1]['name'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])), res.output)
 
     cmd = list(spc)
-    cmd.extend(['package', 'upload', APPS[0], './file3.txt', '--os', PACKAGES[2]['os'],
-                '--arch', PACKAGES[2]['arch'], '--name', PACKAGES[2]['name'], '--revision',
-                PACKAGES[2]['revision'], '--repo_type', PACKAGES[2]['repo_type'], '--repo_url',
-                PACKAGES[2]['repo_url']])
+    cmd.extend(['package', 'upload', APPS[0], './file3.txt',
+                '--os', PACKAGES[2]['os'],
+                '--arch', PACKAGES[2]['arch'],
+                '--name', PACKAGES[2]['name'],
+                '--revision', PACKAGES[2]['revision'],
+                '--repo_type', PACKAGES[2]['repo_type'],
+                '--repo_url', PACKAGES[2]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (
@@ -191,9 +200,13 @@ def ext(server, runner, spc, apps, files):
     name1 = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                        EXTENSIONS[0]['app_revision'])
     cmd.extend(['extension', 'upload', APPS[0], './file1.txt',
-                '--os', EXTENSIONS[0]['os'], '--arch', EXTENSIONS[0]['arch'], '--name', EXTENSIONS[0]['name'],
-                '--revision', EXTENSIONS[0]['revision'], '--app_revision', EXTENSIONS[0]['app_revision'],
-                '--repo_type', EXTENSIONS[0]['repo_type'], '--repo_url', EXTENSIONS[0]['repo_url']])
+                '--os', EXTENSIONS[0]['os'],
+                '--arch', EXTENSIONS[0]['arch'],
+                '--name', EXTENSIONS[0]['name'],
+                '--revision', EXTENSIONS[0]['revision'],
+                '--app_revision', EXTENSIONS[0]['app_revision'],
+                '--repo_type', EXTENSIONS[0]['repo_type'],
+                '--repo_url', EXTENSIONS[0]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name1), res.output)
@@ -202,9 +215,13 @@ def ext(server, runner, spc, apps, files):
     name2 = getPkgName(EXTENSIONS[1]['name'], EXTENSIONS[1]['os'], EXTENSIONS[1]['arch'], EXTENSIONS[1]['revision'],
                        EXTENSIONS[1]['app_revision'])
     cmd.extend(['extension', 'upload', APPS[0], './file2.txt'])
-    options = ['--os', EXTENSIONS[1]['os'], '--arch', EXTENSIONS[1]['arch'], '--name', EXTENSIONS[1]['name'],
-               '--revision', EXTENSIONS[1]['revision'], '--app_revision', EXTENSIONS[1]['app_revision'],
-               '--repo_type', EXTENSIONS[1]['repo_type'], '--repo_url', EXTENSIONS[1]['repo_url']]
+    options = ['--os', EXTENSIONS[1]['os'],
+               '--arch', EXTENSIONS[1]['arch'],
+               '--name', EXTENSIONS[1]['name'],
+               '--revision', EXTENSIONS[1]['revision'],
+               '--app_revision', EXTENSIONS[1]['app_revision'],
+               '--repo_type', EXTENSIONS[1]['repo_type'],
+               '--repo_url', EXTENSIONS[1]['repo_url']]
     cmd.extend(options)
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
@@ -213,9 +230,13 @@ def ext(server, runner, spc, apps, files):
     cmd = list(spc)
     name3 = getPkgName(EXTENSIONS[2]['name'], EXTENSIONS[2]['os'], EXTENSIONS[2]['arch'], EXTENSIONS[2]['revision'])
     cmd.extend(['extension', 'upload', APPS[0], './file3.txt'])
-    options = ['--os', EXTENSIONS[2]['os'], '--arch', EXTENSIONS[2]['arch'], '--name', EXTENSIONS[2]['name'],
-               '--revision', EXTENSIONS[2]['revision'], '--app_revision', EXTENSIONS[2]['app_revision'],
-               '--repo_type', EXTENSIONS[2]['repo_type'], '--repo_url', EXTENSIONS[2]['repo_url']]
+    options = ['--os', EXTENSIONS[2]['os'],
+               '--arch', EXTENSIONS[2]['arch'],
+               '--name', EXTENSIONS[2]['name'],
+               '--revision', EXTENSIONS[2]['revision'],
+               '--app_revision', EXTENSIONS[2]['app_revision'],
+               '--repo_type', EXTENSIONS[2]['repo_type'],
+               '--repo_url', EXTENSIONS[2]['repo_url']]
     cmd.extend(options)
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
@@ -318,28 +339,39 @@ def testDeleteDraftCLI(server, runner, spc, pkg):
 def testUploadPackagesCLI(server, runner, spc, apps, files):
     cmd = list(spc)
     name1 = getPkgName(PACKAGES[0]['name'], PACKAGES[0]['os'], PACKAGES[0]['arch'], PACKAGES[0]['revision'])
-    cmd.extend(['package', 'upload', APPS[0], './file1.txt', '--os', PACKAGES[0]['os'], '--arch',
-                PACKAGES[0]['arch'], '--name', PACKAGES[0]['name'], '--revision', PACKAGES[0]['revision'],
-                '--repo_type', PACKAGES[0]['repo_type'], '--repo_url', PACKAGES[0]['repo_url']])
+    cmd.extend(['package', 'upload', APPS[0], './file1.txt',
+                '--os', PACKAGES[0]['os'],
+                '--arch', PACKAGES[0]['arch'],
+                '--name', PACKAGES[0]['name'],
+                '--revision', PACKAGES[0]['revision'],
+                '--repo_type', PACKAGES[0]['repo_type'],
+                '--repo_url', PACKAGES[0]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name1), res.output)
 
     cmd = list(spc)
     name2 = getPkgName(PACKAGES[1]['name'], PACKAGES[1]['os'], PACKAGES[1]['arch'], PACKAGES[1]['revision'])
-    cmd.extend(['package', 'upload', APPS[0], './file2.txt', '--os', PACKAGES[1]['os'], '--arch',
-                PACKAGES[1]['arch'], '--name', PACKAGES[1]['name'], '--revision', PACKAGES[1]['revision'],
-                '--repo_type', PACKAGES[1]['repo_type'], '--repo_url', PACKAGES[1]['repo_url']])
+    cmd.extend(['package', 'upload', APPS[0], './file2.txt',
+                '--os', PACKAGES[1]['os'],
+                '--arch', PACKAGES[1]['arch'],
+                '--name', PACKAGES[1]['name'],
+                '--revision', PACKAGES[1]['revision'],
+                '--repo_type', PACKAGES[1]['repo_type'],
+                '--repo_url', PACKAGES[1]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name2), res.output)
 
     cmd = list(spc)
     name3 = getPkgName(PACKAGES[2]['name'], PACKAGES[2]['os'], PACKAGES[2]['arch'], PACKAGES[2]['revision'])
-    cmd.extend(['package', 'upload', APPS[0], './file3.txt', '--os', PACKAGES[2]['os'],
-                '--arch', PACKAGES[2]['arch'], '--name', PACKAGES[2]['name'], '--revision',
-                PACKAGES[2]['revision'], '--repo_type', PACKAGES[2]['repo_type'], '--repo_url',
-                PACKAGES[2]['repo_url']])
+    cmd.extend(['package', 'upload', APPS[0], './file3.txt',
+                '--os', PACKAGES[2]['os'],
+                '--arch', PACKAGES[2]['arch'],
+                '--name', PACKAGES[2]['name'],
+                '--revision', PACKAGES[2]['revision'],
+                '--repo_type', PACKAGES[2]['repo_type'],
+                '--repo_url', PACKAGES[2]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name3), res.output)
@@ -389,10 +421,14 @@ def testUploadExtensionsCLI(server, runner, spc, apps, files):
     cmd = list(spc)
     name1 = getPkgName(EXTENSIONS[0]['name'], EXTENSIONS[0]['os'], EXTENSIONS[0]['arch'], EXTENSIONS[0]['revision'],
                        EXTENSIONS[0]['app_revision'])
-    cmd.extend(['extension', 'upload', APPS[0], './file1.txt', '--os', EXTENSIONS[0]['os'],
-                '--arch', EXTENSIONS[0]['arch'], '--name', EXTENSIONS[0]['name'], '--revision',
-                EXTENSIONS[0]['revision'], '--app_revision', EXTENSIONS[0]['app_revision'],
-                '--repo_type', EXTENSIONS[0]['repo_type'], '--repo_url', EXTENSIONS[0]['repo_url']])
+    cmd.extend(['extension', 'upload', APPS[0], './file1.txt',
+                '--os', EXTENSIONS[0]['os'],
+                '--arch', EXTENSIONS[0]['arch'],
+                '--name', EXTENSIONS[0]['name'],
+                '--revision', EXTENSIONS[0]['revision'],
+                '--app_revision', EXTENSIONS[0]['app_revision'],
+                '--repo_type', EXTENSIONS[0]['repo_type'],
+                '--repo_url', EXTENSIONS[0]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name1), res.output)
@@ -400,10 +436,14 @@ def testUploadExtensionsCLI(server, runner, spc, apps, files):
     cmd = list(spc)
     name2 = getPkgName(EXTENSIONS[1]['name'], EXTENSIONS[1]['os'], EXTENSIONS[1]['arch'], EXTENSIONS[1]['revision'],
                        EXTENSIONS[1]['app_revision'])
-    cmd.extend(['extension', 'upload', APPS[0], './file2.txt', '--os', EXTENSIONS[1]['os'],
-                '--arch', EXTENSIONS[1]['arch'], '--name', EXTENSIONS[1]['name'], '--revision',
-                EXTENSIONS[1]['revision'], '--app_revision', EXTENSIONS[1]['app_revision'],
-                '--repo_type', EXTENSIONS[1]['repo_type'], '--repo_url', EXTENSIONS[1]['repo_url']])
+    cmd.extend(['extension', 'upload', APPS[0], './file2.txt',
+                '--os', EXTENSIONS[1]['os'],
+                '--arch', EXTENSIONS[1]['arch'],
+                '--name', EXTENSIONS[1]['name'],
+                '--revision', EXTENSIONS[1]['revision'],
+                '--app_revision', EXTENSIONS[1]['app_revision'],
+                '--repo_type', EXTENSIONS[1]['repo_type'],
+                '--repo_url', EXTENSIONS[1]['repo_url']])
     res = runner.invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(name2), res.output)
