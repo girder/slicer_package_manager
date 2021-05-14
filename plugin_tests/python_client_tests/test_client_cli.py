@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import logging
+import os
 import pytest
 import re
-import os
+
 from click.testing import CliRunner
 from slicer_package_manager_client.cli import main
 
@@ -104,6 +106,13 @@ CLI_COMMON_ARGS = [
 ]
 
 
+def _cli_runner_invoke(main, cmd):
+    res = CliRunner().invoke(main, cmd)
+    if res.exit_code != 0:
+        logging.error(res.exception)
+    return res
+
+
 def _cli_upload_package(package):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['package', 'upload', package['app_name'], package['filepath'],
@@ -113,7 +122,7 @@ def _cli_upload_package(package):
                 '--revision', package['revision'],
                 '--repo_type', package['repo_type'],
                 '--repo_url', package['repo_url']])
-    return CliRunner().invoke(main, cmd)
+    return _cli_runner_invoke(main, cmd)
 
 
 def _cli_upload_extension(extension):
@@ -126,7 +135,7 @@ def _cli_upload_extension(extension):
                 '--app_revision', extension['app_revision'],
                 '--repo_type', extension['repo_type'],
                 '--repo_url', extension['repo_url']])
-    return CliRunner().invoke(main, cmd)
+    return _cli_runner_invoke(main, cmd)
 
 
 @pytest.mark.vcr()
@@ -136,7 +145,7 @@ def TearDown(server):
     for idx in range(len(APPS)):
         cmd = list(CLI_COMMON_ARGS)
         cmd.extend(['app', 'delete', APPS[idx]])
-        CliRunner().invoke(main, cmd)
+        _cli_runner_invoke(main, cmd)
 
 
 @pytest.mark.vcr()
@@ -144,12 +153,12 @@ def TearDown(server):
 def apps(server):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['app', 'create', APPS[0]])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"\w{24} \(%s\) CREATED" % re.escape(APPS[0]), res.output)
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['app', 'create', APPS[1]])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"\w{24} \(%s\) CREATED" % re.escape(APPS[1]), res.output)
     yield
@@ -160,7 +169,7 @@ def apps(server):
 def releases(server):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'create', RELEASES[1]['app_name'], RELEASES[1]['name'], RELEASES[1]['revision']])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) CREATED" % (RELEASES[1]['name'], RELEASES[1]['revision']), res.output)
     yield
@@ -205,7 +214,7 @@ def testCreateAppCLI(server):
     def _create(app):
         cmd = list(CLI_COMMON_ARGS)
         cmd.extend(['app', 'create', APPS[2]])
-        return CliRunner().invoke(main, cmd)
+        return _cli_runner_invoke(main, cmd)
 
     res = _create(APPS[2])
     assert res.exit_code == 0
@@ -223,7 +232,7 @@ def testCreateAppCLI(server):
 def testListAppCLI(server, apps):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['app', 'list'])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s *\w{24}" % re.escape(APPS[0]), res.output)
     assert re.search(r"%s *\w{24}" % re.escape(APPS[1]), res.output)
@@ -234,7 +243,7 @@ def testListAppCLI(server, apps):
 def testDeleteAppCLI(server, apps):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['app', 'delete', APPS[0]])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s \(\w{24}\) DELETED" % re.escape(APPS[0]), res.output)
 
@@ -246,7 +255,7 @@ def testCreateReleaseCLI(server, apps):
     def _create(release):
         cmd = list(CLI_COMMON_ARGS)
         cmd.extend(['release', 'create', release['app_name'], release['name'], release['revision']])
-        return CliRunner().invoke(main, cmd)
+        return _cli_runner_invoke(main, cmd)
 
     res = _create(RELEASES[0])
     assert res.exit_code == 0
@@ -263,7 +272,7 @@ def testCreateReleaseCLI(server, apps):
 def testListReleaseCLI(server, apps, releases):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'list', RELEASES[1]['app_name']])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s *%s *\w{24}" % (RELEASES[1]['revision'], RELEASES[1]['name']), res.output)
 
@@ -273,7 +282,7 @@ def testListReleaseCLI(server, apps, releases):
 def testDeleteReleaseCLI(server, apps, releases):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'delete', RELEASES[1]['app_name'], RELEASES[1]['name']])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) DELETED" % (RELEASES[1]['name'], RELEASES[1]['revision']), res.output)
 
@@ -283,7 +292,7 @@ def testDeleteReleaseCLI(server, apps, releases):
 def testlistDraftCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['draft', 'list', APPS[0]])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s *%s *\w{24}" % ('r002', 'r002'), res.output)
 
@@ -293,7 +302,7 @@ def testlistDraftCLI(server, packages):
 def testDeleteDraftCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['draft', 'delete', APPS[0], 'r002'])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s %s \(\w{24}\) DELETED" % ('r002', 'r002'), res.output)
 
@@ -319,7 +328,7 @@ def testUploadPackagesCLI(server, apps, files):
 def testListPackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['package', 'list', APPS[0]])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
 
     name = getAppPkgName(PACKAGES[0])
@@ -338,7 +347,7 @@ def testDeletePackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     name = getAppPkgName(PACKAGES[2])
     cmd.extend(['package', 'delete', PACKAGES[2]['app_name'], name])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) DELETED" % (name, PACKAGES[2]['revision']), res.output)
 
@@ -349,7 +358,7 @@ def testDownloadPackagesCLI(server, packages):
     cmd = list(CLI_COMMON_ARGS)
     name = getAppPkgName(PACKAGES[0])
     cmd.extend(['package', 'download', PACKAGES[0]['app_name'], name])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) DOWNLOADED \[.*]" % name, res.output)
     os.remove('%s.txt' % name)
@@ -372,7 +381,7 @@ def testUploadExtensionsCLI(server, apps, files):
 def testListExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['extension', 'list', APPS[0], '--all'])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
 
     name = getExtPkgName(EXTENSIONS[0])
@@ -394,7 +403,7 @@ def testDeleteExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
     name = getExtPkgName(EXTENSIONS[0])
     cmd.extend(['extension', 'delete', EXTENSIONS[0]['app_name'], name])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) DELETED" % (name, EXTENSIONS[0]['revision']), res.output)
 
@@ -405,7 +414,7 @@ def testDownloadExtensionsCLI(server, extensions):
     cmd = list(CLI_COMMON_ARGS)
     name = getExtPkgName(EXTENSIONS[0])
     cmd.extend(['extension', 'download', EXTENSIONS[0]['app_name'], name])
-    res = CliRunner().invoke(main, cmd)
+    res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) DOWNLOADED \[.*]" % name, res.output)
     os.remove('%s.txt' % name)
