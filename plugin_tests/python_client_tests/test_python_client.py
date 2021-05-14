@@ -20,6 +20,15 @@ RELEASES = [
     }
 ]
 
+DRAFT_RELEASES = [
+    {
+        'revision': 'extR001'
+    },
+    {
+        'revision': 'extR002'
+    }
+]
+
 PACKAGES = [
     {
         'filepath': './file1.txt',
@@ -58,7 +67,7 @@ EXTENSIONS = [
         'baseName': 'ext1',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext1.git',
-        'app_revision': 'extR001',
+        'app_revision': DRAFT_RELEASES[0]['revision'],
         'revision': 'r300'
     },
     {
@@ -68,7 +77,7 @@ EXTENSIONS = [
         'baseName': 'ext2',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext2.git',
-        'app_revision': 'extR002',
+        'app_revision': DRAFT_RELEASES[1]['revision'],
         'revision': 'r301'
     },
     {

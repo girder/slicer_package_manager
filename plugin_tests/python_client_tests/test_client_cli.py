@@ -20,27 +20,36 @@ RELEASES = [
     }
 ]
 
+DRAFT_RELEASES = [
+    {
+        'revision': 'r002'
+    }
+]
+
 PACKAGES = [
     {
+        'filepath': './file1.txt',
         'os': 'macosx',
         'arch': 'i386',
-        'revision': 'r002',
+        'revision': DRAFT_RELEASES[0]['revision'],
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg1.git',
         'name': 'pkg1'
     },
     {
+        'filepath': './file2.txt',
         'os': 'macosx',
         'arch': 'amd64',
-        'revision': 'r002',
+        'revision': DRAFT_RELEASES[0]['revision'],
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg2.git',
         'name': 'pkg2'
     },
     {
+        'filepath': './file3.txt',
         'os': 'win',
         'arch': 'i386',
-        'revision': 'r002',
+        'revision': DRAFT_RELEASES[0]['revision'],
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg3.git',
         'name': 'pkg3'
@@ -49,31 +58,34 @@ PACKAGES = [
 
 EXTENSIONS = [
     {
+        'filepath': './file1.txt',
         'os': 'macosx',
         'arch': 'i386',
         'revision': '000',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext1.git',
         'name': 'ext1',
-        'app_revision': 'r000'
+        'app_revision': RELEASES[0]['revision']
     },
     {
+        'filepath': './file2.txt',
         'os': 'linux',
         'arch': 'amd64',
         'revision': '001',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext2.git',
         'name': 'ext2',
-        'app_revision': 'r000'
+        'app_revision': RELEASES[0]['revision']
     },
     {
+        'filepath': './file3.txt',
         'os': 'win',
         'arch': 'amd64',
         'revision': '000',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext3.git',
         'name': 'ext3',
-        'app_revision': 'r002'
+        'app_revision': DRAFT_RELEASES[0]['revision']
     }
 ]
 
