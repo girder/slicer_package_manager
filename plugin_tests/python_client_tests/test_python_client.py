@@ -7,74 +7,97 @@ import pytest
 from slicer_package_manager_client import SlicerPackageClient, SlicerPackageManagerError
 
 
-app_name = ['App', 'App1', 'App2']
-rls = [{
-    'name': 'Release',
-    'revision': 'r000'
-}, {
-    'name': 'Release1',
-    'revision': 'r001'
-}]
+APPS = ['App', 'App1', 'App2']
 
-pkgs = [
+RELEASES = [
+    {
+        'app_name': APPS[0],
+        'name': 'Release',
+        'revision': 'r000',
+        'desc': 'random description 1',
+    },
+    {
+        'app_name': APPS[0],
+        'name': 'Release1',
+        'revision': 'r001',
+        'desc': 'random description 2',
+    }
+]
+
+DRAFT_RELEASES = [
+    {
+        'revision': 'extR001'
+    },
+    {
+        'revision': 'extR002'
+    }
+]
+
+PACKAGES = [
     {
         'filepath': './file1.txt',
+        'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'amd64',
         'baseName': 'pkg1',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg1.git',
-        'revision': rls[0]['revision']
+        'revision': RELEASES[0]['revision']
     },
     {
         'filepath': './file2.txt',
+        'app_name': APPS[0],
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'pkg2',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg2.git',
-        'revision': rls[0]['revision']
+        'revision': RELEASES[0]['revision']
     },
     {
         'filepath': './file3.txt',
+        'app_name': APPS[0],
         'os': 'win',
         'arch': 'i386',
         'baseName': 'pkg3',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg3.git',
-        'revision': rls[0]['revision']
+        'revision': RELEASES[0]['revision']
     }
 ]
 
-exts = [
+EXTENSIONS = [
     {
         'filepath': './file1.txt',
+        'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'amd64',
         'baseName': 'ext1',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext1.git',
-        'app_revision': 'extR001',
+        'app_revision': DRAFT_RELEASES[0]['revision'],
         'revision': 'r300'
     },
     {
         'filepath': './file2.txt',
+        'app_name': APPS[0],
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'ext2',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext2.git',
-        'app_revision': 'extR002',
+        'app_revision': DRAFT_RELEASES[1]['revision'],
         'revision': 'r301'
     },
     {
         'filepath': './file3.txt',
+        'app_name': APPS[0],
         'os': 'win',
         'arch': 'i386',
         'baseName': 'ext3',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext3.git',
-        'app_revision': rls[0]['revision'],
+        'app_revision': RELEASES[0]['revision'],
         'revision': 'r302'
     }
 ]
@@ -91,130 +114,77 @@ def spc(server):
 @pytest.mark.vcr()
 @pytest.fixture
 def apps(server, spc):
-    app1 = spc.createApp(name=app_name[0], desc='random description 1')
-    app2 = spc.createApp(name=app_name[1], desc='random description 2')
+    app1 = spc.createApp(name=APPS[0], desc='random description 1')
+    app2 = spc.createApp(name=APPS[1], desc='random description 2')
     yield [app1, app2]
 
 
 @pytest.mark.vcr()
 @pytest.fixture
 def releases(server, spc):
-    rls1 = spc.createRelease(
-        app_name=app_name[0],
-        name=rls[0]['name'],
-        revision=rls[0]['revision'],
-        desc='random description 1')
-    rls2 = spc.createRelease(
-        app_name=app_name[0],
-        name=rls[1]['name'],
-        revision=rls[1]['revision'],
-        desc='random description 2')
-    yield [rls1, rls2]
+
+    def _create(release):
+        return spc.createRelease(
+            app_name=release['app_name'],
+            name=release['name'],
+            revision=release['revision'],
+            desc=release['desc'])
+
+    yield [_create(RELEASES[0]), _create(RELEASES[1])]
 
 
 @pytest.mark.vcr()
 @pytest.fixture
 def packages(server, spc, releases, files):
-    pkg1 = spc.uploadApplicationPackage(
-        filepath=pkgs[0]['filepath'],
-        app_name=app_name[0],
-        pkg_os=pkgs[0]['os'],
-        arch=pkgs[0]['arch'],
-        name=pkgs[0]['baseName'],
-        repo_type=pkgs[0]['repo_type'],
-        repo_url=pkgs[0]['repo_url'],
-        revision='r300')
-    time.sleep(0.1)
-    pkg2 = spc.uploadApplicationPackage(
-        filepath=pkgs[1]['filepath'],
-        app_name=app_name[0],
-        pkg_os=pkgs[1]['os'],
-        arch=pkgs[1]['arch'],
-        name=pkgs[1]['baseName'],
-        repo_type=pkgs[1]['repo_type'],
-        repo_url=pkgs[1]['repo_url'],
-        revision='r301')
-    time.sleep(0.1)
-    pkg3 = spc.uploadApplicationPackage(
-        filepath=pkgs[2]['filepath'],
-        app_name=app_name[0],
-        pkg_os=pkgs[2]['os'],
-        arch=pkgs[2]['arch'],
-        name=pkgs[2]['baseName'],
-        repo_type=pkgs[2]['repo_type'],
-        repo_url=pkgs[2]['repo_url'],
-        revision=rls[0]['revision'])
-    yield [pkg1, pkg2, pkg3]
+
+    def _upload(package, revision):
+        pkg = spc.uploadApplicationPackage(
+            filepath=package['filepath'],
+            app_name=package['app_name'],
+            pkg_os=package['os'],
+            arch=package['arch'],
+            name=package['baseName'],
+            repo_type=package['repo_type'],
+            repo_url=package['repo_url'],
+            revision=revision)
+        time.sleep(0.1)
+        return pkg
+
+    yield [
+        _upload(PACKAGES[0], 'r300'),
+        _upload(PACKAGES[1], 'r301'),
+        _upload(PACKAGES[2], PACKAGES[2]['revision'])
+    ]
 
 
 @pytest.mark.vcr()
 @pytest.fixture
 def extensions(server, spc, releases, files):
-    ext1 = spc.uploadExtension(
-        filepath=exts[0]['filepath'],
-        app_name=app_name[0],
-        ext_os=exts[0]['os'],
-        arch=exts[0]['arch'],
-        name=exts[0]['baseName'],
-        repo_type=exts[0]['repo_type'],
-        repo_url=exts[0]['repo_url'],
-        app_revision=exts[0]['app_revision'],
-        revision=exts[0]['revision'])
-    time.sleep(0.1)
-    ext2 = spc.uploadExtension(
-        filepath=exts[1]['filepath'],
-        app_name=app_name[0],
-        ext_os=exts[1]['os'],
-        arch=exts[1]['arch'],
-        name=exts[1]['baseName'],
-        repo_type=exts[1]['repo_type'],
-        repo_url=exts[1]['repo_url'],
-        app_revision=exts[1]['app_revision'],
-        revision=exts[1]['revision'])
-    time.sleep(0.1)
-    ext3 = spc.uploadExtension(
-        filepath=exts[2]['filepath'],
-        app_name=app_name[0],
-        ext_os=exts[2]['os'],
-        arch=exts[2]['arch'],
-        name=exts[2]['baseName'],
-        repo_type=exts[2]['repo_type'],
-        repo_url=exts[2]['repo_url'],
-        app_revision=rls[0]['revision'],
-        revision=exts[2]['revision'])
 
-    yield [ext1, ext2, ext3]
+    def _upload(extension):
+        ext = spc.uploadExtension(
+            filepath=extension['filepath'],
+            app_name=extension['app_name'],
+            ext_os=extension['os'],
+            arch=extension['arch'],
+            name=extension['baseName'],
+            repo_type=extension['repo_type'],
+            repo_url=extension['repo_url'],
+            app_revision=extension['app_revision'],
+            revision=extension['revision'])
+        time.sleep(0.1)
+        return ext
 
-
-@pytest.mark.vcr()
-@pytest.fixture
-def files():
-    f1 = open('file1.txt', 'w+')
-    f1.write('Content of the file number 1')
-    f1.close()
-
-    f2 = open('file2.txt', 'w+')
-    f2.write('Content of the file number 2')
-    f2.close()
-
-    f3 = open('file3.txt', 'w+')
-    f3.write('Content of the file number 3')
-    f3.close()
-
-    yield ['file1.txt', 'file2.txt', 'file3.txt']
-
-    os.remove('file1.txt')
-    os.remove('file2.txt')
-    os.remove('file3.txt')
+    yield [_upload(EXTENSIONS[0]), _upload(EXTENSIONS[1]), _upload(EXTENSIONS[2])]
 
 
 @pytest.mark.vcr()
 @pytest.fixture(autouse=True)
 def TearDown(server, spc, request):
     yield
-    for idx in range(len(app_name)):
+    for idx in range(len(APPS)):
         try:
-            spc.deleteApp(name=app_name[idx])
+            spc.deleteApp(name=APPS[idx])
         except SlicerPackageManagerError:
             pass
 
@@ -222,13 +192,13 @@ def TearDown(server, spc, request):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateApp(server, spc):
-    app1 = spc.createApp(name=app_name[2])
-    assert app1['name'] == app_name[2]
+    app1 = spc.createApp(name=APPS[2])
+    assert app1['name'] == APPS[2]
 
     # Try to create the same application
     with pytest.raises(Exception) as excinfo:
-        spc.createApp(name=app_name[2])
-    assert 'The Application "%s" already exist.' % app_name[2] in str(excinfo.value)
+        spc.createApp(name=APPS[2])
+    assert 'The Application "%s" already exist.' % APPS[2] in str(excinfo.value)
 
 
 @pytest.mark.vcr()
@@ -268,15 +238,15 @@ def testDeleteApp(server, spc, apps):
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateRelease(server, spc, apps):
     release = spc.createRelease(
-        app_name=apps[0]['name'], name=rls[0]['name'], revision=rls[0]['revision'])
-    assert release['name'] == rls[0]['name']
-    assert release['meta']['revision'] == rls[0]['revision']
+        app_name=apps[0]['name'], name=RELEASES[0]['name'], revision=RELEASES[0]['revision'])
+    assert release['name'] == RELEASES[0]['name']
+    assert release['meta']['revision'] == RELEASES[0]['revision']
 
     # Try to create the same release
     with pytest.raises(Exception) as excinfo:
         spc.createRelease(
-            app_name=apps[0]['name'], name=rls[0]['name'], revision=rls[0]['revision'])
-    assert 'The release "%s" already exist.' % rls[0]['name'] in str(excinfo.value)
+            app_name=apps[0]['name'], name=RELEASES[0]['name'], revision=RELEASES[0]['revision'])
+    assert 'The release "%s" already exist.' % RELEASES[0]['name'] in str(excinfo.value)
 
 
 @pytest.mark.vcr()
@@ -351,80 +321,75 @@ def testDeleteDraftRelease(server, spc, apps, packages):
 def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
     # Upload
     pkg1 = spc.uploadApplicationPackage(
-        filepath=pkgs[0]['filepath'],
+        filepath=PACKAGES[0]['filepath'],
         app_name=apps[0]['name'],
-        pkg_os=pkgs[0]['os'],
-        arch=pkgs[0]['arch'],
-        name=pkgs[0]['baseName'],
-        repo_type=pkgs[0]['repo_type'],
-        repo_url=pkgs[0]['repo_url'],
+        pkg_os=PACKAGES[0]['os'],
+        arch=PACKAGES[0]['arch'],
+        name=PACKAGES[0]['baseName'],
+        repo_type=PACKAGES[0]['repo_type'],
+        repo_url=PACKAGES[0]['repo_url'],
         revision=releases[0]['meta']['revision'])
-    assert pkg1['meta']['baseName'] == pkgs[0]['baseName']
+    assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
 
+    # Upload
     pkg2 = spc.uploadApplicationPackage(
-        filepath=pkgs[1]['filepath'],
+        filepath=PACKAGES[1]['filepath'],
         app_name=apps[0]['name'],
-        pkg_os=pkgs[1]['os'],
-        arch=pkgs[1]['arch'],
-        name=pkgs[1]['baseName'],
-        repo_type=pkgs[1]['repo_type'],
-        repo_url=pkgs[1]['repo_url'],
+        pkg_os=PACKAGES[1]['os'],
+        arch=PACKAGES[1]['arch'],
+        name=PACKAGES[1]['baseName'],
+        repo_type=PACKAGES[1]['repo_type'],
+        repo_url=PACKAGES[1]['repo_url'],
         revision=releases[0]['meta']['revision'])
-    assert pkg2['meta']['baseName'] == pkgs[1]['baseName']
+    assert pkg2['meta']['baseName'] == PACKAGES[1]['baseName']
 
     # Download
     downloaded_pkg1 = spc.downloadApplicationPackage(
         app_name=apps[0]['name'], id_or_name=pkg1['_id'])
     downloaded_pkg1_name = apps[0]['meta']['applicationPackageNameTemplate'].format(
-        **pkgs[0])
+        **PACKAGES[0])
     assert downloaded_pkg1['name'] == downloaded_pkg1_name
+
+    # Download
     downloaded_pkg2 = spc.downloadApplicationPackage(
         app_name=apps[0]['name'], id_or_name=pkg2['_id'])
     downloaded_pkg2_name = apps[0]['meta']['applicationPackageNameTemplate'].format(
-        **pkgs[1])
+        **PACKAGES[1])
     assert downloaded_pkg2['name'] == downloaded_pkg2_name
 
     # Compare downloaded files
-    downloaded_f1 = open('%s.txt' % downloaded_pkg1_name, 'r')
-    f1 = open(files[0], 'r')
-    assert downloaded_f1.read() == f1.read()
+    with open('%s.txt' % downloaded_pkg1_name, 'r') as downloaded_f1, open(files[0], 'r') as f1:
+        assert downloaded_f1.read() == f1.read()
 
-    downloaded_f2 = open('%s.txt' % downloaded_pkg2_name, 'r')
-    f2 = open(files[1], 'r')
-    assert downloaded_f2.read() == f2.read()
-
-    f1.close()
-    downloaded_f1.close()
-    f2.close()
-    downloaded_f2.close()
+    with open('%s.txt' % downloaded_pkg2_name, 'r') as downloaded_f2, open(files[1], 'r') as f2:
+        assert downloaded_f2.read() == f2.read()
 
     os.remove('%s.txt' % downloaded_pkg1_name)
     os.remove('%s.txt' % downloaded_pkg2_name)
 
     # Update an existing package
     spc.uploadApplicationPackage(
-        filepath=pkgs[1]['filepath'],
+        filepath=PACKAGES[1]['filepath'],
         app_name=apps[0]['name'],
-        pkg_os=pkgs[0]['os'],
-        arch=pkgs[0]['arch'],
-        name=pkgs[0]['baseName'],
-        repo_type=pkgs[0]['repo_type'],
-        repo_url=pkgs[0]['repo_url'],
+        pkg_os=PACKAGES[0]['os'],
+        arch=PACKAGES[0]['arch'],
+        name=PACKAGES[0]['baseName'],
+        repo_type=PACKAGES[0]['repo_type'],
+        repo_url=PACKAGES[0]['repo_url'],
         revision=releases[0]['meta']['revision'])
-    assert pkg1['meta']['baseName'] == pkgs[0]['baseName']
+    assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
+
     # Download
     downloaded_pkg1_bis = spc.downloadApplicationPackage(
         app_name=apps[0]['name'], id_or_name=pkg1['_id'])
     downloaded_pkg1_name_bis = apps[0]['meta']['applicationPackageNameTemplate'].format(
-        **pkgs[0])
+        **PACKAGES[0])
     assert downloaded_pkg1_bis['name'] == downloaded_pkg1_name_bis
-    # Compare, the file should have changed
-    downloaded_f1_bis = open('%s.txt' % downloaded_pkg1_name_bis, 'r')
-    f1_bis = open(files[1], 'r')
-    assert downloaded_f1_bis.read() == f1_bis.read()
 
-    f1_bis.close()
-    downloaded_f1_bis.close()
+    # Compare, the file should have changed
+    with open('%s.txt' % downloaded_pkg1_name_bis, 'r') as downloaded_f1_bis, open(files[1], 'r') as f1_bis:
+        assert downloaded_f1_bis.read() == f1_bis.read()
+
     os.remove('%s.txt' % downloaded_pkg1_name_bis)
 
 
@@ -436,7 +401,7 @@ def testListApplicationPackage(server, spc, apps, releases, packages):
     assert len(pkg_list) == 3
 
     # List all the application packages from a release
-    pkg_list = spc.listApplicationPackage(app_name=apps[0]['name'], release=rls[0]['name'])
+    pkg_list = spc.listApplicationPackage(app_name=apps[0]['name'], release=RELEASES[0]['name'])
     assert len(pkg_list) == 1
     assert pkg_list[0]['_id'] == packages[2]['_id']
 
@@ -468,91 +433,84 @@ def testDeletePackage(server, spc, apps, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadExtension(server, spc, apps, releases, files):
-    pass
     # Upload
     ext1 = spc.uploadExtension(
-        filepath=exts[0]['filepath'],
+        filepath=EXTENSIONS[0]['filepath'],
         app_name=apps[0]['name'],
-        ext_os=exts[0]['os'],
-        arch=exts[0]['arch'],
-        name=exts[0]['baseName'],
-        repo_type=exts[0]['repo_type'],
-        repo_url=exts[0]['repo_url'],
+        ext_os=EXTENSIONS[0]['os'],
+        arch=EXTENSIONS[0]['arch'],
+        name=EXTENSIONS[0]['baseName'],
+        repo_type=EXTENSIONS[0]['repo_type'],
+        repo_url=EXTENSIONS[0]['repo_url'],
         app_revision=releases[0]['meta']['revision'],
-        revision=exts[0]['revision'])
-    assert ext1['meta']['baseName'] == exts[0]['baseName']
+        revision=EXTENSIONS[0]['revision'])
+    assert ext1['meta']['baseName'] == EXTENSIONS[0]['baseName']
 
+    # Upload
     ext2 = spc.uploadExtension(
-        filepath=exts[1]['filepath'],
+        filepath=EXTENSIONS[1]['filepath'],
         app_name=apps[0]['name'],
-        ext_os=exts[1]['os'],
-        arch=exts[1]['arch'],
-        name=exts[1]['baseName'],
-        repo_type=exts[1]['repo_type'],
-        repo_url=exts[1]['repo_url'],
+        ext_os=EXTENSIONS[1]['os'],
+        arch=EXTENSIONS[1]['arch'],
+        name=EXTENSIONS[1]['baseName'],
+        repo_type=EXTENSIONS[1]['repo_type'],
+        repo_url=EXTENSIONS[1]['repo_url'],
         app_revision=releases[0]['meta']['revision'],
-        revision=exts[1]['revision'])
-    assert ext2['meta']['baseName'] == exts[1]['baseName']
+        revision=EXTENSIONS[1]['revision'])
+    assert ext2['meta']['baseName'] == EXTENSIONS[1]['baseName']
 
     # Download
     downloaded_ext1 = spc.downloadExtension(
         app_name=apps[0]['name'], id_or_name=ext1['_id'])
-    params1 = exts[0].copy()
+    params1 = EXTENSIONS[0].copy()
     params1['app_revision'] = releases[0]['meta']['revision']
     downloaded_ext1_name = apps[0]['meta']['extensionPackageNameTemplate'].format(
         **params1)
     assert downloaded_ext1['name'] == downloaded_ext1_name
+
     # Download using a different dir_path
     downloaded_ext2 = spc.downloadExtension(
         app_name=apps[0]['name'], id_or_name=ext2['_id'], dir_path='../')
-    params2 = exts[1].copy()
+    params2 = EXTENSIONS[1].copy()
     params2['app_revision'] = releases[0]['meta']['revision']
     downloaded_ext2_name = apps[0]['meta']['extensionPackageNameTemplate'].format(
         **params2)
     assert downloaded_ext2['name'] == downloaded_ext2_name
 
     # Compare downloaded files
-    downloaded_f1 = open('%s.txt' % downloaded_ext1_name, 'r')
-    f1 = open(files[0], 'r')
-    assert downloaded_f1.read() == f1.read()
+    with open('%s.txt' % downloaded_ext1_name, 'r') as downloaded_f1, open(files[0], 'r') as f1:
+        assert downloaded_f1.read() == f1.read()
 
-    downloaded_f2 = open('../%s.txt' % downloaded_ext2_name, 'r')
-    f2 = open(files[1], 'r')
-    assert downloaded_f2.read() == f2.read()
-
-    f1.close()
-    downloaded_f1.close()
-    f2.close()
-    downloaded_f2.close()
+    with open('../%s.txt' % downloaded_ext2_name, 'r') as downloaded_f2, open(files[1], 'r') as f2:
+        assert downloaded_f2.read() == f2.read()
 
     os.remove('%s.txt' % downloaded_ext1_name)
     os.remove('../%s.txt' % downloaded_ext2_name)
 
     # Update an existing package by changing the revision
     spc.uploadExtension(
-        filepath=exts[1]['filepath'],
+        filepath=EXTENSIONS[1]['filepath'],
         app_name=apps[0]['name'],
-        ext_os=exts[0]['os'],
-        arch=exts[0]['arch'],
-        name=exts[0]['baseName'],
-        repo_type=exts[0]['repo_type'],
-        repo_url=exts[0]['repo_url'],
+        ext_os=EXTENSIONS[0]['os'],
+        arch=EXTENSIONS[0]['arch'],
+        name=EXTENSIONS[0]['baseName'],
+        repo_type=EXTENSIONS[0]['repo_type'],
+        repo_url=EXTENSIONS[0]['repo_url'],
         app_revision=releases[0]['meta']['revision'],
         revision='newRev')
-    assert ext1['meta']['baseName'] == exts[0]['baseName']
+    assert ext1['meta']['baseName'] == EXTENSIONS[0]['baseName']
+
     # Download
     downloaded_ext1_bis = spc.downloadExtension(
         app_name=apps[0]['name'], id_or_name=ext1['_id'])
     downloaded_ext1_name_bis = apps[0]['meta']['extensionPackageNameTemplate'].format(
         **params1)
     assert downloaded_ext1_bis['name'] != downloaded_ext1_name_bis
-    # Compare, the file should have changed
-    downloaded_f1_bis = open('%s.txt' % downloaded_ext1_bis['name'], 'r')
-    f1_bis = open(files[1], 'r')
-    assert downloaded_f1_bis.read() == f1_bis.read()
 
-    f1_bis.close()
-    downloaded_f1_bis.close()
+    # Compare, the file should have changed
+    with open('%s.txt' % downloaded_ext1_bis['name'], 'r') as downloaded_f1_bis, open(files[1], 'r') as f1_bis:
+        assert downloaded_f1_bis.read() == f1_bis.read()
+
     os.remove('%s.txt' % downloaded_ext1_bis['name'])
 
 
@@ -568,7 +526,7 @@ def testListExtension(server, spc, apps, extensions):
     assert len(ext_list) == 3
 
     # List all the extension packages from a release
-    ext_list = spc.listExtension(app_name=apps[0]['name'], release=rls[0]['name'])
+    ext_list = spc.listExtension(app_name=apps[0]['name'], release=RELEASES[0]['name'])
     assert len(ext_list) == 1
     assert ext_list[0]['_id'] == extensions[2]['_id']
 
