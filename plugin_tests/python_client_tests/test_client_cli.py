@@ -27,6 +27,9 @@ RELEASES = [
 DRAFT_RELEASES = [
     {
         'revision': 'r002'
+    },
+    {
+        'revision': 'r003'
     }
 ]
 
@@ -60,6 +63,16 @@ PACKAGES = [
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg3.git',
         'baseName': 'pkg3'
+    },
+    {
+        'filepath': './file4.txt',
+        'app_name': APPS[0],
+        'os': 'linux',
+        'arch': 'amd64',
+        'revision': DRAFT_RELEASES[1]['revision'],
+        'repo_type': 'git',
+        'repo_url': 'git@github.com:pkg4.git',
+        'baseName': 'pkg4'
     }
 ]
 
@@ -96,6 +109,17 @@ EXTENSIONS = [
         'repo_url': 'git@github.com:ext3.git',
         'baseName': 'ext3',
         'app_revision': DRAFT_RELEASES[0]['revision']
+    },
+    {
+        'filepath': './file4.txt',
+        'app_name': APPS[0],
+        'os': 'linux',
+        'arch': 'amd64',
+        'revision': '000',
+        'repo_type': 'git',
+        'repo_url': 'git@github.com:ext4.git',
+        'baseName': 'ext4',
+        'app_revision': DRAFT_RELEASES[1]['revision']
     }
 ]
 
@@ -190,6 +214,10 @@ def packages(server, apps, files):
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[2])), res.output)
 
+    res = _cli_upload_package(PACKAGES[3])
+    assert res.exit_code == 0
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[3])), res.output)
+
 
 @pytest.mark.vcr()
 @pytest.fixture
@@ -205,6 +233,10 @@ def extensions(server, apps, files):
     res = _cli_upload_extension(EXTENSIONS[2])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[2])), res.output)
+
+    res = _cli_upload_extension(EXTENSIONS[3])
+    assert res.exit_code == 0
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[3])), res.output)
 
 
 @pytest.mark.vcr()
