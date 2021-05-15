@@ -353,6 +353,9 @@ def _cli_deleteRelease(sc, *args, **kwargs):
 @click.option('--revision', default=None,
               help='Revision of the draft release',
               cls=_AdvancedOption)
+@click.option('--limit', default=Constant.DEFAULT_LIMIT,
+              help='The limit number of listed releases',
+              cls=_AdvancedOption)
 @click.option('--offset', default=0,
               help='Offset of the list',
               cls=_AdvancedOption)

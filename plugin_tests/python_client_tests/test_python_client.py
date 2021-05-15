@@ -301,6 +301,13 @@ def testListDraftRelease(server, spc, apps, packages):
 
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
+def testListDraftReleaseWithLimit(server, spc, apps, packages):
+    draft_list = spc.listDraftRelease(app_name=apps[0]['name'], limit=1)
+    assert len(draft_list) == 1
+
+
+@pytest.mark.vcr()
+@pytest.mark.plugin('slicer_package_manager')
 def testDeleteDraftRelease(server, spc, apps, packages):
     draft_list = spc.listDraftRelease(app_name=apps[0]['name'])
     assert len(draft_list) == 2

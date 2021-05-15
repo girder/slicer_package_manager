@@ -4,17 +4,14 @@ import pytest
 
 @pytest.fixture
 def files():
-    with open('file1.txt', 'w+') as file:
-        file.write('Content of the file number 1')
 
-    with open('file2.txt', 'w+') as file:
-        file.write('Content of the file number 2')
+    filenames = ['file1.txt', 'file2.txt', 'file3.txt', 'file4.txt']
 
-    with open('file3.txt', 'w+') as file:
-        file.write('Content of the file number 3')
+    for idx, filename in enumerate(filenames, start=1):
+        with open(filename, 'w+') as file:
+            file.write('Content of the file number %s' % idx)
 
-    yield ['file1.txt', 'file2.txt', 'file3.txt']
+    yield filenames
 
-    os.remove('file1.txt')
-    os.remove('file2.txt')
-    os.remove('file3.txt')
+    for filename in filenames:
+        os.remove(filename)
