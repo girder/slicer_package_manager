@@ -160,7 +160,7 @@ class App(Resource):
         .errorResponse()
         .errorResponse('Read permission denied on the application.', 403)
     )
-    @access.user(scope=TokenScope.DATA_READ)
+    @access.public(scope=TokenScope.DATA_READ)
     def listApp(self, app_id, collection_id, name, text, limit, offset, sort):
         """
         List existing applications base on some optional parameters.
@@ -273,7 +273,7 @@ class App(Resource):
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
-    @access.user(scope=TokenScope.DATA_READ)
+    @access.public(scope=TokenScope.DATA_READ)
     def getReleases(self, app_id, release_id_or_name, limit, offset, sort):
         """
         Get a list of all the stable release of an application. You can also search
@@ -286,7 +286,7 @@ class App(Resource):
         :return: List of all release within the application or a specific release folder
         """
         user = self.getCurrentUser()
-        application = self._model.load(app_id, user=user)
+        application = self._model.load(app_id, user=user, level=AccessType.READ)
 
         if ObjectId.is_valid(release_id_or_name):
             return self._model.load(release_id_or_name, user=user)
@@ -320,7 +320,7 @@ class App(Resource):
         .errorResponse('ID was invalid.')
         .errorResponse('Read permission denied on the application.', 403)
     )
-    @access.user(scope=TokenScope.DATA_READ)
+    @access.public(scope=TokenScope.DATA_READ)
     def getAllDraftReleases(self, app_id, revision, limit, offset, sort):
         """
         Get a list of all the draft release of an application. It's also
@@ -331,7 +331,7 @@ class App(Resource):
         :return: List of all release within the application
         """
         user = self.getCurrentUser()
-        application = self._model.load(app_id, user=user)
+        application = self._model.load(app_id, user=user, level=AccessType.READ)
 
         filters = {
             'name': constants.DRAFT_RELEASE_NAME
@@ -424,7 +424,7 @@ class App(Resource):
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
     )
-    @access.public(cookie=True)
+    @access.public(scope=TokenScope.DATA_READ)
     def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
                       app_revision, baseName, limit, sort, offset=0):
         """
@@ -555,7 +555,7 @@ class App(Resource):
         .param('codebase', 'The codebase baseName (Ex: Slicer4).', required=False)
         .errorResponse()
     )
-    @access.public(cookie=True)
+    @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
                                 revision, app_revision, packagetype, codebase, description,
                                 release, icon_url, development_status, category, enabled, homepage,
@@ -668,7 +668,6 @@ class App(Resource):
         # Ready to upload the binary file
         return extension
 
-    @access.user(scope=TokenScope.DATA_WRITE)
     @autoDescribeRoute(
         Description('Delete an Extension by ID.')
         .param('app_id', 'The ID of the App.', paramType='path')
@@ -676,6 +675,7 @@ class App(Resource):
         .errorResponse('ID was invalid.')
         .errorResponse('Admin access was denied for the extension.', 403)
     )
+    @access.user(scope=TokenScope.DATA_WRITE)
     def deleteExtension(self, app_id, item):
         """
         Delete the extension by ID.
@@ -706,7 +706,7 @@ class App(Resource):
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
     )
-    @access.public(cookie=True)
+    @access.public(scope=TokenScope.DATA_READ)
     def getPackages(self, app_id, package_name, release_id, package_id, os, arch,
                     revision, baseName, limit, offset, sort):
         """
@@ -797,7 +797,7 @@ class App(Resource):
                dataType='boolean', required=False)
         .errorResponse()
     )
-    @access.public(cookie=True)
+    @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
                               revision, description, pre_release):
         """
@@ -865,7 +865,6 @@ class App(Resource):
         # Ready to upload the binary file
         return package
 
-    @access.user(scope=TokenScope.DATA_WRITE)
     @autoDescribeRoute(
         Description('Delete a Package by ID.')
         .param('app_id', 'The ID of the App.', paramType='path')
@@ -873,6 +872,7 @@ class App(Resource):
         .errorResponse('ID was invalid.')
         .errorResponse('Admin access was denied for the package.', 403)
     )
+    @access.user(scope=TokenScope.DATA_WRITE)
     def deletePackage(self, app_id, item):
         """
         Delete the package by ID.
@@ -890,7 +890,7 @@ class App(Resource):
         .param('app_id', 'The ID of the application.', paramType='path')
         .errorResponse()
     )
-    @access.public(cookie=True)
+    @access.public(scope=TokenScope.DATA_READ)
     def getDownloadStats(self, app_id):
         """
         Get all the download count of all the application and extension packages
