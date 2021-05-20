@@ -35,8 +35,11 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
-    'sphinx.ext.coverage'
+    'sphinx.ext.coverage',
+    'sphinx_issues'
 ]
+
+issues_github_path = 'girder/slicer_package_manager'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

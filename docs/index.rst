@@ -117,6 +117,7 @@ Table of Contents
    developer_guide
    slicer_package_manager
    slicer_package_manager_client
+   changes
 
 Indices and tables
 ==================
