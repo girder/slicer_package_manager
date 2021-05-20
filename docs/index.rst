@@ -115,8 +115,8 @@ Table of Contents
    :caption: Developer Documentation:
 
    developer_guide
-   server
-   python_client
+   slicer_package_manager
+   slicer_package_manager_client
 
 Indices and tables
 ==================

@@ -54,5 +54,9 @@ ENV/
 *.swp
 .vscode/*
 
+# Sphinx documentation
+docs/_build/
+doc/_build/
+
 # External data
 tests/.external_data

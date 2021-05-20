@@ -18,3 +18,18 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+# Custom targets specific to this project
+docs-only:
+	rm -f slicer_package_manager.api.rst
+	rm -f slicer_package_manager.models.rst
+	rm -rf _build/
+	sphinx-apidoc -o . --no-toc --module-first ../slicer_package_manager/
+	sphinx-apidoc -o . --no-toc --module-first ../python_client/slicer_package_manager_client/
+	$(MAKE) clean
+	$(MAKE) html
+
+docs: docs-only
+	open _build/html/index.html || xdg-open _build/html/index.html
+
+.PHONY: docs docs-only

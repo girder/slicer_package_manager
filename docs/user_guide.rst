@@ -24,7 +24,7 @@ There are 3 different ways to use the Slicer Package Manager:
     If you don't want to use neither the Shell or python script, this UI is made for you.
     Let see the [documentation] to know how to use it.
 
-* By using the :doc:`python_client` within Python script:
+* By using the :doc:`slicer_package_manager_client` within Python script:
 
     Using the Python Client API allow you to write scripts for create application, new release and
     automatically upload or download application or extensions packages.
@@ -98,8 +98,8 @@ Concepts
     environment the package is made for like : Operating System: ``os``, architecture: ``arch``,
     application revision: ``revision``, repository url... (see the
     `list of parameters of Package <https://slicer-package-manager.readthedocs.io/en/latest/
-    server.api.html#server.api.app.App.createOrUpdatePackage>`_ on the server API to have an
-    exhausted list of all the metadata).
+    slicer_package_manager.api.html#slicer_package_manager.api.app.App.createOrUpdatePackage>`_
+    on the server API to have an exhausted list of all the metadata).
 
     When uploading an application package, some of these metadata are required, the ``revision``
     metadata is used to determine in which release to upload the application package.
