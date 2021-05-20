@@ -115,8 +115,15 @@ Table of Contents
    :caption: Developer Documentation:
 
    developer_guide
-   server
-   python_client
+   slicer_package_manager
+   slicer_package_manager_client
+   changes
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Maintainer Documentation:
+
+   make_a_release
 
 Indices and tables
 ==================

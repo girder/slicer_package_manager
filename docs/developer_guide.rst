@@ -197,7 +197,7 @@ what is it and how to use it. The Slicer Package Manager Documentation is build 
 
 Here is some tools very useful to rapidly see what is result of your documentation.
 
-In the 'slicer_package_manager' directory, just run::
+In the ``slicer_package_manager/docs`` directory, just run::
 
     $ make docs
 

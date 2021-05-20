@@ -1,4 +1,5 @@
 girder
 girder_client
 sphinx
+sphinx-issues
 sphinx_rtd_theme
