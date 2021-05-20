@@ -119,6 +119,12 @@ Table of Contents
    slicer_package_manager_client
    changes
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Maintainer Documentation:
+
+   make_a_release
+
 Indices and tables
 ==================
 

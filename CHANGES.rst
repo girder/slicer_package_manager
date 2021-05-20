@@ -32,6 +32,8 @@ Python Client
 Documentation
 -------------
 
+* Add maintainer documentation along with :doc:`/make_a_release` section.
+
 * Improve description of ``limit`` in :func:`slicer_package_manager_client.SlicerPackageClient.listExtension`
   and :func:`slicer_package_manager_client.SlicerPackageClient.listApplicationPackage`. See :issue:`84`.
 
