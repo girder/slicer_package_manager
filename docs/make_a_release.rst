@@ -93,7 +93,7 @@ Setting up environment
 
 
 5. In `CHANGES.rst` replace ``Next Release`` section header with
-   ``Slicer Package Manager X.Y.Z`` and commit the changes.
+   ``X.Y.Z`` and commit the changes.
 
   .. code::
 
