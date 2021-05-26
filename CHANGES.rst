@@ -8,6 +8,16 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Bug fixes
+---------
+
+Server
+^^^^^^
+
+* Update implementation of ``GET /app/:app_id/package`` endpoint to properly handle
+  ``limit=0`` parameter. See :issue:`94`.
+
+
 Documentation
 -------------
 
