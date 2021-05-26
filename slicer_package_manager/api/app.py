@@ -561,10 +561,14 @@ class App(Resource):
                                 release, icon_url, development_status, category, enabled, homepage,
                                 screenshots, contributors, dependency, license):
         """
-        Create an extension item in a specific release by providing ``release_id`` or in
-        the **draft** folder by default.
-        It's also possible to update an existing extension. In this case, it will update the name
-        and the metadata of the extension.
+        Create or update an extension item.
+
+        If a release identified by ``app_revision`` exists, it is used to create or lookup
+        the corresponding release folder. Otherwise, a **draft** sub-folder named after
+        ``app_revision`` is either used or created.
+
+        If an extension with matching metadata ``meta.baseName``, ``meta.os``, ``meta.arch`` and
+        ``meta.app_revision`` is found, the extension name and other metadata are updated.
 
         :param app_id: The ID of the application.
         :param os: The operation system used for the extension.
@@ -801,10 +805,14 @@ class App(Resource):
     def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
                               revision, description, pre_release):
         """
-        Create a package item in a specific release by providing ``release_id`` or in
-        the **draft** folder by default.
-        It's also possible to update an existing package. In this case, it will update the name
-        and the metadata of the package.
+        Create or update a package item.
+
+        If a release identified by ``revision`` exists, it is used to create or lookup
+        the corresponding release folder. Otherwise, a **draft** sub-folder named after
+        ``revision`` is either used or created.
+
+        If a package with matching metadata ``meta.baseName``, ``meta.os``, ``meta.arch`` and
+        ``meta.revision`` is found, the package name and other metadata are updated.
 
         :param app_id: The ID of the application.
         :param os: The operation system used for the package.

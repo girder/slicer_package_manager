@@ -13,6 +13,14 @@ def isSlicerPackages(item):
 
 
 def getOrCreateReleaseFolder(application, user, app_revision):
+    """
+    Get or create the release folder associated with the application revision.
+
+    :param application: The parent folder containing the release.
+    :param user: The user to check access against or to create the new folder
+    :param app_revision: The revision of the application.
+    :return: The created/existing release folder.
+    """
     release_folder = None
     # Find the release by metadata revision
     releases = Folder().childFolders(application, 'Folder', user=user)
