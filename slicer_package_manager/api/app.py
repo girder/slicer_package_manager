@@ -761,9 +761,7 @@ class App(Resource):
                     if revisions:
                         filters['folderId'] = ObjectId(revisions[0]['_id'])
                 else:
-                    revisions = self._model.childFolders(
-                        release,
-                        'Folder')
+                    revisions = self._model.childFolders(release, 'Folder')
                     packages = []
                     limit_tmp = limit
                     for rev in revisions:
@@ -773,6 +771,8 @@ class App(Resource):
                             limit=limit_tmp,
                             offset=offset,
                             sort=sort))
+                        if limit == 0:
+                            continue
                         limit_tmp = limit - len(packages)
                         if limit_tmp <= 0:
                             break
