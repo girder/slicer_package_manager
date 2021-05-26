@@ -306,7 +306,7 @@ def _cli_createRelease(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_listRelease(sc, *args, **kwargs):
     """
-    List all the release within an application.
+    List all the releases within an application.
     """
     try:
         releases = sc.listRelease(*args, **kwargs)
@@ -362,7 +362,7 @@ def _cli_deleteRelease(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_listDraftRelease(sc, *args, **kwargs):
     """
-    List all the revision of the default preview within an application.
+    List all the revisions of the default preview within an application.
     """
     try:
         releases = sc.listDraftRelease(*args, **kwargs)
@@ -523,7 +523,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 @click.pass_obj
 def _cli_listExtension(sc, *args, **kwargs):
     """
-    List all the extension within an application.
+    List all the extensions within an application.
     """
     try:
         extensions = sc.listExtension(*args, **kwargs)
@@ -651,15 +651,15 @@ def _cli_downloadApplicationPackage(sc, *args, **kwargs):
               help='The revision of the application',
               cls=_AdvancedOption)
 @click.option('--release', default=None,
-              help='List all extension within the release',
+              help='List all packages within the release',
               cls=_AdvancedOption)
 @click.option('--limit', default=Constant.DEFAULT_LIMIT,
-              help='The limit number of listed extensions ',
+              help='The limit number of listed packages ',
               cls=_AdvancedOption)
 @click.pass_obj
 def _cli_listApplicationPackage(sc, *args, **kwargs):
     """
-    List all the application package within an application.
+    List all the application packages within an application.
     """
     try:
         packages = sc.listApplicationPackage(*args, **kwargs)

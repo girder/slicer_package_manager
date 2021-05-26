@@ -5,6 +5,14 @@ Release Notes
 This is the list of **Slicer Package Manager** changes between each release. For full
 details, see the commit logs at https://github.com/girder/slicer_package_manager
 
+Next Release
+============
+
+Documentation
+-------------
+
+* Add documentation to :func:`slicer_package_manager.utilities.getOrCreateReleaseFolder`.
+
 0.2.0
 =====
 
