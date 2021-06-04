@@ -176,7 +176,7 @@ class App(Resource):
         user = self.getCurrentUser()
 
         if ObjectId.is_valid(app_id):
-            return self._model.load(app_id, user=user)
+            return self._model.load(app_id, user=user, level=AccessType.READ)
         else:
             if collection_id:
                 parent = Collection().load(
@@ -251,7 +251,7 @@ class App(Resource):
         :return: The new release folder
         """
         creator = self.getCurrentUser()
-        application = self._model.load(app_id, user=creator)
+        application = self._model.load(app_id, user=creator, level=AccessType.READ)
         if not description:
             description = ''
         release = self._model.createFolder(
@@ -289,7 +289,7 @@ class App(Resource):
         application = self._model.load(app_id, user=user, level=AccessType.READ)
 
         if ObjectId.is_valid(release_id_or_name):
-            return self._model.load(release_id_or_name, user=user)
+            return self._model.load(release_id_or_name, user=user, level=AccessType.READ)
         elif release_id_or_name:
             release_folder = list(self._model.childFolders(
                 application,
@@ -468,7 +468,7 @@ class App(Resource):
             # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
         if ObjectId.is_valid(release_id):
-            release = self._model.load(release_id, user=user)
+            release = self._model.load(release_id, user=user, level=AccessType.READ)
             if release['name'] == constants.DRAFT_RELEASE_NAME:
                 if app_revision:
                     revisions = list(self._model.childFolders(
@@ -758,7 +758,7 @@ class App(Resource):
             # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
         if ObjectId.is_valid(release_id):
-            release = self._model.load(release_id, user=user)
+            release = self._model.load(release_id, user=user, level=AccessType.READ)
             if release['name'] == constants.DRAFT_RELEASE_NAME:
                 if revision:
                     revisions = list(self._model.childFolders(
@@ -916,7 +916,7 @@ class App(Resource):
         :return: The JSON document of all the download statistics
         """
         user = self.getCurrentUser()
-        application = self._model.load(app_id, user=user)
+        application = self._model.load(app_id, user=user, level=AccessType.READ)
         releases = self._model.childFolders(application, 'Folder', user=user)
 
         downloadStats = {}

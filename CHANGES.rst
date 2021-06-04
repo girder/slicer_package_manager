@@ -14,8 +14,9 @@ Bug fixes
 Server
 ^^^^^^
 
-* Ensure permissions are consistently checked in API endpoints implementation. ``user`` parameter
-  is now always passed to ``girder.models.folder.childFolders()`` function.
+* Ensure permissions are consistently checked in API endpoints implementation. See :issue:`95`.
+
+* Fix support for unauthenticated use of public API endpoints. See :issue:`95`.
 
 
 0.3.0
