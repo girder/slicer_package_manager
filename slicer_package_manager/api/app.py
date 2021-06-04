@@ -294,6 +294,7 @@ class App(Resource):
             release_folder = list(self._model.childFolders(
                 application,
                 'Folder',
+                user=user,
                 filters={'lowerName': release_id_or_name.lower()}))
             if not release_folder:
                 return None
@@ -384,17 +385,20 @@ class App(Resource):
             release_folder = list(self._model.childFolders(
                 folder,
                 'Folder',
+                user=user,
                 filters={'lowerName': release_id_or_name.lower()}))
             if not release_folder:
                 release_folder = list(self._model.childFolders(
                     folder,
                     'Folder',
+                    user=user,
                     filters={'lowerName': constants.DRAFT_RELEASE_NAME.lower()}))
                 if not release_folder:
                     raise Exception("Couldn't find release %s" % release_id_or_name)
                 revision_folder = list(self._model.childFolders(
                     release_folder[0],
                     'Folder',
+                    user=user,
                     filters={'lowerName': release_id_or_name.lower()}
                 ))
                 if not revision_folder:
@@ -470,11 +474,13 @@ class App(Resource):
                     revisions = list(self._model.childFolders(
                         release,
                         'Folder',
+                        user=user,
                         filters={'meta.revision': app_revision}))
                     if revisions:
                         extensions_folder = list(self._model.childFolders(
                             revisions[0],
                             'Folder',
+                            user=user,
                             filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
                         if extensions_folder:
                             filters['folderId'] = ObjectId(extensions_folder[0]['_id'])
@@ -482,6 +488,7 @@ class App(Resource):
                     revisions = self._model.childFolders(
                         release,
                         'Folder',
+                        user=user,
                         sort=sort)
                     extensions = []
                     limit_tmp = limit
@@ -757,11 +764,12 @@ class App(Resource):
                     revisions = list(self._model.childFolders(
                         release,
                         'Folder',
+                        user=user,
                         filters={'meta.revision': revision}))
                     if revisions:
                         filters['folderId'] = ObjectId(revisions[0]['_id'])
                 else:
-                    revisions = self._model.childFolders(release, 'Folder')
+                    revisions = self._model.childFolders(release, 'Folder', user=user)
                     packages = []
                     limit_tmp = limit
                     for rev in revisions:

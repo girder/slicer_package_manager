@@ -8,6 +8,16 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Bug fixes
+---------
+
+Server
+^^^^^^
+
+* Ensure permissions are consistently checked in API endpoints implementation. ``user`` parameter
+  is now always passed to ``girder.models.folder.childFolders()`` function.
+
+
 0.3.0
 =====
 
