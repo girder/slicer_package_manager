@@ -8,6 +8,17 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Bug fixes
+---------
+
+Server
+^^^^^^
+
+* Ensure permissions are consistently checked in API endpoints implementation. See :issue:`95`.
+
+* Fix support for unauthenticated use of public API endpoints. See :issue:`95`.
+
+
 0.3.0
 =====
 

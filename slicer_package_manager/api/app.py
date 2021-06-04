@@ -176,7 +176,7 @@ class App(Resource):
         user = self.getCurrentUser()
 
         if ObjectId.is_valid(app_id):
-            return self._model.load(app_id, user=user)
+            return self._model.load(app_id, user=user, level=AccessType.READ)
         else:
             if collection_id:
                 parent = Collection().load(
@@ -251,7 +251,7 @@ class App(Resource):
         :return: The new release folder
         """
         creator = self.getCurrentUser()
-        application = self._model.load(app_id, user=creator)
+        application = self._model.load(app_id, user=creator, level=AccessType.READ)
         if not description:
             description = ''
         release = self._model.createFolder(
@@ -289,11 +289,12 @@ class App(Resource):
         application = self._model.load(app_id, user=user, level=AccessType.READ)
 
         if ObjectId.is_valid(release_id_or_name):
-            return self._model.load(release_id_or_name, user=user)
+            return self._model.load(release_id_or_name, user=user, level=AccessType.READ)
         elif release_id_or_name:
             release_folder = list(self._model.childFolders(
                 application,
                 'Folder',
+                user=user,
                 filters={'lowerName': release_id_or_name.lower()}))
             if not release_folder:
                 return None
@@ -384,17 +385,20 @@ class App(Resource):
             release_folder = list(self._model.childFolders(
                 folder,
                 'Folder',
+                user=user,
                 filters={'lowerName': release_id_or_name.lower()}))
             if not release_folder:
                 release_folder = list(self._model.childFolders(
                     folder,
                     'Folder',
+                    user=user,
                     filters={'lowerName': constants.DRAFT_RELEASE_NAME.lower()}))
                 if not release_folder:
                     raise Exception("Couldn't find release %s" % release_id_or_name)
                 revision_folder = list(self._model.childFolders(
                     release_folder[0],
                     'Folder',
+                    user=user,
                     filters={'lowerName': release_id_or_name.lower()}
                 ))
                 if not revision_folder:
@@ -464,17 +468,19 @@ class App(Resource):
             # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
         if ObjectId.is_valid(release_id):
-            release = self._model.load(release_id, user=user)
+            release = self._model.load(release_id, user=user, level=AccessType.READ)
             if release['name'] == constants.DRAFT_RELEASE_NAME:
                 if app_revision:
                     revisions = list(self._model.childFolders(
                         release,
                         'Folder',
+                        user=user,
                         filters={'meta.revision': app_revision}))
                     if revisions:
                         extensions_folder = list(self._model.childFolders(
                             revisions[0],
                             'Folder',
+                            user=user,
                             filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
                         if extensions_folder:
                             filters['folderId'] = ObjectId(extensions_folder[0]['_id'])
@@ -482,6 +488,7 @@ class App(Resource):
                     revisions = self._model.childFolders(
                         release,
                         'Folder',
+                        user=user,
                         sort=sort)
                     extensions = []
                     limit_tmp = limit
@@ -751,17 +758,18 @@ class App(Resource):
             # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
         if ObjectId.is_valid(release_id):
-            release = self._model.load(release_id, user=user)
+            release = self._model.load(release_id, user=user, level=AccessType.READ)
             if release['name'] == constants.DRAFT_RELEASE_NAME:
                 if revision:
                     revisions = list(self._model.childFolders(
                         release,
                         'Folder',
+                        user=user,
                         filters={'meta.revision': revision}))
                     if revisions:
                         filters['folderId'] = ObjectId(revisions[0]['_id'])
                 else:
-                    revisions = self._model.childFolders(release, 'Folder')
+                    revisions = self._model.childFolders(release, 'Folder', user=user)
                     packages = []
                     limit_tmp = limit
                     for rev in revisions:
@@ -908,7 +916,7 @@ class App(Resource):
         :return: The JSON document of all the download statistics
         """
         user = self.getCurrentUser()
-        application = self._model.load(app_id, user=user)
+        application = self._model.load(app_id, user=user, level=AccessType.READ)
         releases = self._model.childFolders(application, 'Folder', user=user)
 
         downloadStats = {}
