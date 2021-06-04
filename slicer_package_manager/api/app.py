@@ -706,7 +706,7 @@ class App(Resource):
         .responseClass('Package')
         .param('app_id', 'The ID of the application.', paramType='path')
         .param('package_name', 'The name of the package.', required=False)
-        .param('release_id', 'The release id.', required=False)
+        .param('release_id_or_name', "The release's ID or name", required=False)
         .param('package_id', 'The package id.', required=False)
         .param('os', 'The target operating system of the package.',
                required=False, enum=['linux', 'win', 'macosx'])
@@ -718,7 +718,7 @@ class App(Resource):
         .errorResponse()
     )
     @access.public(scope=TokenScope.DATA_READ)
-    def getPackages(self, app_id, package_name, release_id, package_id, os, arch,
+    def getPackages(self, app_id, package_name, release_id_or_name, package_id, os, arch,
                     revision, baseName, limit, offset, sort):
         """
         Get a list of package which is filtered by some optional parameters. If the ``release_id``
@@ -727,7 +727,7 @@ class App(Resource):
 
         :param app_id: Application ID
         :param package_name: Package name
-        :param release_id: Release ID
+        :param release_id_or_name: Could be either the release ID or the release name
         :param package_id: Package ID
         :param os: The operation system used for the application package.
         :param arch: The architecture compatible with the application package.
@@ -757,8 +757,21 @@ class App(Resource):
         if baseName:
             # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
-        if ObjectId.is_valid(release_id):
-            release = self._model.load(release_id, user=user, level=AccessType.READ)
+
+        release = None
+        if ObjectId.is_valid(release_id_or_name):
+            release = self._model.load(release_id_or_name, user=user, level=AccessType.READ)
+        elif release_id_or_name:
+            application = self._model.load(app_id, user=user, level=AccessType.READ)
+            release_folder = list(self._model.childFolders(
+                application,
+                'Folder',
+                user=user,
+                filters={'lowerName': release_id_or_name.lower()}))
+            if len(release_folder) > 0:
+                release = release_folder[0]
+
+        if release is not None:
             if release['name'] == constants.DRAFT_RELEASE_NAME:
                 if revision:
                     revisions = list(self._model.childFolders(

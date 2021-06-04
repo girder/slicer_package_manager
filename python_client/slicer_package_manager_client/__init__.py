@@ -536,17 +536,13 @@ class SlicerPackageClient(GirderClient):
         :param pkg_os: The target operating system of the package
         :param arch: The os chip architecture
         :param revision: Revision of the application
-        :param release: Name of the release
+        :param release: Name or ID of the release
         :param limit: Limit of the number of applications listed (see :const:`Constant.DEFAULT_LIMIT`)
         :return: A list of application package filtered by optional parameters
         """
         app = self._getApp(app_name=app_name, coll_id=coll_id)
-        release_id = None
-        if release:
-            release_folder = self.listRelease(app_name, release)
-            if release_folder:
-                release_id = release_folder['_id']
-            else:
+        if release and not ObjectId.is_valid(release):
+            if not self.listRelease(app_name, release):
                 raise SlicerPackageManagerError(
                     'The release "%s" doesn\'t exist.' % release)
 
@@ -555,7 +551,7 @@ class SlicerPackageClient(GirderClient):
             'arch': arch,
             'baseName': name,
             'revision': revision,
-            'release_id': release_id,
+            'release_id_or_name': release,
             'limit': limit,
             'sort': 'created',
             'sortDir': -1
