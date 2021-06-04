@@ -781,7 +781,7 @@ def testGetPackages(server, fsAssetstore, external_data):
         method='GET',
         user=_user,
         params={
-            'release_id': _release['_id']
+            'release_id_or_name': _release['_id']
         }
     )
     assertStatusOk(resp)
@@ -797,7 +797,7 @@ def testGetPackages(server, fsAssetstore, external_data):
         method='GET',
         user=_user,
         params={
-            'release_id': draftRelease[0]['_id']
+            'release_id_or_name': draftRelease[0]['_id']
         }
     )
     assertStatusOk(resp)

@@ -8,6 +8,11 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+New Features
+------------
+
+* Support querying application packages given a release name. See :issue:`96`.
+
 Bug fixes
 ---------
 
