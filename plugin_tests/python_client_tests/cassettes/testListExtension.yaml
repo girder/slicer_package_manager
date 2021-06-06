@@ -689,7 +689,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb910657dd0639692bc7/extension?os=macosx&arch=amd64&baseName=ext1&app_revision=extR001&release_id=6099bb910657dd0639692bc8&limit=50&sort=created&sortDir=-1
+    uri: http://localhost:8080/api/v1//app/6099bb910657dd0639692bc7/extension?os=macosx&arch=amd64&baseName=ext1&app_revision=r002&release_id=6099bb910657dd0639692bc8&limit=50&sort=created&sortDir=-1
   response:
     body:
       string: '[]'
@@ -725,16 +725,16 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb910657dd0639692bc7/extension?os=macosx&arch=amd64&baseName=ext1&repository_type=git&repository_url=git%40github.com%3Aext1.git&revision=r300&app_revision=extR001&description=&packagetype=&icon_url=&homepage=
+    uri: http://localhost:8080/api/v1//app/6099bb910657dd0639692bc7/extension?os=macosx&arch=amd64&baseName=ext1&repository_type=git&repository_url=git%40github.com%3Aext1.git&revision=r300&app_revision=r002&description=&packagetype=&icon_url=&homepage=
   response:
     body:
       string: '{"_id": "6099bb910657dd0639692bcf", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:41.313626+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb910657dd0639692bce",
-        "lowerName": "extr001_ext1_macosx_amd64_r300", "meta": {"app_id": "6099bb910657dd0639692bc7",
-        "app_revision": "extR001", "arch": "amd64", "baseName": "ext1", "description":
+        "lowerName": "r002_ext1_macosx_amd64_r300", "meta": {"app_id": "6099bb910657dd0639692bc7",
+        "app_revision": "r002", "arch": "amd64", "baseName": "ext1", "description":
         "", "os": "macosx", "repository_type": "git", "repository_url": "git@github.com:ext1.git",
-        "revision": "r300"}, "name": "extR001_ext1_macosx_amd64_r300", "size": 0,
+        "revision": "r300"}, "name": "r002_ext1_macosx_amd64_r300", "size": 0,
         "updated": "2021-05-10T23:02:41.314854+00:00"}'
     headers:
       Allow:
@@ -1050,7 +1050,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb910657dd0639692bc7/extension?os=linux&arch=amd64&baseName=ext2&app_revision=extR002&release_id=6099bb910657dd0639692bc8&limit=50&sort=created&sortDir=-1
+    uri: http://localhost:8080/api/v1//app/6099bb910657dd0639692bc7/extension?os=linux&arch=amd64&baseName=ext2&app_revision=r003&release_id=6099bb910657dd0639692bc8&limit=50&sort=created&sortDir=-1
   response:
     body:
       string: '[]'
@@ -1086,16 +1086,16 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb910657dd0639692bc7/extension?os=linux&arch=amd64&baseName=ext2&repository_type=git&repository_url=git%40github.com%3Aext2.git&revision=r301&app_revision=extR002&description=&packagetype=&icon_url=&homepage=
+    uri: http://localhost:8080/api/v1//app/6099bb910657dd0639692bc7/extension?os=linux&arch=amd64&baseName=ext2&repository_type=git&repository_url=git%40github.com%3Aext2.git&revision=r301&app_revision=r003&description=&packagetype=&icon_url=&homepage=
   response:
     body:
       string: '{"_id": "6099bb910657dd0639692bd4", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:41.518073+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb910657dd0639692bd3",
-        "lowerName": "extr002_ext2_linux_amd64_r301", "meta": {"app_id": "6099bb910657dd0639692bc7",
-        "app_revision": "extR002", "arch": "amd64", "baseName": "ext2", "description":
+        "lowerName": "r003_ext2_linux_amd64_r301", "meta": {"app_id": "6099bb910657dd0639692bc7",
+        "app_revision": "r003", "arch": "amd64", "baseName": "ext2", "description":
         "", "os": "linux", "repository_type": "git", "repository_url": "git@github.com:ext2.git",
-        "revision": "r301"}, "name": "extR002_ext2_linux_amd64_r301", "size": 0, "updated":
+        "revision": "r301"}, "name": "r003_ext2_linux_amd64_r301", "size": 0, "updated":
         "2021-05-10T23:02:41.519095+00:00"}'
     headers:
       Allow:
@@ -1737,18 +1737,18 @@ interactions:
       string: '[{"_id": "6099bb910657dd0639692bd4", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:41.518000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb910657dd0639692bd3",
-        "lowerName": "extr002_ext2_linux_amd64_r301", "meta": {"app_id": "6099bb910657dd0639692bc7",
-        "app_revision": "extR002", "arch": "amd64", "baseName": "ext2", "description":
+        "lowerName": "r003_ext2_linux_amd64_r301", "meta": {"app_id": "6099bb910657dd0639692bc7",
+        "app_revision": "r003", "arch": "amd64", "baseName": "ext2", "description":
         "", "os": "linux", "repository_type": "git", "repository_url": "git@github.com:ext2.git",
-        "revision": "r301"}, "name": "extR002_ext2_linux_amd64_r301", "size": 28,
+        "revision": "r301"}, "name": "r003_ext2_linux_amd64_r301", "size": 28,
         "updated": "2021-05-10T23:02:41.519000+00:00"}, {"_id": "6099bb910657dd0639692bcf",
         "baseParentId": "609995b20657dd063969294d", "baseParentType": "collection",
         "created": "2021-05-10T23:02:41.313000+00:00", "creatorId": "5f081a506e4717a84202fd10",
-        "description": "", "folderId": "6099bb910657dd0639692bce", "lowerName": "extr001_ext1_macosx_amd64_r300",
-        "meta": {"app_id": "6099bb910657dd0639692bc7", "app_revision": "extR001",
+        "description": "", "folderId": "6099bb910657dd0639692bce", "lowerName": "r002_ext1_macosx_amd64_r300",
+        "meta": {"app_id": "6099bb910657dd0639692bc7", "app_revision": "r002",
         "arch": "amd64", "baseName": "ext1", "description": "", "os": "macosx", "repository_type":
         "git", "repository_url": "git@github.com:ext1.git", "revision": "r300"}, "name":
-        "extR001_ext1_macosx_amd64_r300", "size": 28, "updated": "2021-05-10T23:02:41.314000+00:00"}]'
+        "r002_ext1_macosx_amd64_r300", "size": 28, "updated": "2021-05-10T23:02:41.314000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -1833,18 +1833,18 @@ interactions:
         "2021-05-10T23:02:41.724000+00:00"}, {"_id": "6099bb910657dd0639692bd4", "baseParentId":
         "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:02:41.518000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb910657dd0639692bd3",
-        "lowerName": "extr002_ext2_linux_amd64_r301", "meta": {"app_id": "6099bb910657dd0639692bc7",
-        "app_revision": "extR002", "arch": "amd64", "baseName": "ext2", "description":
+        "lowerName": "r003_ext2_linux_amd64_r301", "meta": {"app_id": "6099bb910657dd0639692bc7",
+        "app_revision": "r003", "arch": "amd64", "baseName": "ext2", "description":
         "", "os": "linux", "repository_type": "git", "repository_url": "git@github.com:ext2.git",
-        "revision": "r301"}, "name": "extR002_ext2_linux_amd64_r301", "size": 28,
+        "revision": "r301"}, "name": "r003_ext2_linux_amd64_r301", "size": 28,
         "updated": "2021-05-10T23:02:41.519000+00:00"}, {"_id": "6099bb910657dd0639692bcf",
         "baseParentId": "609995b20657dd063969294d", "baseParentType": "collection",
         "created": "2021-05-10T23:02:41.313000+00:00", "creatorId": "5f081a506e4717a84202fd10",
-        "description": "", "folderId": "6099bb910657dd0639692bce", "lowerName": "extr001_ext1_macosx_amd64_r300",
-        "meta": {"app_id": "6099bb910657dd0639692bc7", "app_revision": "extR001",
+        "description": "", "folderId": "6099bb910657dd0639692bce", "lowerName": "r002_ext1_macosx_amd64_r300",
+        "meta": {"app_id": "6099bb910657dd0639692bc7", "app_revision": "r002",
         "arch": "amd64", "baseName": "ext1", "description": "", "os": "macosx", "repository_type":
         "git", "repository_url": "git@github.com:ext1.git", "revision": "r300"}, "name":
-        "extR001_ext1_macosx_amd64_r300", "size": 28, "updated": "2021-05-10T23:02:41.314000+00:00"}]'
+        "r002_ext1_macosx_amd64_r300", "size": 28, "updated": "2021-05-10T23:02:41.314000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -2166,10 +2166,10 @@ interactions:
       string: '[{"_id": "6099bb910657dd0639692bcf", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:41.313000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb910657dd0639692bce",
-        "lowerName": "extr001_ext1_macosx_amd64_r300", "meta": {"app_id": "6099bb910657dd0639692bc7",
-        "app_revision": "extR001", "arch": "amd64", "baseName": "ext1", "description":
+        "lowerName": "r002_ext1_macosx_amd64_r300", "meta": {"app_id": "6099bb910657dd0639692bc7",
+        "app_revision": "r002", "arch": "amd64", "baseName": "ext1", "description":
         "", "os": "macosx", "repository_type": "git", "repository_url": "git@github.com:ext1.git",
-        "revision": "r300"}, "name": "extR001_ext1_macosx_amd64_r300", "size": 28,
+        "revision": "r300"}, "name": "r002_ext1_macosx_amd64_r300", "size": 28,
         "updated": "2021-05-10T23:02:41.314000+00:00"}]'
     headers:
       Allow:

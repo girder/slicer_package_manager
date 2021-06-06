@@ -26,10 +26,10 @@ RELEASES = [
 
 DRAFT_RELEASES = [
     {
-        'revision': 'extR001'
+        'revision': 'r002'
     },
     {
-        'revision': 'extR002'
+        'revision': 'r003'
     }
 ]
 
