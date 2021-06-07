@@ -608,7 +608,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?os=macosx&arch=amd64&baseName=pkg1&revision=r300&limit=50&sort=created&sortDir=-1
+    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?os=macosx&arch=amd64&baseName=pkg1&revision=r002&limit=50&sort=created&sortDir=-1
   response:
     body:
       string: '[]'
@@ -644,16 +644,16 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?os=macosx&arch=amd64&baseName=pkg1&repository_type=git&repository_url=git%40github.com%3Apkg1.git&revision=r300&description=&pre_release=False
+    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?os=macosx&arch=amd64&baseName=pkg1&repository_type=git&repository_url=git%40github.com%3Apkg1.git&revision=r002&description=&pre_release=False
   response:
     body:
       string: '{"_id": "6099bb8d0657dd0639692bae", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:37.965107+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8d0657dd0639692bad",
-        "lowerName": "pkg1_macosx_amd64_r300", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
+        "lowerName": "pkg1_macosx_amd64_r002", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
         "arch": "amd64", "baseName": "pkg1", "os": "macosx", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg1.git", "revision":
-        "r300"}, "name": "pkg1_macosx_amd64_r300", "size": 0, "updated": "2021-05-10T23:02:37.966584+00:00"}'
+        "r002"}, "name": "pkg1_macosx_amd64_r002", "size": 0, "updated": "2021-05-10T23:02:37.966584+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -887,7 +887,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?os=linux&arch=amd64&baseName=pkg2&revision=r301&limit=50&sort=created&sortDir=-1
+    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?os=linux&arch=amd64&baseName=pkg2&revision=r003&limit=50&sort=created&sortDir=-1
   response:
     body:
       string: '[]'
@@ -923,16 +923,16 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?os=linux&arch=amd64&baseName=pkg2&repository_type=git&repository_url=git%40github.com%3Apkg2.git&revision=r301&description=&pre_release=False
+    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?os=linux&arch=amd64&baseName=pkg2&repository_type=git&repository_url=git%40github.com%3Apkg2.git&revision=r003&description=&pre_release=False
   response:
     body:
       string: '{"_id": "6099bb8e0657dd0639692bb2", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:38.145322+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8e0657dd0639692bb1",
-        "lowerName": "pkg2_linux_amd64_r301", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
+        "lowerName": "pkg2_linux_amd64_r003", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
         "arch": "amd64", "baseName": "pkg2", "os": "linux", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg2.git", "revision":
-        "r301"}, "name": "pkg2_linux_amd64_r301", "size": 0, "updated": "2021-05-10T23:02:38.146577+00:00"}'
+        "r003"}, "name": "pkg2_linux_amd64_r003", "size": 0, "updated": "2021-05-10T23:02:38.146577+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -1417,17 +1417,17 @@ interactions:
         {"_id": "6099bb8e0657dd0639692bb2", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:38.145000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8e0657dd0639692bb1",
-        "lowerName": "pkg2_linux_amd64_r301", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
+        "lowerName": "pkg2_linux_amd64_r003", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
         "arch": "amd64", "baseName": "pkg2", "os": "linux", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg2.git", "revision":
-        "r301"}, "name": "pkg2_linux_amd64_r301", "size": 28, "updated": "2021-05-10T23:02:38.146000+00:00"},
+        "r003"}, "name": "pkg2_linux_amd64_r003", "size": 28, "updated": "2021-05-10T23:02:38.146000+00:00"},
         {"_id": "6099bb8d0657dd0639692bae", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:37.965000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8d0657dd0639692bad",
-        "lowerName": "pkg1_macosx_amd64_r300", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
+        "lowerName": "pkg1_macosx_amd64_r002", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
         "arch": "amd64", "baseName": "pkg1", "os": "macosx", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg1.git", "revision":
-        "r300"}, "name": "pkg1_macosx_amd64_r300", "size": 28, "updated": "2021-05-10T23:02:37.966000+00:00"}]'
+        "r002"}, "name": "pkg1_macosx_amd64_r002", "size": 28, "updated": "2021-05-10T23:02:37.966000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -1499,16 +1499,16 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?package_name=pkg1_macosx_amd64_r300
+    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?package_name=pkg1_macosx_amd64_r002
   response:
     body:
       string: '[{"_id": "6099bb8d0657dd0639692bae", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:37.965000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8d0657dd0639692bad",
-        "lowerName": "pkg1_macosx_amd64_r300", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
+        "lowerName": "pkg1_macosx_amd64_r002", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
         "arch": "amd64", "baseName": "pkg1", "os": "macosx", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg1.git", "revision":
-        "r300"}, "name": "pkg1_macosx_amd64_r300", "size": 28, "updated": "2021-05-10T23:02:37.966000+00:00"}]'
+        "r002"}, "name": "pkg1_macosx_amd64_r002", "size": 28, "updated": "2021-05-10T23:02:37.966000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -1547,10 +1547,10 @@ interactions:
       string: '{"_id": "6099bb8d0657dd0639692bae", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:37.965000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8d0657dd0639692bad",
-        "lowerName": "pkg1_macosx_amd64_r300", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
+        "lowerName": "pkg1_macosx_amd64_r002", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
         "arch": "amd64", "baseName": "pkg1", "os": "macosx", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg1.git", "revision":
-        "r300"}, "name": "pkg1_macosx_amd64_r300", "size": 28, "updated": "2021-05-10T23:02:37.966000+00:00"}'
+        "r002"}, "name": "pkg1_macosx_amd64_r002", "size": 28, "updated": "2021-05-10T23:02:37.966000+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -1635,10 +1635,10 @@ interactions:
         {"_id": "6099bb8e0657dd0639692bb2", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:38.145000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8e0657dd0639692bb1",
-        "lowerName": "pkg2_linux_amd64_r301", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
+        "lowerName": "pkg2_linux_amd64_r003", "meta": {"app_id": "6099bb8d0657dd0639692ba7",
         "arch": "amd64", "baseName": "pkg2", "os": "linux", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg2.git", "revision":
-        "r301"}, "name": "pkg2_linux_amd64_r301", "size": 28, "updated": "2021-05-10T23:02:38.146000+00:00"}]'
+        "r003"}, "name": "pkg2_linux_amd64_r003", "size": 28, "updated": "2021-05-10T23:02:38.146000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -1710,7 +1710,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: GET
-    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?package_name=pkg1_macosx_amd64_r300
+    uri: http://localhost:8080/api/v1//app/6099bb8d0657dd0639692ba7/package?package_name=pkg1_macosx_amd64_r002
   response:
     body:
       string: '[]'

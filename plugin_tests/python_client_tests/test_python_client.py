@@ -42,7 +42,7 @@ PACKAGES = [
         'baseName': 'pkg1',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg1.git',
-        'revision': RELEASES[0]['revision']
+        'revision': DRAFT_RELEASES[0]['revision']
     },
     {
         'filepath': './file2.txt',
@@ -52,7 +52,7 @@ PACKAGES = [
         'baseName': 'pkg2',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg2.git',
-        'revision': RELEASES[0]['revision']
+        'revision': DRAFT_RELEASES[1]['revision']
     },
     {
         'filepath': './file3.txt',
@@ -137,7 +137,7 @@ def releases(server, spc):
 @pytest.fixture
 def packages(server, spc, releases, files):
 
-    def _upload(package, revision):
+    def _upload(package):
         pkg = spc.uploadApplicationPackage(
             filepath=package['filepath'],
             app_name=package['app_name'],
@@ -146,15 +146,11 @@ def packages(server, spc, releases, files):
             name=package['baseName'],
             repo_type=package['repo_type'],
             repo_url=package['repo_url'],
-            revision=revision)
+            revision=package['revision'])
         time.sleep(0.1)
         return pkg
 
-    yield [
-        _upload(PACKAGES[0], 'r300'),
-        _upload(PACKAGES[1], 'r301'),
-        _upload(PACKAGES[2], PACKAGES[2]['revision'])
-    ]
+    yield [_upload(PACKAGES[0]), _upload(PACKAGES[1]), _upload(PACKAGES[2])]
 
 
 @pytest.mark.vcr()
@@ -291,12 +287,12 @@ def testListDraftRelease(server, spc, apps, packages):
     # List all the draft releases using an offset
     draft_list = spc.listDraftRelease(app_name=apps[0]['name'], offset=1)
     assert len(draft_list) == 1
-    assert draft_list[0]['meta']['revision'] == 'r300'
+    assert draft_list[0]['meta']['revision'] == DRAFT_RELEASES[0]['revision']
 
     # List one draft release by revision
-    draft_list = spc.listDraftRelease(app_name=apps[0]['name'], revision='r300')
+    draft_list = spc.listDraftRelease(app_name=apps[0]['name'], revision=DRAFT_RELEASES[0]['revision'])
     assert len(draft_list) == 1
-    assert draft_list[0]['meta']['revision'] == 'r300'
+    assert draft_list[0]['meta']['revision'] == DRAFT_RELEASES[0]['revision']
 
 
 @pytest.mark.vcr()
@@ -312,15 +308,15 @@ def testDeleteDraftRelease(server, spc, apps, packages):
     draft_list = spc.listDraftRelease(app_name=apps[0]['name'])
     assert len(draft_list) == 2
 
-    deleted_draft = spc.deleteDraftRelease(app_name=apps[0]['name'], revision='r301')
+    deleted_draft = spc.deleteDraftRelease(app_name=apps[0]['name'], revision=DRAFT_RELEASES[1]['revision'])
     draft_list = spc.listDraftRelease(app_name=apps[0]['name'])
     assert len(draft_list) == 1
-    assert deleted_draft['meta']['revision'] == 'r301'
+    assert deleted_draft['meta']['revision'] == DRAFT_RELEASES[1]['revision']
 
     # Try to delete the same deleted draft release
     with pytest.raises(Exception) as excinfo:
-        spc.deleteDraftRelease(app_name=apps[0]['name'], revision='r301')
-    assert 'The release with the revision "%s" doesn\'t exist.' % 'r301' in str(excinfo.value)
+        spc.deleteDraftRelease(app_name=apps[0]['name'], revision=DRAFT_RELEASES[1]['revision'])
+    assert 'The release with the revision "%s" doesn\'t exist.' % DRAFT_RELEASES[1]['revision'] in str(excinfo.value)
 
 
 @pytest.mark.vcr()
@@ -335,7 +331,7 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         name=PACKAGES[0]['baseName'],
         repo_type=PACKAGES[0]['repo_type'],
         repo_url=PACKAGES[0]['repo_url'],
-        revision=releases[0]['meta']['revision'])
+        revision=PACKAGES[0]['revision'])
     assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
 
     # Upload
@@ -347,7 +343,7 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         name=PACKAGES[1]['baseName'],
         repo_type=PACKAGES[1]['repo_type'],
         repo_url=PACKAGES[1]['repo_url'],
-        revision=releases[0]['meta']['revision'])
+        revision=PACKAGES[1]['revision'])
     assert pkg2['meta']['baseName'] == PACKAGES[1]['baseName']
 
     # Download
@@ -383,7 +379,7 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         name=PACKAGES[0]['baseName'],
         repo_type=PACKAGES[0]['repo_type'],
         repo_url=PACKAGES[0]['repo_url'],
-        revision=releases[0]['meta']['revision'])
+        revision=PACKAGES[0]['revision'])
     assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
 
     # Download
