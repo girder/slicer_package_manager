@@ -39,40 +39,40 @@ PACKAGES = [
         'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'i386',
-        'revision': DRAFT_RELEASES[0]['revision'],
+        'baseName': 'pkg1',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg1.git',
-        'baseName': 'pkg1'
+        'revision': DRAFT_RELEASES[0]['revision']
     },
     {
         'filepath': './file2.txt',
         'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'amd64',
-        'revision': DRAFT_RELEASES[0]['revision'],
+        'baseName': 'pkg2',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg2.git',
-        'baseName': 'pkg2'
+        'revision': DRAFT_RELEASES[0]['revision']
     },
     {
         'filepath': './file3.txt',
         'app_name': APPS[0],
         'os': 'win',
         'arch': 'i386',
-        'revision': DRAFT_RELEASES[0]['revision'],
+        'baseName': 'pkg3',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg3.git',
-        'baseName': 'pkg3'
+        'revision': DRAFT_RELEASES[0]['revision']
     },
     {
         'filepath': './file4.txt',
         'app_name': APPS[0],
         'os': 'linux',
         'arch': 'amd64',
-        'revision': DRAFT_RELEASES[1]['revision'],
+        'baseName': 'pkg4',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg4.git',
-        'baseName': 'pkg4'
+        'revision': DRAFT_RELEASES[1]['revision']
     }
 ]
 
@@ -82,44 +82,44 @@ EXTENSIONS = [
         'app_name': APPS[0],
         'os': 'macosx',
         'arch': 'i386',
-        'revision': '000',
+        'baseName': 'ext1',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext1.git',
-        'baseName': 'ext1',
-        'app_revision': RELEASES[0]['revision']
+        'app_revision': RELEASES[0]['revision'],
+        'revision': '000'
     },
     {
         'filepath': './file2.txt',
         'app_name': APPS[0],
         'os': 'linux',
         'arch': 'amd64',
-        'revision': '001',
+        'baseName': 'ext2',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext2.git',
-        'baseName': 'ext2',
-        'app_revision': RELEASES[0]['revision']
+        'app_revision': RELEASES[0]['revision'],
+        'revision': '001'
     },
     {
         'filepath': './file3.txt',
         'app_name': APPS[0],
         'os': 'win',
         'arch': 'amd64',
-        'revision': '000',
+        'baseName': 'ext3',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext3.git',
-        'baseName': 'ext3',
-        'app_revision': DRAFT_RELEASES[0]['revision']
+        'app_revision': DRAFT_RELEASES[0]['revision'],
+        'revision': '000'
     },
     {
         'filepath': './file4.txt',
         'app_name': APPS[0],
         'os': 'linux',
         'arch': 'amd64',
-        'revision': '000',
+        'baseName': 'ext4',
         'repo_type': 'git',
         'repo_url': 'git@github.com:ext4.git',
-        'baseName': 'ext4',
-        'app_revision': DRAFT_RELEASES[1]['revision']
+        'app_revision': DRAFT_RELEASES[1]['revision'],
+        'revision': '000'
     }
 ]
 
