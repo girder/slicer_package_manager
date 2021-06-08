@@ -335,7 +335,7 @@ interactions:
         [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
         "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:02:36.305895+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "random description
-        1", "lowerName": "release", "meta": {"revision": "r000"}, "name": "Release",
+        1", "lowerName": "release", "meta": {"revision": "r000", "version": "1.0"}, "name": "Release",
         "parentCollection": "folder", "parentId": "6099bb8c0657dd0639692b96", "public":
         true, "size": 0, "updated": "2021-05-10T23:02:36.307462+00:00"}'
     headers:
@@ -493,7 +493,7 @@ interactions:
         [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
         "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:02:36.342135+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "random description
-        2", "lowerName": "release1", "meta": {"revision": "r001"}, "name": "Release1",
+        2", "lowerName": "release1", "meta": {"revision": "r001", "version": "2.0"}, "name": "Release1",
         "parentCollection": "folder", "parentId": "6099bb8c0657dd0639692b96", "public":
         true, "size": 0, "updated": "2021-05-10T23:02:36.346406+00:00"}'
     headers:
@@ -644,7 +644,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb8c0657dd0639692b96/package?os=macosx&arch=amd64&baseName=pkg1&repository_type=git&repository_url=git%40github.com%3Apkg1.git&revision=r002&description=&pre_release=False
+    uri: http://localhost:8080/api/v1//app/6099bb8c0657dd0639692b96/package?os=macosx&arch=amd64&baseName=pkg1&repository_type=git&repository_url=git%40github.com%3Apkg1.git&revision=r002&version=3.0&description=&pre_release=False
   response:
     body:
       string: '{"_id": "6099bb8c0657dd0639692b9d", "baseParentId": "609995b20657dd063969294d",
@@ -653,7 +653,7 @@ interactions:
         "lowerName": "pkg1_macosx_amd64_r002", "meta": {"app_id": "6099bb8c0657dd0639692b96",
         "arch": "amd64", "baseName": "pkg1", "os": "macosx", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg1.git", "revision":
-        "r002"}, "name": "pkg1_macosx_amd64_r002", "size": 0, "updated": "2021-05-10T23:02:36.388647+00:00"}'
+        "r002", "version": "3.0"}, "name": "pkg1_macosx_amd64_r002", "size": 0, "updated": "2021-05-10T23:02:36.388647+00:00"}'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -923,7 +923,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb8c0657dd0639692b96/package?os=linux&arch=amd64&baseName=pkg2&repository_type=git&repository_url=git%40github.com%3Apkg2.git&revision=r003&description=&pre_release=False
+    uri: http://localhost:8080/api/v1//app/6099bb8c0657dd0639692b96/package?os=linux&arch=amd64&baseName=pkg2&repository_type=git&repository_url=git%40github.com%3Apkg2.git&revision=r003&version=3.0&description=&pre_release=False
   response:
     body:
       string: '{"_id": "6099bb8c0657dd0639692ba1", "baseParentId": "609995b20657dd063969294d",
@@ -1202,7 +1202,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb8c0657dd0639692b96/package?os=win&arch=i386&baseName=pkg3&repository_type=git&repository_url=git%40github.com%3Apkg3.git&revision=r000&description=&pre_release=False
+    uri: http://localhost:8080/api/v1//app/6099bb8c0657dd0639692b96/package?os=win&arch=i386&baseName=pkg3&repository_type=git&repository_url=git%40github.com%3Apkg3.git&revision=r000&version=1.0&description=&pre_release=False
   response:
     body:
       string: '{"_id": "6099bb8c0657dd0639692ba4", "baseParentId": "609995b20657dd063969294d",
@@ -1210,7 +1210,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8c0657dd0639692b9a",
         "lowerName": "pkg3_win_i386_r000", "meta": {"app_id": "6099bb8c0657dd0639692b96",
         "arch": "i386", "baseName": "pkg3", "os": "win", "pre_release": false, "repository_type":
-        "git", "repository_url": "git@github.com:pkg3.git", "revision": "r000"}, "name":
+        "git", "repository_url": "git@github.com:pkg3.git", "revision": "r000", "version": "1.0"}, "name":
         "pkg3_win_i386_r000", "size": 0, "updated": "2021-05-10T23:02:36.760216+00:00"}'
     headers:
       Allow:
@@ -1412,7 +1412,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8c0657dd0639692b9a",
         "lowerName": "pkg3_win_i386_r000", "meta": {"app_id": "6099bb8c0657dd0639692b96",
         "arch": "i386", "baseName": "pkg3", "os": "win", "pre_release": false, "repository_type":
-        "git", "repository_url": "git@github.com:pkg3.git", "revision": "r000"}, "name":
+        "git", "repository_url": "git@github.com:pkg3.git", "revision": "r000", "version": "1.0"}, "name":
         "pkg3_win_i386_r000", "size": 28, "updated": "2021-05-10T23:02:36.760000+00:00"},
         {"_id": "6099bb8c0657dd0639692ba1", "baseParentId": "609995b20657dd063969294d",
         "baseParentType": "collection", "created": "2021-05-10T23:02:36.570000+00:00",
@@ -1427,7 +1427,7 @@ interactions:
         "lowerName": "pkg1_macosx_amd64_r002", "meta": {"app_id": "6099bb8c0657dd0639692b96",
         "arch": "amd64", "baseName": "pkg1", "os": "macosx", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg1.git", "revision":
-        "r002"}, "name": "pkg1_macosx_amd64_r002", "size": 28, "updated": "2021-05-10T23:02:36.388000+00:00"}]'
+        "r002", "version": "3.0"}, "name": "pkg1_macosx_amd64_r002", "size": 28, "updated": "2021-05-10T23:02:36.388000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT
@@ -1547,7 +1547,7 @@ interactions:
         [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
         "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:02:36.305000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "random description
-        1", "lowerName": "release", "meta": {"revision": "r000"}, "name": "Release",
+        1", "lowerName": "release", "meta": {"revision": "r000", "version": "1.0"}, "name": "Release",
         "parentCollection": "folder", "parentId": "6099bb8c0657dd0639692b96", "public":
         true, "size": 28, "updated": "2021-05-10T23:02:36.307000+00:00"}'
     headers:
@@ -1588,7 +1588,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb8c0657dd0639692b9a",
         "lowerName": "pkg3_win_i386_r000", "meta": {"app_id": "6099bb8c0657dd0639692b96",
         "arch": "i386", "baseName": "pkg3", "os": "win", "pre_release": false, "repository_type":
-        "git", "repository_url": "git@github.com:pkg3.git", "revision": "r000"}, "name":
+        "git", "repository_url": "git@github.com:pkg3.git", "revision": "r000", "version": "1.0"}, "name":
         "pkg3_win_i386_r000", "size": 28, "updated": "2021-05-10T23:02:36.760000+00:00"}]'
     headers:
       Allow:
@@ -1670,7 +1670,7 @@ interactions:
         "lowerName": "pkg1_macosx_amd64_r002", "meta": {"app_id": "6099bb8c0657dd0639692b96",
         "arch": "amd64", "baseName": "pkg1", "os": "macosx", "pre_release": false,
         "repository_type": "git", "repository_url": "git@github.com:pkg1.git", "revision":
-        "r002"}, "name": "pkg1_macosx_amd64_r002", "size": 28, "updated": "2021-05-10T23:02:36.388000+00:00"}]'
+        "r002", "version": "3.0"}, "name": "pkg1_macosx_amd64_r002", "size": 28, "updated": "2021-05-10T23:02:36.388000+00:00"}]'
     headers:
       Allow:
       - DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT

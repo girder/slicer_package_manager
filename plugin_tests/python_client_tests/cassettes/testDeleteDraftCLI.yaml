@@ -414,7 +414,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/609ef29cce219e6bff5148f2/package?os=macosx&arch=i386&baseName=pkg1&repository_type=git&repository_url=git%40github.com%3Apkg1.git&revision=r002&description=
+    uri: http://localhost:8080/api/v1//app/609ef29cce219e6bff5148f2/package?os=macosx&arch=i386&baseName=pkg1&repository_type=git&repository_url=git%40github.com%3Apkg1.git&revision=r002&version=3.0&description=
   response:
     body:
       string: '{"_id": "609ef29cce219e6bff5148f7", "baseParentId": "609995b20657dd063969294d",
@@ -422,7 +422,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "609ef29cce219e6bff5148f6",
         "lowerName": "pkg1_macosx_i386_r002", "meta": {"app_id": "609ef29cce219e6bff5148f2",
         "arch": "i386", "baseName": "pkg1", "os": "macosx", "repository_type": "git",
-        "repository_url": "git@github.com:pkg1.git", "revision": "r002"}, "name":
+        "repository_url": "git@github.com:pkg1.git", "revision": "r002", "version": "3.0"}, "name":
         "pkg1_macosx_i386_r002", "size": 0, "updated": "2021-05-14T21:58:52.770271+00:00"}'
     headers:
       Allow:
@@ -736,7 +736,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/609ef29cce219e6bff5148f2/package?os=macosx&arch=amd64&baseName=pkg2&repository_type=git&repository_url=git%40github.com%3Apkg2.git&revision=r002&description=
+    uri: http://localhost:8080/api/v1//app/609ef29cce219e6bff5148f2/package?os=macosx&arch=amd64&baseName=pkg2&repository_type=git&repository_url=git%40github.com%3Apkg2.git&revision=r002&version=3.0&description=
   response:
     body:
       string: '{"_id": "609ef29dce219e6bff5148fa", "baseParentId": "609995b20657dd063969294d",
@@ -744,7 +744,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "609ef29cce219e6bff5148f6",
         "lowerName": "pkg2_macosx_amd64_r002", "meta": {"app_id": "609ef29cce219e6bff5148f2",
         "arch": "amd64", "baseName": "pkg2", "os": "macosx", "repository_type": "git",
-        "repository_url": "git@github.com:pkg2.git", "revision": "r002"}, "name":
+        "repository_url": "git@github.com:pkg2.git", "revision": "r002", "version": "3.0"}, "name":
         "pkg2_macosx_amd64_r002", "size": 0, "updated": "2021-05-14T21:58:53.100981+00:00"}'
     headers:
       Allow:
@@ -1058,7 +1058,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/609ef29cce219e6bff5148f2/package?os=win&arch=i386&baseName=pkg3&repository_type=git&repository_url=git%40github.com%3Apkg3.git&revision=r002&description=
+    uri: http://localhost:8080/api/v1//app/609ef29cce219e6bff5148f2/package?os=win&arch=i386&baseName=pkg3&repository_type=git&repository_url=git%40github.com%3Apkg3.git&revision=r002&version=3.0&description=
   response:
     body:
       string: '{"_id": "609ef29dce219e6bff5148fd", "baseParentId": "609995b20657dd063969294d",
@@ -1066,7 +1066,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "609ef29cce219e6bff5148f6",
         "lowerName": "pkg3_win_i386_r002", "meta": {"app_id": "609ef29cce219e6bff5148f2",
         "arch": "i386", "baseName": "pkg3", "os": "win", "repository_type": "git",
-        "repository_url": "git@github.com:pkg3.git", "revision": "r002"}, "name":
+        "repository_url": "git@github.com:pkg3.git", "revision": "r002", "version": "3.0"}, "name":
         "pkg3_win_i386_r002", "size": 0, "updated": "2021-05-14T21:58:53.436467+00:00"}'
     headers:
       Allow:
@@ -1380,7 +1380,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/609ef29cce219e6bff5148f2/package?os=linux&arch=amd64&baseName=pkg4&repository_type=git&repository_url=git%40github.com%3Apkg4.git&revision=r003&description=
+    uri: http://localhost:8080/api/v1//app/609ef29cce219e6bff5148f2/package?os=linux&arch=amd64&baseName=pkg4&repository_type=git&repository_url=git%40github.com%3Apkg4.git&revision=r003&version=3.0&description=
   response:
     body:
       string: '{"_id": "609ef29dce219e6bff514901", "baseParentId": "609995b20657dd063969294d",
@@ -1388,7 +1388,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "609ef29dce219e6bff514900",
         "lowerName": "pkg4_linux_amd64_r003", "meta": {"app_id": "609ef29cce219e6bff5148f2",
         "arch": "amd64", "baseName": "pkg4", "os": "linux", "repository_type": "git",
-        "repository_url": "git@github.com:pkg4.git", "revision": "r003"}, "name":
+        "repository_url": "git@github.com:pkg4.git", "revision": "r003", "version": "3.0"}, "name":
         "pkg4_linux_amd64_r003", "size": 0, "updated": "2021-05-14T21:58:53.815017+00:00"}'
     headers:
       Allow:
@@ -1673,7 +1673,7 @@ interactions:
         [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
         "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-14T21:58:52.766000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "r002",
-        "meta": {"revision": "r002"}, "name": "r002", "parentCollection": "folder",
+        "meta": {"revision": "r002", "version": "3.0"}, "name": "r002", "parentCollection": "folder",
         "parentId": "609ef29cce219e6bff5148f3", "public": true, "size": 84, "updated":
         "2021-05-14T21:58:52.767000+00:00"}]'
     headers:
@@ -1715,7 +1715,7 @@ interactions:
         [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
         "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-14T21:58:52.766000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "r002",
-        "meta": {"revision": "r002"}, "name": "r002", "parentCollection": "folder",
+        "meta": {"revision": "r002", "version": "3.0"}, "name": "r002", "parentCollection": "folder",
         "parentId": "609ef29cce219e6bff5148f3", "public": true, "size": 84, "updated":
         "2021-05-14T21:58:52.767000+00:00"}'
     headers:

@@ -414,7 +414,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb6b0657dd0639692ad4/package?os=macosx&arch=i386&baseName=pkg1&repository_type=git&repository_url=git%40github.com%3Apkg1.git&revision=r002&description=
+    uri: http://localhost:8080/api/v1//app/6099bb6b0657dd0639692ad4/package?os=macosx&arch=i386&baseName=pkg1&repository_type=git&repository_url=git%40github.com%3Apkg1.git&revision=r002&version=3.0&description=
   response:
     body:
       string: '{"_id": "6099bb6b0657dd0639692ad9", "baseParentId": "609995b20657dd063969294d",
@@ -422,7 +422,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb6b0657dd0639692ad8",
         "lowerName": "pkg1_macosx_i386_r002", "meta": {"app_id": "6099bb6b0657dd0639692ad4",
         "arch": "i386", "baseName": "pkg1", "os": "macosx", "repository_type": "git",
-        "repository_url": "git@github.com:pkg1.git", "revision": "r002"}, "name":
+        "repository_url": "git@github.com:pkg1.git", "revision": "r002", "version": "3.0"}, "name":
         "pkg1_macosx_i386_r002", "size": 0, "updated": "2021-05-10T23:02:03.709822+00:00"}'
     headers:
       Allow:
@@ -736,7 +736,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb6b0657dd0639692ad4/package?os=macosx&arch=amd64&baseName=pkg2&repository_type=git&repository_url=git%40github.com%3Apkg2.git&revision=r002&description=
+    uri: http://localhost:8080/api/v1//app/6099bb6b0657dd0639692ad4/package?os=macosx&arch=amd64&baseName=pkg2&repository_type=git&repository_url=git%40github.com%3Apkg2.git&revision=r002&version=3.0&description=
   response:
     body:
       string: '{"_id": "6099bb6c0657dd0639692adc", "baseParentId": "609995b20657dd063969294d",
@@ -744,7 +744,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb6b0657dd0639692ad8",
         "lowerName": "pkg2_macosx_amd64_r002", "meta": {"app_id": "6099bb6b0657dd0639692ad4",
         "arch": "amd64", "baseName": "pkg2", "os": "macosx", "repository_type": "git",
-        "repository_url": "git@github.com:pkg2.git", "revision": "r002"}, "name":
+        "repository_url": "git@github.com:pkg2.git", "revision": "r002", "version": "3.0"}, "name":
         "pkg2_macosx_amd64_r002", "size": 0, "updated": "2021-05-10T23:02:04.042832+00:00"}'
     headers:
       Allow:
@@ -1058,7 +1058,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb6b0657dd0639692ad4/package?os=win&arch=i386&baseName=pkg3&repository_type=git&repository_url=git%40github.com%3Apkg3.git&revision=r002&description=
+    uri: http://localhost:8080/api/v1//app/6099bb6b0657dd0639692ad4/package?os=win&arch=i386&baseName=pkg3&repository_type=git&repository_url=git%40github.com%3Apkg3.git&revision=r002&version=3.0&description=
   response:
     body:
       string: '{"_id": "6099bb6c0657dd0639692adf", "baseParentId": "609995b20657dd063969294d",
@@ -1066,7 +1066,7 @@ interactions:
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "folderId": "6099bb6b0657dd0639692ad8",
         "lowerName": "pkg3_win_i386_r002", "meta": {"app_id": "6099bb6b0657dd0639692ad4",
         "arch": "i386", "baseName": "pkg3", "os": "win", "repository_type": "git",
-        "repository_url": "git@github.com:pkg3.git", "revision": "r002"}, "name":
+        "repository_url": "git@github.com:pkg3.git", "revision": "r002", "version": "3.0"}, "name":
         "pkg3_win_i386_r002", "size": 0, "updated": "2021-05-10T23:02:04.371059+00:00"}'
     headers:
       Allow:

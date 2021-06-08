@@ -15,21 +15,25 @@ RELEASES = [
     {
         'app_name': APPS[0],
         'name': 'Release',
-        'revision': 'r000'
+        'revision': 'r000',
+        'version': '1.0',
     },
     {
         'app_name': APPS[0],
         'name': 'Release1',
-        'revision': 'r001'
+        'revision': 'r001',
+        'version': '2.0',
     }
 ]
 
 DRAFT_RELEASES = [
     {
-        'revision': 'r002'
+        'revision': 'r002',
+        'version': '3.0'
     },
     {
-        'revision': 'r003'
+        'revision': 'r003',
+        'version': '3.0'
     }
 ]
 
@@ -42,7 +46,8 @@ PACKAGES = [
         'baseName': 'pkg1',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg1.git',
-        'revision': DRAFT_RELEASES[0]['revision']
+        'revision': DRAFT_RELEASES[0]['revision'],
+        'version': DRAFT_RELEASES[0]['version']
     },
     {
         'filepath': './file2.txt',
@@ -52,7 +57,8 @@ PACKAGES = [
         'baseName': 'pkg2',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg2.git',
-        'revision': DRAFT_RELEASES[0]['revision']
+        'revision': DRAFT_RELEASES[0]['revision'],
+        'version': DRAFT_RELEASES[0]['version']
     },
     {
         'filepath': './file3.txt',
@@ -62,7 +68,8 @@ PACKAGES = [
         'baseName': 'pkg3',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg3.git',
-        'revision': DRAFT_RELEASES[0]['revision']
+        'revision': DRAFT_RELEASES[0]['revision'],
+        'version': DRAFT_RELEASES[0]['version']
     },
     {
         'filepath': './file4.txt',
@@ -72,7 +79,8 @@ PACKAGES = [
         'baseName': 'pkg4',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg4.git',
-        'revision': DRAFT_RELEASES[1]['revision']
+        'revision': DRAFT_RELEASES[1]['revision'],
+        'version': DRAFT_RELEASES[1]['version']
     }
 ]
 
@@ -144,6 +152,7 @@ def _cli_upload_package(package):
                 '--arch', package['arch'],
                 '--name', package['baseName'],
                 '--revision', package['revision'],
+                '--version', package['version'],
                 '--repo_type', package['repo_type'],
                 '--repo_url', package['repo_url']])
     return _cli_runner_invoke(main, cmd)
@@ -375,13 +384,16 @@ def testListPackagesCLI(server, packages):
     assert res.exit_code == 0
 
     name = getAppPkgName(PACKAGES[0])
-    assert re.search(r"%s *%s *%s *\w{24}" % (PACKAGES[0]['revision'], name, 'draft'), res.output)
+    assert re.search(r"%s *%s *%s *%s *\w{24}" % (
+        PACKAGES[0]['revision'], PACKAGES[0]['version'], name, 'draft'), res.output)
 
     name = getAppPkgName(PACKAGES[1])
-    assert re.search(r"%s *%s *%s *\w{24}" % (PACKAGES[1]['revision'], name, 'draft'), res.output)
+    assert re.search(r"%s *%s *%s *%s *\w{24}" % (
+        PACKAGES[1]['revision'], PACKAGES[1]['version'], name, 'draft'), res.output)
 
     name = getAppPkgName(PACKAGES[2])
-    assert re.search(r"%s *%s *%s *\w{24}" % (PACKAGES[2]['revision'], name, 'draft'), res.output)
+    assert re.search(r"%s *%s *%s *%s *\w{24}" % (
+        PACKAGES[2]['revision'], PACKAGES[2]['version'], name, 'draft'), res.output)
 
 
 @pytest.mark.vcr()

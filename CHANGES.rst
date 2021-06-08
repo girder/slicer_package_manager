@@ -5,6 +5,14 @@ Release Notes
 This is the list of **Slicer Package Manager** changes between each release. For full
 details, see the commit logs at https://github.com/girder/slicer_package_manager
 
+Next Release
+============
+
+New Features
+------------
+
+* Require version information to be specified when uploading application packages. See :issue:`97`.
+
 
 0.4.0
 =====
@@ -37,11 +45,11 @@ Server
 * Update implementation of ``GET /app/:app_id/package`` endpoint to properly handle
   ``limit=0`` parameter. See :issue:`94`.
 
-
 Documentation
 -------------
 
 * Add documentation to :func:`slicer_package_manager.utilities.getOrCreateReleaseFolder`.
+
 
 0.2.0
 =====

@@ -14,22 +14,26 @@ RELEASES = [
         'app_name': APPS[0],
         'name': 'Release',
         'revision': 'r000',
+        'version': '1.0',
         'desc': 'random description 1',
     },
     {
         'app_name': APPS[0],
         'name': 'Release1',
         'revision': 'r001',
+        'version': '2.0',
         'desc': 'random description 2',
     }
 ]
 
 DRAFT_RELEASES = [
     {
-        'revision': 'r002'
+        'revision': 'r002',
+        'version': '3.0'
     },
     {
-        'revision': 'r003'
+        'revision': 'r003',
+        'version': '3.0'
     }
 ]
 
@@ -42,7 +46,8 @@ PACKAGES = [
         'baseName': 'pkg1',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg1.git',
-        'revision': DRAFT_RELEASES[0]['revision']
+        'revision': DRAFT_RELEASES[0]['revision'],
+        'version': DRAFT_RELEASES[0]['version']
     },
     {
         'filepath': './file2.txt',
@@ -52,7 +57,8 @@ PACKAGES = [
         'baseName': 'pkg2',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg2.git',
-        'revision': DRAFT_RELEASES[1]['revision']
+        'revision': DRAFT_RELEASES[1]['revision'],
+        'version': DRAFT_RELEASES[1]['version']
     },
     {
         'filepath': './file3.txt',
@@ -62,7 +68,8 @@ PACKAGES = [
         'baseName': 'pkg3',
         'repo_type': 'git',
         'repo_url': 'git@github.com:pkg3.git',
-        'revision': RELEASES[0]['revision']
+        'revision': RELEASES[0]['revision'],
+        'version': RELEASES[0]['version']
     }
 ]
 
@@ -146,7 +153,8 @@ def packages(server, spc, releases, files):
             name=package['baseName'],
             repo_type=package['repo_type'],
             repo_url=package['repo_url'],
-            revision=package['revision'])
+            revision=package['revision'],
+            version=package['version'])
         time.sleep(0.1)
         return pkg
 
@@ -331,7 +339,8 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         name=PACKAGES[0]['baseName'],
         repo_type=PACKAGES[0]['repo_type'],
         repo_url=PACKAGES[0]['repo_url'],
-        revision=PACKAGES[0]['revision'])
+        revision=PACKAGES[0]['revision'],
+        version=PACKAGES[0]['version'])
     assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
 
     # Upload
@@ -343,7 +352,8 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         name=PACKAGES[1]['baseName'],
         repo_type=PACKAGES[1]['repo_type'],
         repo_url=PACKAGES[1]['repo_url'],
-        revision=PACKAGES[1]['revision'])
+        revision=PACKAGES[1]['revision'],
+        version=PACKAGES[1]['version'])
     assert pkg2['meta']['baseName'] == PACKAGES[1]['baseName']
 
     # Download
@@ -379,7 +389,8 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         name=PACKAGES[0]['baseName'],
         repo_type=PACKAGES[0]['repo_type'],
         repo_url=PACKAGES[0]['repo_url'],
-        revision=PACKAGES[0]['revision'])
+        revision=PACKAGES[0]['revision'],
+        version=PACKAGES[0]['version'])
     assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
 
     # Download

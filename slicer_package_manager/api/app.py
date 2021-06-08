@@ -817,6 +817,7 @@ class App(Resource):
         .param('repository_type', 'The type of the repository (svn, git).')
         .param('repository_url', 'The url of the repository.')
         .param('revision', 'The revision of the application')
+        .param('version', 'The version of the application')
         .param('description', 'Text describing the package.', required=False)
         .param('pre_release', 'Boolean to specify if the package is ready to be distributed',
                dataType='boolean', required=False)
@@ -824,7 +825,7 @@ class App(Resource):
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
-                              revision, description, pre_release):
+                              revision, version, description, pre_release):
         """
         Create or update a package item.
 
@@ -842,6 +843,7 @@ class App(Resource):
         :param repository_type: The type of repository (github, gitlab, ...).
         :param repository_url: The Url of the repository.
         :param revision: The revision of the application.
+        :param version: The version of the application.
         :param description: Description of the application package
         :param pre_release: Boolean to specify if the package is ready to be distributed
         :return: The created/updated package.
@@ -861,6 +863,7 @@ class App(Resource):
             'repository_type': repository_type,
             'repository_url': repository_url,
             'revision': revision,
+            'version': version,
             'pre_release': pre_release
         }
 
