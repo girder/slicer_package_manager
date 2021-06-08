@@ -587,6 +587,9 @@ def _cli_deleteExtension(sc, *args, **kwargs):
 @click.option('--revision', prompt=True,
               help='Revision of the application',
               cls=_AdvancedOption)
+@click.option('--version', prompt=True,
+              help='The version of the application',
+              cls=_AdvancedOption)
 @click.option('--coll_id', default=None, envvar='COLLECTION_ID',
               help='ID of an existing collection',
               show_default=True,
@@ -650,6 +653,9 @@ def _cli_downloadApplicationPackage(sc, *args, **kwargs):
 @click.option('--revision', default=None,
               help='The revision of the application',
               cls=_AdvancedOption)
+@click.option('--version', default=None,
+              help='The version of the application',
+              cls=_AdvancedOption)
 @click.option('--release', default=None,
               help='List all packages within the release',
               cls=_AdvancedOption)
@@ -673,11 +679,11 @@ def _cli_listApplicationPackage(sc, *args, **kwargs):
                     break
             if not release_name:
                 release_name = Constant.DRAFT_RELEASE_NAME
-            table.append([pkg['meta']['revision'], pkg['name'], release_name, pkg['_id']])
+            table.append([pkg['meta']['revision'], pkg['meta']['version'], pkg['name'], release_name, pkg['_id']])
         print(tabulate(
             table,
-            headers=['APP REVISION', 'NAME', 'RELEASE NAME', 'PACKAGE ID'],
-            tablefmt="simple", numalign="left"))
+            headers=['APP REVISION', 'VERSION', 'NAME', 'RELEASE NAME', 'PACKAGE ID'],
+            tablefmt="simple", numalign="left", floatfmt=".1f"))
     except SlicerPackageManagerError as exc_info:
         print(exc_info)
 

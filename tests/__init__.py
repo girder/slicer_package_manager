@@ -89,6 +89,7 @@ packages = {
             'repository_type': 'gitlab',
             'repository_url': 'https://slicer4.com',
             'revision': '0005',
+            'version': '0.1.0',
         }
     },
 
@@ -100,6 +101,7 @@ packages = {
             'repository_type': 'gitlab',
             'repository_url': 'https://slicer4.com',
             'revision': '0000',
+            'version': '0.2.0',
         }
     },
 
@@ -111,6 +113,7 @@ packages = {
             'repository_type': 'git',
             'repository_url': 'git://slicer4.com',
             'revision': '0000',
+            'version': '0.3.0',
         }
     }
 

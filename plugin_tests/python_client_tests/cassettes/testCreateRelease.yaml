@@ -335,7 +335,7 @@ interactions:
         [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
         "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:02:29.090840+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "release",
-        "meta": {"revision": "r000"}, "name": "Release", "parentCollection": "folder",
+        "meta": {"revision": "r000", "version": "1.0"}, "name": "Release", "parentCollection": "folder",
         "parentId": "6099bb850657dd0639692b55", "public": true, "size": 0, "updated":
         "2021-05-10T23:02:29.092311+00:00"}'
     headers:
@@ -457,7 +457,7 @@ interactions:
         [{"flags": [], "id": "5f081a506e4717a84202fd10", "level": 2}]}, "baseParentId":
         "609995b20657dd063969294d", "baseParentType": "collection", "created": "2021-05-10T23:02:29.090000+00:00",
         "creatorId": "5f081a506e4717a84202fd10", "description": "", "lowerName": "release",
-        "meta": {"revision": "r000"}, "name": "Release", "parentCollection": "folder",
+        "meta": {"revision": "r000", "version": "1.0"}, "name": "Release", "parentCollection": "folder",
         "parentId": "6099bb850657dd0639692b55", "public": true, "size": 0, "updated":
         "2021-05-10T23:02:29.092000+00:00"}'
     headers:

@@ -414,7 +414,7 @@ class SlicerPackageClient(GirderClient):
         return self._deletePackage('extension', app_name, id_or_name, coll_id)
 
     def uploadApplicationPackage(self, filepath, app_name, pkg_os, arch, name, repo_type,
-                                 repo_url, revision, coll_id=None, desc='', pre_release=False):
+                                 repo_url, revision, version, coll_id=None, desc='', pre_release=False):
         """
         Upload an application package by providing a path to the file.
         It can also be used to update an existing one.
@@ -427,6 +427,7 @@ class SlicerPackageClient(GirderClient):
         :param repo_type: Type of the repository
         :param repo_url: Url of the repository
         :param revision: The revision of the application
+        :param version: The version of the application
         :param coll_id: Collection ID
         :param desc: The description of the application package
         :param pre_release: Boolean to specify if the package is ready to be distributed
@@ -452,6 +453,7 @@ class SlicerPackageClient(GirderClient):
                 'repository_type': repo_type,
                 'repository_url': repo_url,
                 'revision': revision,
+                'version': version,
                 'description': desc,
                 'pre_release': pre_release
             })
@@ -490,6 +492,7 @@ class SlicerPackageClient(GirderClient):
                 'repository_type': repo_type,
                 'repository_url': repo_url,
                 'revision': revision,
+                'version': version,
                 'description': desc
             })
 
@@ -520,7 +523,7 @@ class SlicerPackageClient(GirderClient):
                                      dir_path=dir_path, coll_id=coll_id)
 
     def listApplicationPackage(self, app_name, coll_id=None, name=None, pkg_os=None, arch=None,
-                               revision=None, release=None, limit=Constant.DEFAULT_LIMIT):
+                               revision=None, version=None, release=None, limit=Constant.DEFAULT_LIMIT):
         """
         List the application packages filtered by some optional parameters (os, arch, ...).
 
@@ -536,6 +539,7 @@ class SlicerPackageClient(GirderClient):
         :param pkg_os: The target operating system of the package
         :param arch: The os chip architecture
         :param revision: Revision of the application
+        :param version: Version of the application
         :param release: Name or ID of the release
         :param limit: Limit of the number of applications listed (see :const:`Constant.DEFAULT_LIMIT`)
         :return: A list of application package filtered by optional parameters
@@ -551,6 +555,7 @@ class SlicerPackageClient(GirderClient):
             'arch': arch,
             'baseName': name,
             'revision': revision,
+            'version': version,
             'release_id_or_name': release,
             'limit': limit,
             'sort': 'created',
