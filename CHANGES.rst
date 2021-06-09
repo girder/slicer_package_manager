@@ -13,6 +13,11 @@ New Features
 
 * Require version information to be specified when uploading application packages. See :issue:`97`.
 
+Server
+^^^^^^
+
+* Add :func:`slicer_package_manager.utilities.getReleaseFolder`.
+
 
 0.4.0
 =====

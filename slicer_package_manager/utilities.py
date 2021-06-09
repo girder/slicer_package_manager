@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from girder.constants import AccessType
 from girder.models.folder import Folder
 from girder.utility.progress import ProgressContext
 
@@ -61,6 +62,57 @@ def getOrCreateReleaseFolder(application, user, app_revision):
         release_folder = revision_folder
 
     return release_folder
+
+
+def getReleaseFolder(item):
+    """
+    Get item release folder.
+
+    The release folder is either the one the with name matching
+    :const:`constants.DRAFT_RELEASE_NAME` (e,g ``draft``) or the release
+    folder (e.g ``1.0``).
+
+    ::
+
+    Applications
+        |--- packages
+        |        |----- Slicer
+        |        |         |----- 1.0
+        |        |         |        |---- Package1
+        .        .         .        .
+        |        |         |        |---- extensions
+        |        |         |        |         |---- Extension1
+        .        .         .        .         .
+        .        .         .
+        .        .         .
+        |        |         |----- draft
+        |        |         |        |--- r100
+        |        |         |        |      |---- Package1
+        .        .         .        .      .
+        |        |         |        |      |----- extensions
+        |        |         |        |      |          |---- Extension1
+
+    :param item: A package or extension instance.
+    :return: The parent release folder or None.
+    """
+    if not isSlicerPackages(item):
+        return None
+
+    folder = Folder().load(item['folderId'], level=AccessType.READ)
+
+    # Check if item folder is "extensions". If yes, get parent folder.
+    if folder['name'] == constants.EXTENSIONS_FOLDER_NAME:
+        extensions_folder = folder
+        folder = Folder().load(extensions_folder['parentId'], level=AccessType.READ)
+
+    package_folder = folder
+
+    # Check if grand parent folder is "draft". If yes return it.
+    grantparent_folder = Folder().load(package_folder['parentId'], level=AccessType.READ)
+    if grantparent_folder['name'] == constants.DRAFT_RELEASE_NAME:
+        return grantparent_folder
+    else:
+        return package_folder
 
 
 def deleteFolder(folder, progress, user):

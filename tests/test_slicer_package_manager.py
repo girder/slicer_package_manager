@@ -12,7 +12,7 @@ from girder.models.user import User
 from pytest_girder.assertions import assertStatusOk
 from pytest_girder.utils import getResponseBody
 
-from slicer_package_manager import constants
+from slicer_package_manager import constants, utilities
 
 from . import computeFileChecksum, computeContentChecksum, extensions, FIXTURE_DIR, packages, expectedDownloadStats
 
@@ -994,6 +994,58 @@ def testDownloadStats(server, fsAssetstore, external_data):
     )
     assertStatusOk(resp)
     assert resp.json == expectedStats
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testGetReleaseFolder(server):
+    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+
+    # Create an application package in the release "_release"
+    release_package = _createOrUpdatePackage(
+        server,
+        'package',
+        _packages['package1']['meta'],
+        _user=_user,
+        _app=_app
+    )
+    assert release_package['name'] == _packages['package1']['name']
+    assert ObjectId(release_package['folderId']) == _release['_id']
+    assert utilities.getReleaseFolder(release_package)['_id'] == _release['_id']
+
+    # Create an application package in the "draft" release
+    draft_package = _createOrUpdatePackage(
+        server,
+        'package',
+        _packages['package2']['meta'],
+        _user=_user,
+        _app=_app
+    )
+    assert draft_package['name'] == _packages['package2']['name']
+    assert utilities.getReleaseFolder(draft_package)['name'] == constants.DRAFT_RELEASE_NAME
+
+    # Create an extension in the release "_release"
+    release_extension = _createOrUpdatePackage(
+        server,
+        'extension',
+        _extensions['extension1']['meta'],
+        _user=_user,
+        _app=_app
+    )
+    assert release_extension['name'] == _extensions['extension1']['name']
+    extensions_folder = Folder().load(release_extension['folderId'], user=_user)
+    assert ObjectId(extensions_folder['parentId']) == _release['_id']
+    assert utilities.getReleaseFolder(release_extension)['_id'] == _release['_id']
+
+    # Create an extension in the "draft" release
+    draft_extension = _createOrUpdatePackage(
+        server,
+        'extension',
+        _extensions['extension2']['meta'],
+        _user=_user,
+        _app=_app
+    )
+    assert draft_extension['name'] == _extensions['extension2']['name']
+    assert utilities.getReleaseFolder(draft_extension)['name'] == constants.DRAFT_RELEASE_NAME
 
 
 def _createApplicationCheck(server, appName, appDescription, collId=None,
