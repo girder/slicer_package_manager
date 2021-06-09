@@ -16,7 +16,8 @@ New Features
 Server
 ^^^^^^
 
-* Add :func:`slicer_package_manager.utilities.getReleaseFolder`.
+* Add :func:`slicer_package_manager.utilities.getReleaseFolder` and simplify update of ``downloadStats``
+  release metadata to use the new function.
 
 
 0.4.0

@@ -13,38 +13,44 @@ del get_versions
 
 
 def _onDownloadFileComplete(event):
+    """
+    Increment download count associated with item revision associated with the event.
+
+    Count is stored in the ``downloadStats`` metadata organized as a json document
+    set in the parent release folder.
+
+    See :func:`utilities.getReleaseFolder()`.
+    """
     item = Item().load(event.info['file']['itemId'], level=AccessType.READ)
+
+    if not utilities.isSlicerPackages(item):
+        return
+
+    release = utilities.getReleaseFolder(item)
+    if release is None:
+        return
+
     meta = item['meta']
-    if utilities.isSlicerPackages(item):
-        item_folder = Folder().load(item['folderId'], level=AccessType.READ)
-        release = Folder().load(item_folder['parentId'], level=AccessType.READ)
-        if item_folder['name'] == constants.EXTENSIONS_FOLDER_NAME:
-            release = Folder().load(release['parentId'], level=AccessType.READ)
-            if release['name'] == constants.DRAFT_RELEASE_NAME:
-                Folder().increment(
-                    query={'_id': release['_id']},
-                    field='meta.downloadStats.{app_revision}.{folder_name}.{baseName}.{os}.{arch}'.format(
-                        folder_name=constants.EXTENSIONS_FOLDER_NAME, **meta),
-                    amount=1)
-            else:
-                Folder().increment(
-                    query={'_id': item_folder['parentId']},
-                    field='meta.downloadStats.{folder_name}.{baseName}.{os}.{arch}'.format(
-                        folder_name=constants.EXTENSIONS_FOLDER_NAME, **meta),
-                    amount=1)
+    is_draft_release = release['name'] == constants.DRAFT_RELEASE_NAME
+    is_extension_item = 'app_revision' in meta
+
+    if is_extension_item:
+        folder_name = constants.EXTENSIONS_FOLDER_NAME
+        if is_draft_release:
+            field_template = 'meta.downloadStats.{app_revision}.{folder_name}.{baseName}.{os}.{arch}'
         else:
-            if release['name'] == constants.DRAFT_RELEASE_NAME:
-                Folder().increment(
-                    query={'_id': release['_id']},
-                    field='meta.downloadStats.{revision}.{folder_name}.{os}.{arch}'.format(
-                        folder_name='applications', **meta),
-                    amount=1)
-            else:
-                Folder().increment(
-                    query={'_id': item_folder['_id']},
-                    field='meta.downloadStats.{folder_name}.{os}.{arch}'.format(
-                        folder_name='applications', **meta),
-                    amount=1)
+            field_template = 'meta.downloadStats.{folder_name}.{baseName}.{os}.{arch}'
+    else:
+        folder_name = 'applications'
+        if is_draft_release:
+            field_template = 'meta.downloadStats.{revision}.{folder_name}.{os}.{arch}'
+        else:
+            field_template = 'meta.downloadStats.{folder_name}.{os}.{arch}'
+
+    Folder().increment(
+        query={'_id': release['_id']},
+        field=field_template.format(folder_name=folder_name, **meta),
+        amount=1)
 
 
 class GirderPlugin(plugin.GirderPlugin):
