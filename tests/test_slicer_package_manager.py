@@ -67,26 +67,15 @@ def _initialize():
         parentType='Folder',
         public=True,
         creator=_user)
-
     _release = Folder().setMetadata(_release, {'revision': '0005'})
+
     _extensions = EXTENSIONS
-    _extensions['extension1']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension1']['meta'])
-    _extensions['extension2']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension2']['meta'])
-    _extensions['extension3']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension3']['meta'])
-    _extensions['extension4']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension4']['meta'])
-    _extensions['extension5']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension5']['meta'])
+    for extension in _extensions:
+        extension['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(**extension['meta'])
+
     _packages = PACKAGES
-    _packages['package1']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
-        **_packages['package1']['meta'])
-    _packages['package2']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
-        **_packages['package2']['meta'])
-    _packages['package3']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
-        **_packages['package3']['meta'])
+    for package in _packages:
+        package['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(**package['meta'])
 
     return _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages
 
@@ -364,21 +353,21 @@ def testDeleteRevisionRelease(server, fsAssetstore, external_data):
     extension1 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension3']['meta'],
+        _extensions[2]['meta'],
         external_data.join('extension3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension1['name'] == _extensions['extension3']['name']
+    assert extension1['name'] == _extensions[2]['name']
     extension2 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension4']['meta'],
+        _extensions[3]['meta'],
         external_data.join('extension4.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension2['name'] == _extensions['extension4']['name']
+    assert extension2['name'] == _extensions[3]['name']
 
     resp = server.request(
         path='/app/%s/draft' % _app['_id'],
@@ -392,7 +381,7 @@ def testDeleteRevisionRelease(server, fsAssetstore, external_data):
     # Delete by Name the revision release '0001' in the "draft" release
     resp = server.request(
         path='/app/%s/release/%s' %
-             (_app['_id'], _extensions['extension4']['meta']['app_revision']),
+             (_app['_id'], _extensions[3]['meta']['app_revision']),
         method='DELETE',
         user=_user
     )
@@ -420,44 +409,44 @@ def testUploadAndDownloadExtension(server, fsAssetstore, external_data):
     extension1 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension1']['meta'],
+        _extensions[0]['meta'],
         external_data.join('extension1.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension1['name'] == _extensions['extension1']['name']
+    assert extension1['name'] == _extensions[0]['name']
     extensions_folder = Folder().load(extension1['folderId'], user=_user)
     assert ObjectId(extensions_folder['parentId']) == _release['_id']
     # Create an other extension in the "draft" release
     extension2 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension2']['meta'],
+        _extensions[1]['meta'],
         external_data.join('extension2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension2['name'] == _extensions['extension2']['name']
+    assert extension2['name'] == _extensions[1]['name']
     # Create a third extension in the "draft" release
     extension3 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension3']['meta'],
+        _extensions[2]['meta'],
         external_data.join('extension3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension3['name'] == _extensions['extension3']['name']
+    assert extension3['name'] == _extensions[2]['name']
     # Try to create the same extension should just get the same one
     extension3 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension3']['meta'],
+        _extensions[2]['meta'],
         external_data.join('extension3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension3['name'] == _extensions['extension3']['name']
+    assert extension3['name'] == _extensions[2]['name']
 
 
 @pytest.mark.external_data(
@@ -469,14 +458,14 @@ def testUpdateExtensions(server, fsAssetstore, external_data):
     extension = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension2']['meta'],
+        _extensions[1]['meta'],
         external_data.join('extension2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension['name'] == _extensions['extension2']['name']
+    assert extension['name'] == _extensions[1]['name']
     # Update the same extension
-    newParams = _extensions['extension2']['meta'].copy()
+    newParams = _extensions[1]['meta'].copy()
     newParams.update({
         'revision': '0000',
         'repository_type': 'gitlab',
@@ -498,30 +487,30 @@ def testGetExtensions(server):
     extension1 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension1']['meta'],
+        _extensions[0]['meta'],
         _user=_user,
         _app=_app
     )
-    assert extension1['name'] == _extensions['extension1']['name']
+    assert extension1['name'] == _extensions[0]['name']
     extensions_folder = Folder().load(extension1['folderId'], user=_user)
     assert ObjectId(extensions_folder['parentId']) == _release['_id']
     # Create other extensions in the "draft" release
     extension2 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension2']['meta'],
+        _extensions[1]['meta'],
         _user=_user,
         _app=_app
     )
-    assert extension2['name'] == _extensions['extension2']['name']
+    assert extension2['name'] == _extensions[1]['name']
     extension3 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension3']['meta'],
+        _extensions[2]['meta'],
         _user=_user,
         _app=_app
     )
-    assert extension3['name'] == _extensions['extension3']['name']
+    assert extension3['name'] == _extensions[2]['name']
     # Get all the extension of the application
     resp = server.request(
         path='/app/%s/extension' % _app['_id'],
@@ -614,11 +603,11 @@ def testDeleteExtensionPackages(server):
     extension = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension1']['meta'],
+        _extensions[0]['meta'],
         _user=_user,
         _app=_app
     )
-    assert extension['name'] == _extensions['extension1']['name']
+    assert extension['name'] == _extensions[0]['name']
     extensions_folder = Folder().load(extension['folderId'], user=_user)
     assert ObjectId(extensions_folder['parentId']) == _release['_id']
     # Get, delete, and try to re-get the package
@@ -637,43 +626,43 @@ def testUploadAndDownloadPackages(server, fsAssetstore, external_data):
     package1 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package1']['meta'],
+        _packages[0]['meta'],
         external_data.join('pkg1.dmg'),
         _user=_user,
         _app=_app
     )
-    assert package1['name'] == _packages['package1']['name']
+    assert package1['name'] == _packages[0]['name']
     assert ObjectId(package1['folderId']) == _release['_id']
     # Create an other application package in the "draft" release
     package2 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package2']['meta'],
+        _packages[1]['meta'],
         external_data.join('pkg2.exe'),
         _user=_user,
         _app=_app
     )
-    assert package2['name'] == _packages['package2']['name']
+    assert package2['name'] == _packages[1]['name']
     # Create a third application package in the "draft" release
     package3 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package3']['meta'],
+        _packages[2]['meta'],
         external_data.join('pkg3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert package3['name'] == _packages['package3']['name']
+    assert package3['name'] == _packages[2]['name']
     # Try to create the same application package should just get the same one
     package3 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package3']['meta'],
+        _packages[2]['meta'],
         external_data.join('pkg3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert package3['name'] == _packages['package3']['name']
+    assert package3['name'] == _packages[2]['name']
 
 
 @pytest.mark.external_data(
@@ -685,14 +674,14 @@ def testUpdatePackages(server, fsAssetstore, external_data):
     package = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package2']['meta'],
+        _packages[1]['meta'],
         external_data.join('pkg2.exe'),
         _user=_user,
         _app=_app
     )
-    assert package['name'] == _packages['package2']['name']
+    assert package['name'] == _packages[1]['name']
     # Update the same package
-    newParams = _packages['package2']['meta'].copy()
+    newParams = _packages[1]['meta'].copy()
     newParams.update({
         'repository_url': 'https://AnotherURL.com',
         'repository_type': 'gitlab',
@@ -716,33 +705,33 @@ def testGetPackages(server, fsAssetstore, external_data):
     package1 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package1']['meta'],
+        _packages[0]['meta'],
         external_data.join('pkg1.dmg'),
         _user=_user,
         _app=_app
     )
-    assert package1['name'] == _packages['package1']['name']
+    assert package1['name'] == _packages[0]['name']
     assert ObjectId(package1['folderId']) == _release['_id']
     # Create an other application package in the "draft" release
     package2 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package2']['meta'],
+        _packages[1]['meta'],
         external_data.join('pkg2.exe'),
         _user=_user,
         _app=_app
     )
-    assert package2['name'] == _packages['package2']['name']
+    assert package2['name'] == _packages[1]['name']
     # Create a third application package in the "draft" release
     package3 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package3']['meta'],
+        _packages[2]['meta'],
         external_data.join('pkg3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert package3['name'] == _packages['package3']['name']
+    assert package3['name'] == _packages[2]['name']
     # Get all the package of the application
     resp = server.request(
         path='/app/%s/package' % _app['_id'],
@@ -831,11 +820,11 @@ def testDeleteApplicationPackages(server):
     package = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package1']['meta'],
+        _packages[0]['meta'],
         _user=_user,
         _app=_app
     )
-    assert package['name'] == _packages['package1']['name']
+    assert package['name'] == _packages[0]['name']
     assert ObjectId(package['folderId']) == _release['_id']
     # Get, delete, and try to re-get the package
     _deletePackages(server, 'package', package, _user=_user, _app=_app)
@@ -857,75 +846,75 @@ def testDownloadStats(server, fsAssetstore, external_data):
     extension1 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension1']['meta'],
+        _extensions[0]['meta'],
         external_data.join('extension1.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension1['name'] == _extensions['extension1']['name']
+    assert extension1['name'] == _extensions[0]['name']
     extension2 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension2']['meta'],
+        _extensions[1]['meta'],
         external_data.join('extension2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension2['name'] == _extensions['extension2']['name']
+    assert extension2['name'] == _extensions[1]['name']
     extension3 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension3']['meta'],
+        _extensions[2]['meta'],
         external_data.join('extension3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension3['name'] == _extensions['extension3']['name']
+    assert extension3['name'] == _extensions[2]['name']
     extension4 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension4']['meta'],
+        _extensions[3]['meta'],
         external_data.join('extension4.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension4['name'] == _extensions['extension4']['name']
+    assert extension4['name'] == _extensions[3]['name']
     extension5 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension5']['meta'],
+        _extensions[4]['meta'],
         external_data.join('extension5.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension5['name'] == _extensions['extension5']['name']
+    assert extension5['name'] == _extensions[4]['name']
     package1 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package1']['meta'],
+        _packages[0]['meta'],
         external_data.join('pkg1.dmg'),
         _user=_user,
         _app=_app
     )
-    assert package1['name'] == _packages['package1']['name']
+    assert package1['name'] == _packages[0]['name']
     package2 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package2']['meta'],
+        _packages[1]['meta'],
         external_data.join('pkg2.exe'),
         _user=_user,
         _app=_app
     )
-    assert package2['name'] == _packages['package2']['name']
+    assert package2['name'] == _packages[1]['name']
     package3 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package3']['meta'],
+        _packages[2]['meta'],
         external_data.join('pkg3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert package3['name'] == _packages['package3']['name']
+    assert package3['name'] == _packages[2]['name']
 
     # Get the downloadStats
     expectedStats = expectedDownloadStats
@@ -1004,11 +993,11 @@ def testGetReleaseFolder(server):
     release_package = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package1']['meta'],
+        _packages[0]['meta'],
         _user=_user,
         _app=_app
     )
-    assert release_package['name'] == _packages['package1']['name']
+    assert release_package['name'] == _packages[0]['name']
     assert ObjectId(release_package['folderId']) == _release['_id']
     assert utilities.getReleaseFolder(release_package)['_id'] == _release['_id']
 
@@ -1016,22 +1005,22 @@ def testGetReleaseFolder(server):
     draft_package = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package2']['meta'],
+        _packages[1]['meta'],
         _user=_user,
         _app=_app
     )
-    assert draft_package['name'] == _packages['package2']['name']
+    assert draft_package['name'] == _packages[1]['name']
     assert utilities.getReleaseFolder(draft_package)['name'] == constants.DRAFT_RELEASE_NAME
 
     # Create an extension in the release "_release"
     release_extension = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension1']['meta'],
+        _extensions[0]['meta'],
         _user=_user,
         _app=_app
     )
-    assert release_extension['name'] == _extensions['extension1']['name']
+    assert release_extension['name'] == _extensions[0]['name']
     extensions_folder = Folder().load(release_extension['folderId'], user=_user)
     assert ObjectId(extensions_folder['parentId']) == _release['_id']
     assert utilities.getReleaseFolder(release_extension)['_id'] == _release['_id']
@@ -1040,11 +1029,11 @@ def testGetReleaseFolder(server):
     draft_extension = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension2']['meta'],
+        _extensions[1]['meta'],
         _user=_user,
         _app=_app
     )
-    assert draft_extension['name'] == _extensions['extension2']['name']
+    assert draft_extension['name'] == _extensions[1]['name']
     assert utilities.getReleaseFolder(draft_extension)['name'] == constants.DRAFT_RELEASE_NAME
 
 

@@ -7,8 +7,8 @@ FIXTURE_DIR = os.path.join(
     )
 
 
-EXTENSIONS = {
-    'extension1': {
+EXTENSIONS = [
+    {
         'meta': {
             'os': 'linux',
             'arch': 'i386',
@@ -22,7 +22,7 @@ EXTENSIONS = {
             'description': 'Extension for Slicer 4'
         }
     },
-    'extension2': {
+    {
         'meta': {
             'os': 'win',
             'arch': 'i386',
@@ -36,7 +36,7 @@ EXTENSIONS = {
             'description': 'Extension for Slicer 4 new version'
         }
     },
-    'extension3': {
+    {
         'meta': {
             'os': 'linux',
             'arch': 'amd64',
@@ -50,7 +50,7 @@ EXTENSIONS = {
             'description': 'Extension for Slicer 4 new version'
         }
     },
-    'extension4': {
+    {
         'meta': {
             'os': 'macosx',
             'arch': 'amd64',
@@ -64,7 +64,7 @@ EXTENSIONS = {
             'description': 'Extension for Slicer 4 new version'
         }
     },
-    'extension5': {
+    {
         'meta': {
             'os': 'macosx',
             'arch': 'i386',
@@ -78,10 +78,10 @@ EXTENSIONS = {
             'description': 'Extension for Slicer 4 new version'
         }
     }
-}
+]
 
-PACKAGES = {
-    'package1': {
+PACKAGES = [
+    {
         'meta': {
             'os': 'macosx',
             'arch': 'amd64',
@@ -92,8 +92,7 @@ PACKAGES = {
             'version': '0.1.0',
         }
     },
-
-    'package2': {
+    {
         'meta': {
             'os': 'win',
             'arch': 'i386',
@@ -104,8 +103,7 @@ PACKAGES = {
             'version': '0.2.0',
         }
     },
-
-    'package3': {
+    {
         'meta': {
             'os': 'linux',
             'arch': 'amd64',
@@ -116,8 +114,7 @@ PACKAGES = {
             'version': '0.3.0',
         }
     }
-
-}
+]
 
 expectedDownloadStats = {
     '0000': {
