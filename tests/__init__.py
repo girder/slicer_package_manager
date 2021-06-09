@@ -12,7 +12,7 @@ EXTENSIONS = [
         'meta': {
             'os': 'linux',
             'arch': 'i386',
-            'baseName': 'Ext1',
+            'baseName': 'Ext0',
             'repository_type': 'git',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '35333',
@@ -26,7 +26,7 @@ EXTENSIONS = [
         'meta': {
             'os': 'win',
             'arch': 'i386',
-            'baseName': 'Ext2',
+            'baseName': 'Ext1',
             'repository_type': 'git',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '54342',
@@ -40,7 +40,7 @@ EXTENSIONS = [
         'meta': {
             'os': 'linux',
             'arch': 'amd64',
-            'baseName': 'Ext3',
+            'baseName': 'Ext2',
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
@@ -54,7 +54,7 @@ EXTENSIONS = [
         'meta': {
             'os': 'macosx',
             'arch': 'amd64',
-            'baseName': 'Ext3',
+            'baseName': 'Ext2',
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
@@ -68,7 +68,7 @@ EXTENSIONS = [
         'meta': {
             'os': 'macosx',
             'arch': 'i386',
-            'baseName': 'Ext3',
+            'baseName': 'Ext2',
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
@@ -85,7 +85,7 @@ PACKAGES = [
         'meta': {
             'os': 'macosx',
             'arch': 'amd64',
-            'baseName': 'pkg1',
+            'baseName': 'pkg0',
             'repository_type': 'gitlab',
             'repository_url': 'https://slicer4.com',
             'revision': '0005',
@@ -96,7 +96,7 @@ PACKAGES = [
         'meta': {
             'os': 'win',
             'arch': 'i386',
-            'baseName': 'pkg2',
+            'baseName': 'pkg1',
             'repository_type': 'gitlab',
             'repository_url': 'https://slicer4.com',
             'revision': '0000',
@@ -107,7 +107,7 @@ PACKAGES = [
         'meta': {
             'os': 'linux',
             'arch': 'amd64',
-            'baseName': 'pkg3',
+            'baseName': 'pkg2',
             'repository_type': 'git',
             'repository_url': 'git://slicer4.com',
             'revision': '0000',
@@ -127,7 +127,7 @@ expectedDownloadStats = {
             }
         },
         'extensions': {
-            'Ext2': {
+            'Ext1': {
                 'win': {
                     'i386': 1
                 }
@@ -136,7 +136,7 @@ expectedDownloadStats = {
     },
     '0001': {
         'extensions': {
-            'Ext3': {
+            'Ext2': {
                 'linux': {
                     'amd64': 1
                 },
@@ -154,7 +154,7 @@ expectedDownloadStats = {
             }
         },
         'extensions': {
-            'Ext1': {
+            'Ext0': {
                 'linux': {
                     'i386': 1
                 }

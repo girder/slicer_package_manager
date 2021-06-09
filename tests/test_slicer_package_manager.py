@@ -343,31 +343,31 @@ def testDeleteReleaseByName(server):
 
 
 @pytest.mark.external_data(
+    os.path.join(FIXTURE_DIR, 'extension2.tar.gz'),
     os.path.join(FIXTURE_DIR, 'extension3.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension4.tar.gz'),
 )
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteRevisionRelease(server, fsAssetstore, external_data):
     _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
     # Create extensions in the "draft" release
-    extension1 = _createOrUpdatePackage(
+    extension0 = _createOrUpdatePackage(
         server,
         'extension',
         _extensions[2]['meta'],
+        external_data.join('extension2.tar.gz'),
+        _user=_user,
+        _app=_app
+    )
+    assert extension0['name'] == _extensions[2]['name']
+    extension1 = _createOrUpdatePackage(
+        server,
+        'extension',
+        _extensions[3]['meta'],
         external_data.join('extension3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension1['name'] == _extensions[2]['name']
-    extension2 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions[3]['meta'],
-        external_data.join('extension4.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension2['name'] == _extensions[3]['name']
+    assert extension1['name'] == _extensions[3]['name']
 
     resp = server.request(
         path='/app/%s/draft' % _app['_id'],
@@ -398,59 +398,59 @@ def testDeleteRevisionRelease(server, fsAssetstore, external_data):
 
 
 @pytest.mark.external_data(
+    os.path.join(FIXTURE_DIR, 'extension0.tar.gz'),
     os.path.join(FIXTURE_DIR, 'extension1.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension2.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension3.tar.gz')
+    os.path.join(FIXTURE_DIR, 'extension2.tar.gz')
 )
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadExtension(server, fsAssetstore, external_data):
     _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
     # Create a new extension in the release "_release"
-    extension1 = _createOrUpdatePackage(
+    extension0 = _createOrUpdatePackage(
         server,
         'extension',
         _extensions[0]['meta'],
+        external_data.join('extension0.tar.gz'),
+        _user=_user,
+        _app=_app
+    )
+    assert extension0['name'] == _extensions[0]['name']
+    extensions_folder = Folder().load(extension0['folderId'], user=_user)
+    assert ObjectId(extensions_folder['parentId']) == _release['_id']
+    # Create an other extension in the "draft" release
+    extension1 = _createOrUpdatePackage(
+        server,
+        'extension',
+        _extensions[1]['meta'],
         external_data.join('extension1.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension1['name'] == _extensions[0]['name']
-    extensions_folder = Folder().load(extension1['folderId'], user=_user)
-    assert ObjectId(extensions_folder['parentId']) == _release['_id']
-    # Create an other extension in the "draft" release
+    assert extension1['name'] == _extensions[1]['name']
+    # Create a third extension in the "draft" release
     extension2 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions[1]['meta'],
+        _extensions[2]['meta'],
         external_data.join('extension2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension2['name'] == _extensions[1]['name']
-    # Create a third extension in the "draft" release
-    extension3 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions[2]['meta'],
-        external_data.join('extension3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension3['name'] == _extensions[2]['name']
+    assert extension2['name'] == _extensions[2]['name']
     # Try to create the same extension should just get the same one
-    extension3 = _createOrUpdatePackage(
+    extension2 = _createOrUpdatePackage(
         server,
         'extension',
         _extensions[2]['meta'],
-        external_data.join('extension3.tar.gz'),
+        external_data.join('extension2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension3['name'] == _extensions[2]['name']
+    assert extension2['name'] == _extensions[2]['name']
 
 
 @pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'extension2.tar.gz')
+    os.path.join(FIXTURE_DIR, 'extension1.tar.gz')
 )
 @pytest.mark.plugin('slicer_package_manager')
 def testUpdateExtensions(server, fsAssetstore, external_data):
@@ -459,7 +459,7 @@ def testUpdateExtensions(server, fsAssetstore, external_data):
         server,
         'extension',
         _extensions[1]['meta'],
-        external_data.join('extension2.tar.gz'),
+        external_data.join('extension1.tar.gz'),
         _user=_user,
         _app=_app
     )
@@ -484,33 +484,33 @@ def testUpdateExtensions(server, fsAssetstore, external_data):
 def testGetExtensions(server):
     _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
     # Create a new extension in the release "_release"
-    extension1 = _createOrUpdatePackage(
+    extension0 = _createOrUpdatePackage(
         server,
         'extension',
         _extensions[0]['meta'],
         _user=_user,
         _app=_app
     )
-    assert extension1['name'] == _extensions[0]['name']
-    extensions_folder = Folder().load(extension1['folderId'], user=_user)
+    assert extension0['name'] == _extensions[0]['name']
+    extensions_folder = Folder().load(extension0['folderId'], user=_user)
     assert ObjectId(extensions_folder['parentId']) == _release['_id']
     # Create other extensions in the "draft" release
-    extension2 = _createOrUpdatePackage(
+    extension1 = _createOrUpdatePackage(
         server,
         'extension',
         _extensions[1]['meta'],
         _user=_user,
         _app=_app
     )
-    assert extension2['name'] == _extensions[1]['name']
-    extension3 = _createOrUpdatePackage(
+    assert extension1['name'] == _extensions[1]['name']
+    extension2 = _createOrUpdatePackage(
         server,
         'extension',
         _extensions[2]['meta'],
         _user=_user,
         _app=_app
     )
-    assert extension3['name'] == _extensions[2]['name']
+    assert extension2['name'] == _extensions[2]['name']
     # Get all the extension of the application
     resp = server.request(
         path='/app/%s/extension' % _app['_id'],
@@ -577,13 +577,13 @@ def testGetExtensions(server):
     # Get a specific extension by name
     resp = server.request(
         path='/app/%s/extension' % _app['_id'],
-        params={'extension_name': extension3['name']},
+        params={'extension_name': extension2['name']},
         method='GET',
         user=_user,
     )
     assertStatusOk(resp)
-    assert resp.json[0]['_id'] == extension3['_id']
-    assert resp.json[0]['name'] == extension3['name']
+    assert resp.json[0]['_id'] == extension2['_id']
+    assert resp.json[0]['name'] == extension2['name']
     # Get a specific extension with wrong name
     resp = server.request(
         path='/app/%s/extension' % _app['_id'],
@@ -615,58 +615,58 @@ def testDeleteExtensionPackages(server):
 
 
 @pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'pkg1.dmg'),
-    os.path.join(FIXTURE_DIR, 'pkg2.exe'),
-    os.path.join(FIXTURE_DIR, 'pkg3.tar.gz')
+    os.path.join(FIXTURE_DIR, 'pkg0.dmg'),
+    os.path.join(FIXTURE_DIR, 'pkg1.exe'),
+    os.path.join(FIXTURE_DIR, 'pkg2.tar.gz')
 )
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadPackages(server, fsAssetstore, external_data):
     _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
     # Create a new application package in the release "_release"
-    package1 = _createOrUpdatePackage(
+    package0 = _createOrUpdatePackage(
         server,
         'package',
         _packages[0]['meta'],
-        external_data.join('pkg1.dmg'),
+        external_data.join('pkg0.dmg'),
         _user=_user,
         _app=_app
     )
-    assert package1['name'] == _packages[0]['name']
-    assert ObjectId(package1['folderId']) == _release['_id']
+    assert package0['name'] == _packages[0]['name']
+    assert ObjectId(package0['folderId']) == _release['_id']
     # Create an other application package in the "draft" release
-    package2 = _createOrUpdatePackage(
+    package1 = _createOrUpdatePackage(
         server,
         'package',
         _packages[1]['meta'],
-        external_data.join('pkg2.exe'),
+        external_data.join('pkg1.exe'),
         _user=_user,
         _app=_app
     )
-    assert package2['name'] == _packages[1]['name']
+    assert package1['name'] == _packages[1]['name']
     # Create a third application package in the "draft" release
-    package3 = _createOrUpdatePackage(
+    package2 = _createOrUpdatePackage(
         server,
         'package',
         _packages[2]['meta'],
-        external_data.join('pkg3.tar.gz'),
+        external_data.join('pkg2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert package3['name'] == _packages[2]['name']
+    assert package2['name'] == _packages[2]['name']
     # Try to create the same application package should just get the same one
-    package3 = _createOrUpdatePackage(
+    package2 = _createOrUpdatePackage(
         server,
         'package',
         _packages[2]['meta'],
-        external_data.join('pkg3.tar.gz'),
+        external_data.join('pkg2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert package3['name'] == _packages[2]['name']
+    assert package2['name'] == _packages[2]['name']
 
 
 @pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'pkg2.exe'),
+    os.path.join(FIXTURE_DIR, 'pkg1.exe'),
     )
 @pytest.mark.plugin('slicer_package_manager')
 def testUpdatePackages(server, fsAssetstore, external_data):
@@ -675,7 +675,7 @@ def testUpdatePackages(server, fsAssetstore, external_data):
         server,
         'package',
         _packages[1]['meta'],
-        external_data.join('pkg2.exe'),
+        external_data.join('pkg1.exe'),
         _user=_user,
         _app=_app
     )
@@ -694,44 +694,44 @@ def testUpdatePackages(server, fsAssetstore, external_data):
 
 
 @pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'pkg1.dmg'),
-    os.path.join(FIXTURE_DIR, 'pkg2.exe'),
-    os.path.join(FIXTURE_DIR, 'pkg3.tar.gz'),
+    os.path.join(FIXTURE_DIR, 'pkg0.dmg'),
+    os.path.join(FIXTURE_DIR, 'pkg1.exe'),
+    os.path.join(FIXTURE_DIR, 'pkg2.tar.gz'),
     )
 @pytest.mark.plugin('slicer_package_manager')
 def testGetPackages(server, fsAssetstore, external_data):
     _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
     # Create a new application package in the release "_release"
-    package1 = _createOrUpdatePackage(
+    package0 = _createOrUpdatePackage(
         server,
         'package',
         _packages[0]['meta'],
-        external_data.join('pkg1.dmg'),
+        external_data.join('pkg0.dmg'),
         _user=_user,
         _app=_app
     )
-    assert package1['name'] == _packages[0]['name']
-    assert ObjectId(package1['folderId']) == _release['_id']
+    assert package0['name'] == _packages[0]['name']
+    assert ObjectId(package0['folderId']) == _release['_id']
     # Create an other application package in the "draft" release
-    package2 = _createOrUpdatePackage(
+    package1 = _createOrUpdatePackage(
         server,
         'package',
         _packages[1]['meta'],
-        external_data.join('pkg2.exe'),
+        external_data.join('pkg1.exe'),
         _user=_user,
         _app=_app
     )
-    assert package2['name'] == _packages[1]['name']
+    assert package1['name'] == _packages[1]['name']
     # Create a third application package in the "draft" release
-    package3 = _createOrUpdatePackage(
+    package2 = _createOrUpdatePackage(
         server,
         'package',
         _packages[2]['meta'],
-        external_data.join('pkg3.tar.gz'),
+        external_data.join('pkg2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert package3['name'] == _packages[2]['name']
+    assert package2['name'] == _packages[2]['name']
     # Get all the package of the application
     resp = server.request(
         path='/app/%s/package' % _app['_id'],
@@ -794,13 +794,13 @@ def testGetPackages(server, fsAssetstore, external_data):
     # Get a specific package by name
     resp = server.request(
         path='/app/%s/package' % _app['_id'],
-        params={'package_name': package3['name']},
+        params={'package_name': package2['name']},
         method='GET',
         user=_user,
     )
     assertStatusOk(resp)
-    assert resp.json[0]['_id'] == package3['_id']
-    assert resp.json[0]['name'] == package3['name']
+    assert resp.json[0]['_id'] == package2['_id']
+    assert resp.json[0]['name'] == package2['name']
     # Get a specific extension with wrong name
     resp = server.request(
         path='/app/%s/package' % _app['_id'],
@@ -831,90 +831,90 @@ def testDeleteApplicationPackages(server):
 
 
 @pytest.mark.external_data(
+    os.path.join(FIXTURE_DIR, 'extension0.tar.gz'),
     os.path.join(FIXTURE_DIR, 'extension1.tar.gz'),
     os.path.join(FIXTURE_DIR, 'extension2.tar.gz'),
     os.path.join(FIXTURE_DIR, 'extension3.tar.gz'),
     os.path.join(FIXTURE_DIR, 'extension4.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension5.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'pkg1.dmg'),
-    os.path.join(FIXTURE_DIR, 'pkg2.exe'),
-    os.path.join(FIXTURE_DIR, 'pkg3.tar.gz'),
+    os.path.join(FIXTURE_DIR, 'pkg0.dmg'),
+    os.path.join(FIXTURE_DIR, 'pkg1.exe'),
+    os.path.join(FIXTURE_DIR, 'pkg2.tar.gz'),
     )
 @pytest.mark.plugin('slicer_package_manager')
 def testDownloadStats(server, fsAssetstore, external_data):
     _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    extension1 = _createOrUpdatePackage(
+    extension0 = _createOrUpdatePackage(
         server,
         'extension',
         _extensions[0]['meta'],
+        external_data.join('extension0.tar.gz'),
+        _user=_user,
+        _app=_app
+    )
+    assert extension0['name'] == _extensions[0]['name']
+    extension1 = _createOrUpdatePackage(
+        server,
+        'extension',
+        _extensions[1]['meta'],
         external_data.join('extension1.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension1['name'] == _extensions[0]['name']
+    assert extension1['name'] == _extensions[1]['name']
     extension2 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions[1]['meta'],
+        _extensions[2]['meta'],
         external_data.join('extension2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension2['name'] == _extensions[1]['name']
+    assert extension2['name'] == _extensions[2]['name']
     extension3 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions[2]['meta'],
+        _extensions[3]['meta'],
         external_data.join('extension3.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension3['name'] == _extensions[2]['name']
+    assert extension3['name'] == _extensions[3]['name']
     extension4 = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions[3]['meta'],
+        _extensions[4]['meta'],
         external_data.join('extension4.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert extension4['name'] == _extensions[3]['name']
-    extension5 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions[4]['meta'],
-        external_data.join('extension5.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension5['name'] == _extensions[4]['name']
-    package1 = _createOrUpdatePackage(
+    assert extension4['name'] == _extensions[4]['name']
+    package0 = _createOrUpdatePackage(
         server,
         'package',
         _packages[0]['meta'],
-        external_data.join('pkg1.dmg'),
+        external_data.join('pkg0.dmg'),
         _user=_user,
         _app=_app
     )
-    assert package1['name'] == _packages[0]['name']
-    package2 = _createOrUpdatePackage(
+    assert package0['name'] == _packages[0]['name']
+    package1 = _createOrUpdatePackage(
         server,
         'package',
         _packages[1]['meta'],
-        external_data.join('pkg2.exe'),
+        external_data.join('pkg1.exe'),
         _user=_user,
         _app=_app
     )
-    assert package2['name'] == _packages[1]['name']
-    package3 = _createOrUpdatePackage(
+    assert package1['name'] == _packages[1]['name']
+    package2 = _createOrUpdatePackage(
         server,
         'package',
         _packages[2]['meta'],
-        external_data.join('pkg3.tar.gz'),
+        external_data.join('pkg2.tar.gz'),
         _user=_user,
         _app=_app
     )
-    assert package3['name'] == _packages[2]['name']
+    assert package2['name'] == _packages[2]['name']
 
     # Get the downloadStats
     expectedStats = expectedDownloadStats
@@ -927,17 +927,17 @@ def testDownloadStats(server, fsAssetstore, external_data):
     assert resp.json == expectedStats
 
     # Download multiple time an extension
+    ext3_file = list(File().find({'itemId': ObjectId(extension3['_id'])}))
     ext4_file = list(File().find({'itemId': ObjectId(extension4['_id'])}))
-    ext5_file = list(File().find({'itemId': ObjectId(extension5['_id'])}))
 
     N = 5
     for _idx in range(N):
+        _downloadFile(server, ext3_file[0]['_id'], _user=_user)
         _downloadFile(server, ext4_file[0]['_id'], _user=_user)
-        _downloadFile(server, ext5_file[0]['_id'], _user=_user)
 
-    expectedStats['0001']['extensions']['Ext3']['macosx'].update({
-        'amd64': N + expectedStats['0001']['extensions']['Ext3']['macosx']['amd64'],
-        'i386': N + expectedStats['0001']['extensions']['Ext3']['macosx']['i386']
+    expectedStats['0001']['extensions']['Ext2']['macosx'].update({
+        'amd64': N + expectedStats['0001']['extensions']['Ext2']['macosx']['amd64'],
+        'i386': N + expectedStats['0001']['extensions']['Ext2']['macosx']['i386']
     })
     resp = server.request(
         path='/app/%s/downloadstats' % _app['_id'],
@@ -953,7 +953,7 @@ def testDownloadStats(server, fsAssetstore, external_data):
     resp = server.request(
         path='/app/%(app_id)s/extension/%(ext_id)s' % {
             'app_id': _app['_id'],
-            'ext_id': extension4['_id']},
+            'ext_id': extension3['_id']},
         method='DELETE',
         user=_user
     )
@@ -961,7 +961,7 @@ def testDownloadStats(server, fsAssetstore, external_data):
     resp = server.request(
         path='/app/%(app_id)s/extension/%(ext_id)s' % {
             'app_id': _app['_id'],
-            'ext_id': extension5['_id']},
+            'ext_id': extension4['_id']},
         method='DELETE',
         user=_user
     )
