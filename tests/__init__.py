@@ -299,7 +299,7 @@ class ExternalData:
                 if current_digest != digest:
                     print('File already exists in cache but checksum is different - re-downloading it.')
                     os.remove(filePath)
-                    return self.downloadFile(uri, self._objectStorePath, name, checksum)
+                    return self._downloadFile(uri, name, checksum)
                 else:
                     self._downloadPercent = 100
                     print('File already exists and checksum is OK - reusing it.')

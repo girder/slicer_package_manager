@@ -22,6 +22,11 @@ Server
 * Add :func:`slicer_package_manager.utilities.getReleaseFolder` and simplify update of ``downloadStats``
   release metadata to use the new function.
 
+Tests
+-----
+
+* ExternalData: Fix re-download of files if checksum does not match.
+
 
 0.4.0
 =====
