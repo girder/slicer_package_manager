@@ -44,8 +44,8 @@ PACKAGES = [
         'os': 'macosx',
         'arch': 'i386',
         'baseName': 'pkg1',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:pkg1.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:pkg1.git',
         'revision': DRAFT_RELEASES[0]['revision'],
         'version': DRAFT_RELEASES[0]['version']
     },
@@ -55,8 +55,8 @@ PACKAGES = [
         'os': 'macosx',
         'arch': 'amd64',
         'baseName': 'pkg2',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:pkg2.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:pkg2.git',
         'revision': DRAFT_RELEASES[0]['revision'],
         'version': DRAFT_RELEASES[0]['version']
     },
@@ -66,8 +66,8 @@ PACKAGES = [
         'os': 'win',
         'arch': 'i386',
         'baseName': 'pkg3',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:pkg3.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:pkg3.git',
         'revision': DRAFT_RELEASES[0]['revision'],
         'version': DRAFT_RELEASES[0]['version']
     },
@@ -77,8 +77,8 @@ PACKAGES = [
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'pkg4',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:pkg4.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:pkg4.git',
         'revision': DRAFT_RELEASES[1]['revision'],
         'version': DRAFT_RELEASES[1]['version']
     }
@@ -91,8 +91,8 @@ EXTENSIONS = [
         'os': 'macosx',
         'arch': 'i386',
         'baseName': 'ext1',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:ext1.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:ext1.git',
         'app_revision': RELEASES[0]['revision'],
         'revision': '000'
     },
@@ -102,8 +102,8 @@ EXTENSIONS = [
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'ext2',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:ext2.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:ext2.git',
         'app_revision': RELEASES[0]['revision'],
         'revision': '001'
     },
@@ -113,8 +113,8 @@ EXTENSIONS = [
         'os': 'win',
         'arch': 'amd64',
         'baseName': 'ext3',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:ext3.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:ext3.git',
         'app_revision': DRAFT_RELEASES[0]['revision'],
         'revision': '000'
     },
@@ -124,8 +124,8 @@ EXTENSIONS = [
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'ext4',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:ext4.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:ext4.git',
         'app_revision': DRAFT_RELEASES[1]['revision'],
         'revision': '000'
     }
@@ -153,8 +153,8 @@ def _cli_upload_package(package):
                 '--name', package['baseName'],
                 '--revision', package['revision'],
                 '--version', package['version'],
-                '--repo_type', package['repo_type'],
-                '--repo_url', package['repo_url']])
+                '--repo_type', package['repository_type'],
+                '--repo_url', package['repository_url']])
     return _cli_runner_invoke(main, cmd)
 
 
@@ -166,8 +166,8 @@ def _cli_upload_extension(extension):
                 '--name', extension['baseName'],
                 '--revision', extension['revision'],
                 '--app_revision', extension['app_revision'],
-                '--repo_type', extension['repo_type'],
-                '--repo_url', extension['repo_url']])
+                '--repo_type', extension['repository_type'],
+                '--repo_url', extension['repository_url']])
     return _cli_runner_invoke(main, cmd)
 
 
