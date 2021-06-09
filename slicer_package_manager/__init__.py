@@ -23,29 +23,27 @@ def _onDownloadFileComplete(event):
             if release['name'] == constants.DRAFT_RELEASE_NAME:
                 Folder().increment(
                     query={'_id': release['_id']},
-                    field='meta.downloadStats.%s.%s.%s.%s.%s' % (
-                        meta['app_revision'], constants.EXTENSIONS_FOLDER_NAME,
-                        meta['baseName'], meta['os'], meta['arch']),
+                    field='meta.downloadStats.{app_revision}.{folder_name}.{baseName}.{os}.{arch}'.format(
+                        folder_name=constants.EXTENSIONS_FOLDER_NAME, **meta),
                     amount=1)
             else:
                 Folder().increment(
                     query={'_id': item_folder['parentId']},
-                    field='meta.downloadStats.%s.%s.%s.%s' %
-                          (constants.EXTENSIONS_FOLDER_NAME, meta['baseName'],
-                           meta['os'], meta['arch']),
+                    field='meta.downloadStats.{folder_name}.{baseName}.{os}.{arch}'.format(
+                        folder_name=constants.EXTENSIONS_FOLDER_NAME, **meta),
                     amount=1)
         else:
             if release['name'] == constants.DRAFT_RELEASE_NAME:
                 Folder().increment(
                     query={'_id': release['_id']},
-                    field='meta.downloadStats.%s.%s.%s.%s' % (
-                        meta['revision'], 'applications', meta['os'], meta['arch']),
+                    field='meta.downloadStats.{revision}.{folder_name}.{os}.{arch}'.format(
+                        folder_name='applications', **meta),
                     amount=1)
             else:
                 Folder().increment(
                     query={'_id': item_folder['_id']},
-                    field='meta.downloadStats.%s.%s.%s' % (
-                        'applications', meta['os'], meta['arch']),
+                    field='meta.downloadStats.{folder_name}.{os}.{arch}'.format(
+                        folder_name='applications', **meta),
                     amount=1)
 
 
