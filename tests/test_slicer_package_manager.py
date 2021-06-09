@@ -14,7 +14,7 @@ from pytest_girder.utils import getResponseBody
 
 from slicer_package_manager import constants, utilities
 
-from . import computeFileChecksum, computeContentChecksum, extensions, FIXTURE_DIR, packages, expectedDownloadStats
+from . import computeFileChecksum, computeContentChecksum, EXTENSIONS, FIXTURE_DIR, PACKAGES, expectedDownloadStats
 
 
 def _initialize():
@@ -69,7 +69,7 @@ def _initialize():
         creator=_user)
 
     _release = Folder().setMetadata(_release, {'revision': '0005'})
-    _extensions = extensions
+    _extensions = EXTENSIONS
     _extensions['extension1']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
         **_extensions['extension1']['meta'])
     _extensions['extension2']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
@@ -80,7 +80,7 @@ def _initialize():
         **_extensions['extension4']['meta'])
     _extensions['extension5']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
         **_extensions['extension5']['meta'])
-    _packages = packages
+    _packages = PACKAGES
     _packages['package1']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
         **_packages['package1']['meta'])
     _packages['package2']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(

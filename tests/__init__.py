@@ -7,7 +7,7 @@ FIXTURE_DIR = os.path.join(
     )
 
 
-extensions = {
+EXTENSIONS = {
     'extension1': {
         'meta': {
             'os': 'linux',
@@ -80,7 +80,7 @@ extensions = {
     }
 }
 
-packages = {
+PACKAGES = {
     'package1': {
         'meta': {
             'os': 'macosx',
