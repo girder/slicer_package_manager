@@ -1048,6 +1048,33 @@ def testGetReleaseFolder(server):
     assert utilities.getReleaseFolder(draft_extension)['name'] == constants.DRAFT_RELEASE_NAME
 
 
+@pytest.mark.plugin('slicer_package_manager')
+def testIsApplicationFolder(server):
+    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+    assert utilities.isApplicationFolder(_app)
+    assert not utilities.isApplicationFolder(_release)
+    assert not utilities.isApplicationFolder(_draftRelease)
+    assert not utilities.isApplicationFolder(_draftRevision)
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testIsReleaseFolder(server):
+    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+    assert not utilities.isReleaseFolder(_app)
+    assert utilities.isReleaseFolder(_release)
+    assert not utilities.isReleaseFolder(_draftRelease)
+    assert utilities.isReleaseFolder(_draftRevision)
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testIsDraftReleaseFolder(server):
+    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+    assert not utilities.isDraftReleaseFolder(_app)
+    assert not utilities.isDraftReleaseFolder(_release)
+    assert not utilities.isDraftReleaseFolder(_draftRelease)
+    assert utilities.isDraftReleaseFolder(_draftRevision)
+
+
 def _createApplicationCheck(server, appName, appDescription, collId=None,
                             collName=None, collDescription='', _user=None):
     params = {

@@ -13,6 +13,56 @@ def isSlicerPackages(item):
     return False
 
 
+def isApplicationFolder(folder):
+    """
+    Return True if folder an application folder.
+
+    An application folder is expected to have the ``applicationPackageNameTemplate`` and
+    ``extensionPackageNameTemplate`` metadata as well as parent folder named after
+    :const:`constants.TOP_LEVEL_FOLDER_NAME`.
+    """
+    meta = folder.get('meta', {})
+    if not all(k in meta for k in ('applicationPackageNameTemplate', 'extensionPackageNameTemplate')):
+        return False
+
+    parent_folder = Folder().load(folder['parentId'], force=True)
+    if parent_folder['name'] != constants.TOP_LEVEL_FOLDER_NAME:
+        return False
+
+    return True
+
+
+def isReleaseFolder(folder):
+    """
+    Return True if folder is a release folder.
+
+    A release folder is expected to have the ``revision`` metadata as well as
+    an application parent or grandparent folder (see :func:`isApplicationFolder`).
+    """
+    if 'revision' not in folder.get('meta', {}):
+        return False
+
+    parent_folder = Folder().load(folder['parentId'], force=True)
+    grandparent_folder = Folder().load(parent_folder['parentId'], force=True)
+    if not any([isApplicationFolder(parent_folder), isApplicationFolder(grandparent_folder)]):
+        return False
+
+    return True
+
+
+def isDraftReleaseFolder(folder):
+    """
+    Return True if folder is a draft release folder.
+
+    A draft release folder is expected to be a release folder (see :func:`isReleaseFolder`)
+    and to have a parent folder named after :const:`constants.DRAFT_RELEASE_NAME`.
+    """
+    if not isReleaseFolder(folder):
+        return False
+    parent_folder = Folder().load(folder['parentId'], force=True)
+    return parent_folder['name'] == constants.DRAFT_RELEASE_NAME
+
+
 def getOrCreateReleaseFolder(application, user, app_revision):
     """
     Get or create the release folder associated with the application revision.

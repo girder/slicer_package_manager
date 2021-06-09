@@ -16,6 +16,9 @@ New Features
 Server
 ^^^^^^
 
+* Add convenience functions :func:`slicer_package_manager.utilities.isApplicationFolder`,
+  :func:`slicer_package_manager.utilities.isReleaseFolder` and :func:`slicer_package_manager.utilities.isDraftReleaseFolder`.
+
 * Add :func:`slicer_package_manager.utilities.getReleaseFolder` and simplify update of ``downloadStats``
   release metadata to use the new function.
 
