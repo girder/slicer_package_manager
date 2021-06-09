@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from girder import events, plugin
-from girder.constants import AccessType
 from girder.models.item import Item
 from girder.models.folder import Folder
 from .api.app import App
@@ -21,7 +20,7 @@ def _onDownloadFileComplete(event):
 
     See :func:`utilities.getReleaseFolder()`.
     """
-    item = Item().load(event.info['file']['itemId'], level=AccessType.READ)
+    item = Item().load(event.info['file']['itemId'], force=True)
 
     if not utilities.isSlicerPackages(item):
         return
