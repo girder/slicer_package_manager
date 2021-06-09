@@ -470,7 +470,6 @@ def testUpdateExtensions(server, fsAssetstore, external_data):
         'revision': '0000',
         'repository_type': 'gitlab',
         'packagetype': 'zip',
-        'codebase': 'SL434334',
         'description': 'Extension for Slicer 4 new version 2'
     })
     updatedExtension = _createOrUpdatePackage(server, 'extension', newParams, _user=_user, _app=_app)

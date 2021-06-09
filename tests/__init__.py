@@ -18,7 +18,6 @@ EXTENSIONS = [
             'revision': '35333',
             'app_revision': '0005',
             'packagetype': 'installer',
-            'codebase': 'SL4',
             'description': 'Extension for Slicer 4'
         }
     },
@@ -32,7 +31,6 @@ EXTENSIONS = [
             'revision': '54342',
             'app_revision': '0000',
             'packagetype': 'installer',
-            'codebase': 'SL4',
             'description': 'Extension for Slicer 4 new version'
         }
     },
@@ -46,7 +44,6 @@ EXTENSIONS = [
             'revision': '542',
             'app_revision': '0001',
             'packagetype': 'zip',
-            'codebase': 'SL434334',
             'description': 'Extension for Slicer 4 new version'
         }
     },
@@ -60,7 +57,6 @@ EXTENSIONS = [
             'revision': '542',
             'app_revision': '0001',
             'packagetype': 'zip',
-            'codebase': 'SL434334',
             'description': 'Extension for Slicer 4 new version'
         }
     },
@@ -74,7 +70,6 @@ EXTENSIONS = [
             'revision': '542',
             'app_revision': '0001',
             'packagetype': 'zip',
-            'codebase': 'SL434334',
             'description': 'Extension for Slicer 4 new version'
         }
     }

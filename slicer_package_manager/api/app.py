@@ -559,12 +559,11 @@ class App(Resource):
         .param('enabled', 'Boolean indicating if the extension should be automatically enabled '
                'after its installation.', required=False)
         .param('release', 'Release identifier (Ex: 0.0.1, 0.0.2, 0.1).', required=False)
-        .param('codebase', 'The codebase baseName (Ex: Slicer4).', required=False)
         .errorResponse()
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
-                                revision, app_revision, packagetype, codebase, description,
+                                revision, app_revision, packagetype, description,
                                 release, icon_url, development_status, category, enabled, homepage,
                                 screenshots, contributors, dependency, license):
         """
@@ -586,7 +585,6 @@ class App(Resource):
         :param revision: The revision of the extension.
         :param app_revision: The revision of the application.
         :param packagetype: Type of the extension.
-        :param codebase: The codebase baseName.
         :param description: The description of the extension.
         :return: The created/updated extension.
         """
@@ -646,8 +644,6 @@ class App(Resource):
             params['dependency'] = dependency
         if license:
             params['license'] = license
-        if codebase:
-            params['codebase'] = codebase
 
         name = application['meta']['extensionPackageNameTemplate'].format(**params)
         filters = {

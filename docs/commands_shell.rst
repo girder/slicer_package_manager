@@ -386,7 +386,6 @@ Options:
 * ``--revision`` - The revision of the extension
 * ``--app_revision`` - The revision of the application corresponding to this release
 * ``--packagetype`` - Type of the package (Installer, data...)
-* ``--codebase`` - The codebase baseName
 * ``--coll_id`` - ID of an existing collection
 * ``--desc`` - The description of the new application
 

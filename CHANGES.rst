@@ -22,6 +22,11 @@ Server
 * Add :func:`slicer_package_manager.utilities.getReleaseFolder` and simplify update of ``downloadStats``
   release metadata to use the new function.
 
+Bug fixes
+---------
+
+* Remove partially implemented ``codebase`` metadata.
+
 Tests
 -----
 
