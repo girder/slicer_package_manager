@@ -2,14 +2,42 @@ import os
 
 from shutil import copyfile
 
+from slicer_package_manager.constants import (
+    APPLICATION_PACKAGE_TEMPLATE_NAME,
+    EXTENSION_PACKAGE_TEMPLATE_NAME
+)
+
+
 FIXTURE_DIR = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
     'data',
     )
 
+APPS = ['application']
+
+RELEASES = [
+    {
+        'app_name': APPS[0],
+        'name': 'release1',
+        'revision': '0005',
+        'version': '0.1.0',
+    },
+]
+
+DRAFT_RELEASES = [
+    {
+        'revision': '0000',
+        'version': '0.2.0'
+    },
+    {
+        'revision': '0001',
+        'version': '0.3.0'
+    },
+]
 
 EXTENSIONS = [
     {
+        'filepath': 'extension0.tar.gz',
         'meta': {
             'os': 'linux',
             'arch': 'i386',
@@ -17,11 +45,12 @@ EXTENSIONS = [
             'repository_type': 'git',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '35333',
-            'app_revision': '0005',
+            'app_revision': RELEASES[0]['revision'],
             'description': 'Extension for Slicer 4'
         }
     },
     {
+        'filepath': 'extension1.tar.gz',
         'meta': {
             'os': 'win',
             'arch': 'i386',
@@ -29,11 +58,12 @@ EXTENSIONS = [
             'repository_type': 'git',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '54342',
-            'app_revision': '0000',
+            'app_revision': DRAFT_RELEASES[0]['revision'],
             'description': 'Extension for Slicer 4 new version'
         }
     },
     {
+        'filepath': 'extension2.tar.gz',
         'meta': {
             'os': 'linux',
             'arch': 'amd64',
@@ -41,11 +71,12 @@ EXTENSIONS = [
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
-            'app_revision': '0001',
+            'app_revision': DRAFT_RELEASES[1]['revision'],
             'description': 'Extension for Slicer 4 new version'
         }
     },
     {
+        'filepath': 'extension3.tar.gz',
         'meta': {
             'os': 'macosx',
             'arch': 'amd64',
@@ -53,11 +84,12 @@ EXTENSIONS = [
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
-            'app_revision': '0001',
+            'app_revision': DRAFT_RELEASES[1]['revision'],
             'description': 'Extension for Slicer 4 new version'
         }
     },
     {
+        'filepath': 'extension4.tar.gz',
         'meta': {
             'os': 'macosx',
             'arch': 'i386',
@@ -65,50 +97,60 @@ EXTENSIONS = [
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
-            'app_revision': '0001',
+            'app_revision': DRAFT_RELEASES[1]['revision'],
             'description': 'Extension for Slicer 4 new version'
         }
     }
 ]
 
+
+for extension in EXTENSIONS:
+    extension['name'] = EXTENSION_PACKAGE_TEMPLATE_NAME.format(**extension['meta'])
+
 PACKAGES = [
     {
+        'filepath': 'pkg0.dmg',
         'meta': {
             'os': 'macosx',
             'arch': 'amd64',
             'baseName': 'pkg0',
             'repository_type': 'gitlab',
             'repository_url': 'https://slicer4.com',
-            'revision': '0005',
-            'version': '0.1.0',
+            'revision': RELEASES[0]['revision'],
+            'version': RELEASES[0]['version'],
         }
     },
     {
+        'filepath': 'pkg1.exe',
         'meta': {
             'os': 'win',
             'arch': 'i386',
             'baseName': 'pkg1',
             'repository_type': 'gitlab',
             'repository_url': 'https://slicer4.com',
-            'revision': '0000',
-            'version': '0.2.0',
+            'revision': DRAFT_RELEASES[0]['revision'],
+            'version': DRAFT_RELEASES[0]['version'],
         }
     },
     {
+        'filepath': 'pkg2.tar.gz',
         'meta': {
             'os': 'linux',
             'arch': 'amd64',
             'baseName': 'pkg2',
             'repository_type': 'git',
             'repository_url': 'git://slicer4.com',
-            'revision': '0000',
-            'version': '0.3.0',
+            'revision': DRAFT_RELEASES[0]['revision'],
+            'version': DRAFT_RELEASES[0]['version'],
         }
     }
 ]
 
+for package in PACKAGES:
+    package['name'] = APPLICATION_PACKAGE_TEMPLATE_NAME.format(**package['meta'])
+
 expectedDownloadStats = {
-    '0000': {
+    DRAFT_RELEASES[0]['revision']: {
         'applications': {
             'win': {
                 'i386': 1
@@ -125,7 +167,7 @@ expectedDownloadStats = {
             }
         }
     },
-    '0001': {
+    DRAFT_RELEASES[1]['revision']: {
         'extensions': {
             'Ext2': {
                 'linux': {
@@ -138,7 +180,7 @@ expectedDownloadStats = {
             }
         }
     },
-    '0005': {
+    RELEASES[0]['revision']: {
         'applications': {
             'macosx': {
                 'amd64': 1
