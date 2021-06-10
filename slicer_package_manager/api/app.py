@@ -557,13 +557,12 @@ class App(Resource):
                '(stable, active, etc).', required=False)
         .param('enabled', 'Boolean indicating if the extension should be automatically enabled '
                'after its installation.', required=False)
-        .param('release', 'Release identifier (Ex: 0.0.1, 0.0.2, 0.1).', required=False)
         .errorResponse()
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
                                 revision, app_revision, description,
-                                release, icon_url, development_status, category, enabled, homepage,
+                                icon_url, development_status, category, enabled, homepage,
                                 screenshots, contributors, dependency, license):
         """
         Create or update an extension item.
@@ -620,8 +619,6 @@ class App(Resource):
             'app_revision': app_revision,
             'description': description
         }
-        if release:
-            params['release'] = release
         if icon_url:
             params['icon_url'] = icon_url
         if development_status:

@@ -84,7 +84,7 @@ class Extension(Item):
                     raise ValidationException(spec['exception_msg'])
             extraMeta = set(six.viewkeys(doc['meta'])) - base_params
             if extraMeta:
-                extra_params = {'release', 'icon_url', 'development_status', 'category',
+                extra_params = {'icon_url', 'development_status', 'category',
                                 'enabled', 'homepage', 'screenshots', 'contributors', 'dependency',
                                 'license'}
                 if extraMeta - extra_params:
