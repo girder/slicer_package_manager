@@ -17,7 +17,6 @@ EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '35333',
             'app_revision': '0005',
-            'packagetype': 'installer',
             'description': 'Extension for Slicer 4'
         }
     },
@@ -30,7 +29,6 @@ EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '54342',
             'app_revision': '0000',
-            'packagetype': 'installer',
             'description': 'Extension for Slicer 4 new version'
         }
     },
@@ -43,7 +41,6 @@ EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
             'app_revision': '0001',
-            'packagetype': 'zip',
             'description': 'Extension for Slicer 4 new version'
         }
     },
@@ -56,7 +53,6 @@ EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
             'app_revision': '0001',
-            'packagetype': 'zip',
             'description': 'Extension for Slicer 4 new version'
         }
     },
@@ -69,7 +65,6 @@ EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
             'app_revision': '0001',
-            'packagetype': 'zip',
             'description': 'Extension for Slicer 4 new version'
         }
     }

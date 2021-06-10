@@ -216,7 +216,7 @@ class SlicerPackageClient(GirderClient):
         return release[0]
 
     def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url,
-                        revision, app_revision, desc='', packagetype='', icon_url='',
+                        revision, app_revision, desc='', icon_url='',
                         category=None, homepage='', screenshots=None, contributors=None,
                         dependency=None, coll_id=None, force=False):
         """
@@ -234,7 +234,6 @@ class SlicerPackageClient(GirderClient):
         :param revision: The revision of the extension
         :param app_revision: The revision of the application supported by the extension
         :param desc: The description of the extension
-        :param packagetype: Type of the package
         :param icon_url: Url of the extension's logo
         :param category: Category of the extension
         :param homepage: Url of the extension's homepage
@@ -267,7 +266,6 @@ class SlicerPackageClient(GirderClient):
                 'revision': revision,
                 'app_revision': app_revision,
                 'description': desc,
-                'packagetype': packagetype,
                 'icon_url': icon_url,
                 'category': category,
                 'homepage': homepage,
@@ -313,7 +311,6 @@ class SlicerPackageClient(GirderClient):
                     'revision': revision,
                     'app_revision': app_revision,
                     'description': desc,
-                    'packagetype': packagetype,
                     'icon_url': icon_url,
                     'category': category,
                     'homepage': homepage,

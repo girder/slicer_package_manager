@@ -69,7 +69,7 @@ class Extension(Item):
         # Validate the meta field
         if doc.get('meta'):
             base_params = {'app_id', 'os', 'arch', 'revision', 'repository_type', 'repository_url',
-                           'app_revision', 'packagetype', 'baseName', 'description'}
+                           'app_revision', 'baseName', 'description'}
             specs = []
             for meta in base_params:
                 specs.append({

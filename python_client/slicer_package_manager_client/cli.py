@@ -427,9 +427,6 @@ def _cli_deleteDraftRelease(sc, *args, **kwargs):
 @click.option('--desc', default='',
               help='Description of the extension',
               cls=_AdvancedOption)
-@click.option('--packagetype', default='',
-              help='Type of the package (Installer, data...)',
-              cls=_AdvancedOption)
 @click.option('--icon_url', default='',
               help="Url of the extension's logo",
               cls=_AdvancedOption)

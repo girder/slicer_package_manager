@@ -385,7 +385,6 @@ Options:
 * ``--repo_url`` - The repository URL of the extension
 * ``--revision`` - The revision of the extension
 * ``--app_revision`` - The revision of the application corresponding to this release
-* ``--packagetype`` - Type of the package (Installer, data...)
 * ``--coll_id`` - ID of an existing collection
 * ``--desc`` - The description of the new application
 

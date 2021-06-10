@@ -542,7 +542,6 @@ class App(Resource):
         .param('app_revision', 'The revision of the application '
                                'that the extension was built against.')
         .param('description', 'Text describing the extension.')
-        .param('packagetype', 'Installer, data, etc.', required=False)
         .param('icon_url', 'The url of the icon for the extension.', required=False)
         .param('category', 'Category under which to place the extension. Subcategories should be '
                'delimited by character. If none is passed, will render under '
@@ -563,7 +562,7 @@ class App(Resource):
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
-                                revision, app_revision, packagetype, description,
+                                revision, app_revision, description,
                                 release, icon_url, development_status, category, enabled, homepage,
                                 screenshots, contributors, dependency, license):
         """
@@ -584,7 +583,6 @@ class App(Resource):
         :param repository_url: The Url of the repository.
         :param revision: The revision of the extension.
         :param app_revision: The revision of the application.
-        :param packagetype: Type of the extension.
         :param description: The description of the extension.
         :return: The created/updated extension.
         """
@@ -622,8 +620,6 @@ class App(Resource):
             'app_revision': app_revision,
             'description': description
         }
-        if packagetype:
-            params['packagetype'] = packagetype
         if release:
             params['release'] = release
         if icon_url:

@@ -27,6 +27,8 @@ Bug fixes
 
 * Remove partially implemented ``codebase`` metadata.
 
+* Remove support for unused ``packagetype`` metadata.
+
 Tests
 -----
 
