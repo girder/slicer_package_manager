@@ -808,7 +808,7 @@ class App(Resource):
         .param('revision', 'The revision of the application')
         .param('version', 'The version of the application')
         .param('description', 'Text describing the package.', required=False)
-        .param('pre_release', 'Boolean to specify if the package is ready to be distributed',
+        .param('pre_release', 'Boolean to specify if the package is a full release ready to be distributed.',
                dataType='boolean', required=False)
         .errorResponse()
     )
@@ -834,7 +834,7 @@ class App(Resource):
         :param revision: The revision of the application.
         :param version: The version of the application.
         :param description: Description of the application package
-        :param pre_release: Boolean to specify if the package is ready to be distributed
+        :param pre_release: Boolean to specify if the package is a full release ready to be distributed
         :return: The created/updated package.
         """
         creator = self.getCurrentUser()
