@@ -1,5 +1,6 @@
 import os
 
+from shutil import copyfile
 
 FIXTURE_DIR = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
@@ -317,3 +318,51 @@ class ExternalData:
         raise RuntimeError('Download of %s failed for %d attempts\n  uri: %s\n  errors: %s' % (
             fileName, maximumAttemptsCount, uri, ", ".join(errors)
         ))
+
+
+def downloadExternals(key_files, dest_dir):
+    """
+    Download the data files identified by the key files from https://data.kitware.com.
+
+    :param key_files: List of the data file with a “.sha512” extension appended to the file name.
+    :param dest_dir: Directory where files are downloaded and stored
+    :return: dest_dir
+    """
+    # Collect externals in map where keys are "fileName" and values are "(<algo>, <checksum>)"
+    externals = {}
+    for key_file in key_files:
+        ext_not_found = []
+        for ext in ['sha512']:
+            external = key_file + "." + ext
+            if os.path.exists(external):
+                break
+            else:
+                ext_not_found.append(ext)
+                external = None
+        if external is None:
+            raise ValueError("{}.{} not found".format(key_file, ", ".join(ext_not_found)))
+        with open(external) as content:
+            hashsum = content.read().strip()
+        externals[os.path.basename(key_file)] = (ext, hashsum)
+
+    external_data_dir = os.environ.get(
+        'GIRDER_TEST_DATA_PREFIX', os.path.join(os.path.dirname(__file__), ".external_data"))
+
+    # Download files
+    downloaded_files = []
+    for fileName, value in externals.items():
+        algo, checksum = value
+        print("fileName [%s] algo [%s] checksum [%s]" % (fileName, algo, checksum))
+        downloaded_files.append(
+            ExternalData(external_data_dir).download(
+                uri="https://data.kitware.com/api/v1/file/hashsum/{}/{}/download".format(algo, checksum),
+                fileName=fileName,
+                checksum="{}:{}".format(algo.upper(), checksum)
+            )
+        )
+
+    # Copy download files to temporary directory
+    for downloaded_file in downloaded_files:
+        copyfile(downloaded_file, dest_dir.join(os.path.basename(downloaded_file)))
+
+    return dest_dir

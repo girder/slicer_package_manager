@@ -32,7 +32,11 @@ Bug fixes
 Tests
 -----
 
-* ExternalData: Fix re-download of files if checksum does not match.
+* ExternalData:
+
+  * Fix re-download of files if checksum does not match.
+
+  * Re-factor fixture introducing ``downloadExternals``.
 
 
 0.4.0
