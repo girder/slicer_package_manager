@@ -19,9 +19,11 @@ from . import (
     computeContentChecksum,
     downloadExternals,
     expectedDownloadStats,
+    DRAFT_RELEASES,
     EXTENSIONS,
     FIXTURE_DIR,
-    PACKAGES
+    PACKAGES,
+    RELEASES
 )
 
 
@@ -86,12 +88,12 @@ def fixture_draft_release_folder(user, app_folder):
 def fixture_draft_release_revision_folder(user, draft_release_folder):
     folder = Folder().createFolder(
         parent=draft_release_folder,
-        name='0000',
+        name=DRAFT_RELEASES[0]['revision'],
         parentType='Folder',
         public=True,
         creator=user
     )
-    folder = Folder().setMetadata(folder, {'revision': '0000'})
+    folder = Folder().setMetadata(folder, {'revision': DRAFT_RELEASES[0]['revision']})
     yield folder
 
 
@@ -105,7 +107,7 @@ def fixture_release_folder(user, app_folder):
         public=True,
         creator=user
     )
-    folder = Folder().setMetadata(folder, {'revision': '0005'})
+    folder = Folder().setMetadata(folder, {'revision': RELEASES[0]['revision']})
     yield folder
 
 
