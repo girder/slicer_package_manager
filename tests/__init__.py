@@ -35,7 +35,7 @@ DRAFT_RELEASES = [
     },
 ]
 
-EXTENSIONS = [
+RELEASE_EXTENSIONS = [
     {
         'filepath': 'extension0.tar.gz',
         'meta': {
@@ -48,7 +48,10 @@ EXTENSIONS = [
             'app_revision': RELEASES[0]['revision'],
             'description': 'Extension for Slicer 4'
         }
-    },
+    }
+]
+
+DRAFT_EXTENSIONS = [
     {
         'filepath': 'extension1.tar.gz',
         'meta': {
@@ -103,11 +106,15 @@ EXTENSIONS = [
     }
 ]
 
+EXTENSIONS = []
+EXTENSIONS.extend(RELEASE_EXTENSIONS)
+EXTENSIONS.extend(DRAFT_EXTENSIONS)
 
 for extension in EXTENSIONS:
     extension['name'] = EXTENSION_PACKAGE_TEMPLATE_NAME.format(**extension['meta'])
 
-PACKAGES = [
+
+RELEASE_PACKAGES = [
     {
         'filepath': 'pkg0.dmg',
         'meta': {
@@ -119,7 +126,10 @@ PACKAGES = [
             'revision': RELEASES[0]['revision'],
             'version': RELEASES[0]['version'],
         }
-    },
+    }
+]
+
+DRAFT_PACKAGES = [
     {
         'filepath': 'pkg1.exe',
         'meta': {
@@ -145,6 +155,10 @@ PACKAGES = [
         }
     }
 ]
+
+PACKAGES = []
+PACKAGES.extend(RELEASE_PACKAGES)
+PACKAGES.extend(DRAFT_PACKAGES)
 
 for package in PACKAGES:
     package['name'] = APPLICATION_PACKAGE_TEMPLATE_NAME.format(**package['meta'])

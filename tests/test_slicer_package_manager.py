@@ -19,10 +19,14 @@ from . import (
     computeContentChecksum,
     downloadExternals,
     expectedDownloadStats,
+    DRAFT_EXTENSIONS,
+    DRAFT_PACKAGES,
     DRAFT_RELEASES,
     EXTENSIONS,
     FIXTURE_DIR,
     PACKAGES,
+    RELEASE_EXTENSIONS,
+    RELEASE_PACKAGES,
     RELEASES
 )
 
@@ -111,10 +115,10 @@ def fixture_release_folder(user, app_folder):
     yield folder
 
 
-@pytest.fixture(name='extensions')
-def fixture_extensions(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
+@pytest.fixture(name='release_extensions')
+def fixture_release_extensions(server, user, app_folder, release_folder, tmpdir, fsAssetstore):
     downloadExternals(
-        [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in EXTENSIONS],
+        [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in RELEASE_EXTENSIONS],
         tmpdir
     )
 
@@ -122,36 +126,93 @@ def fixture_extensions(server, user, app_folder, release_folder, draft_release_f
         server, 'extension', extension['meta'],
         filePath=tmpdir.join(extension['filepath']),
         _user=user, _app=app_folder
-    ) for extension in EXTENSIONS]
+    ) for extension in RELEASE_EXTENSIONS]
 
     for index, extension in enumerate(extensions):
-        assert extension['name'] == EXTENSIONS[index]['name']
-        isRelease = EXTENSIONS[index]['meta']['app_revision'] == release_folder['meta']['revision']
-        if isRelease:
-            extensions_folder = Folder().load(extension['folderId'], user=user)
-            assert ObjectId(extensions_folder['parentId']) == release_folder['_id']
+        assert extension['name'] == RELEASE_EXTENSIONS[index]['name']
+        isRelease = RELEASE_EXTENSIONS[index]['meta']['app_revision'] == release_folder['meta']['revision']
+        assert isRelease
+        extensions_folder = Folder().load(extension['folderId'], user=user)
+        assert ObjectId(extensions_folder['parentId']) == release_folder['_id']
 
     yield extensions
 
 
-@pytest.fixture(name='packages')
-def fixture_packages(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
+@pytest.fixture(name='draft_extensions')
+def fixture_draft_extensions(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
     downloadExternals(
-        [os.path.join(FIXTURE_DIR, package['filepath']) for package in PACKAGES],
+        [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in DRAFT_EXTENSIONS],
+        tmpdir
+    )
+
+    extensions = [_createOrUpdatePackage(
+        server, 'extension', extension['meta'],
+        filePath=tmpdir.join(extension['filepath']),
+        _user=user, _app=app_folder
+    ) for extension in DRAFT_EXTENSIONS]
+
+    for index, extension in enumerate(extensions):
+        assert extension['name'] == DRAFT_EXTENSIONS[index]['name']
+        isRelease = DRAFT_EXTENSIONS[index]['meta']['app_revision'] == release_folder['meta']['revision']
+        assert not isRelease
+
+    yield extensions
+
+
+@pytest.fixture(name='extensions')
+def fixture_extensions(release_extensions, draft_extensions):
+    extensions = []
+    extensions.extend(release_extensions)
+    extensions.extend(draft_extensions)
+    yield extensions
+
+
+@pytest.fixture(name='release_packages')
+def fixture_release_packages(server, user, app_folder, release_folder, tmpdir, fsAssetstore):
+    downloadExternals(
+        [os.path.join(FIXTURE_DIR, package['filepath']) for package in RELEASE_PACKAGES],
         tmpdir
     )
     packages = [_createOrUpdatePackage(
         server, 'package', package['meta'],
         filePath=tmpdir.join(package['filepath']),
         _user=user, _app=app_folder
-    ) for package in PACKAGES]
+    ) for package in RELEASE_PACKAGES]
 
     for index, package in enumerate(packages):
-        assert package['name'] == PACKAGES[index]['name']
-        isRelease = PACKAGES[index]['meta']['revision'] == release_folder['meta']['revision']
-        if isRelease:
-            assert ObjectId(package['folderId']) == release_folder['_id']
+        assert package['name'] == RELEASE_PACKAGES[index]['name']
+        isRelease = RELEASE_PACKAGES[index]['meta']['revision'] == release_folder['meta']['revision']
+        assert isRelease
+        assert ObjectId(package['folderId']) == release_folder['_id']
 
+    yield packages
+
+
+@pytest.fixture(name='draft_packages')
+def fixture_draft_packages(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
+    downloadExternals(
+        [os.path.join(FIXTURE_DIR, package['filepath']) for package in DRAFT_PACKAGES],
+        tmpdir
+    )
+    packages = [_createOrUpdatePackage(
+        server, 'package', package['meta'],
+        filePath=tmpdir.join(package['filepath']),
+        _user=user, _app=app_folder
+    ) for package in DRAFT_PACKAGES]
+
+    for index, package in enumerate(packages):
+        assert package['name'] == DRAFT_PACKAGES[index]['name']
+        isRelease = DRAFT_PACKAGES[index]['meta']['revision'] == release_folder['meta']['revision']
+        assert not isRelease
+
+    yield packages
+
+
+@pytest.fixture(name='packages')
+def fixture_packages(release_packages, draft_packages):
+    packages = []
+    packages.extend(release_packages)
+    packages.extend(draft_packages)
     yield packages
 
 
