@@ -1,3 +1,4 @@
+import json
 import os
 
 import pytest
@@ -184,6 +185,7 @@ def fixture_release_packages(server, user, app_folder, release_folder, tmpdir, f
         isRelease = RELEASE_PACKAGES[index]['meta']['revision'] == release_folder['meta']['revision']
         assert isRelease
         assert ObjectId(package['folderId']) == release_folder['_id']
+        assert package['meta']['release'] == release_folder['name']
 
     yield packages
 
@@ -204,6 +206,7 @@ def fixture_draft_packages(server, user, app_folder, release_folder, draft_relea
         assert package['name'] == DRAFT_PACKAGES[index]['name']
         isRelease = DRAFT_PACKAGES[index]['meta']['revision'] == release_folder['meta']['revision']
         assert not isRelease
+        assert 'release' not in package['meta']
 
     yield packages
 
@@ -883,6 +886,96 @@ def testIsDraftReleaseFolder(server, app_folder, release_folder, draft_release_f
     assert utilities.isDraftReleaseFolder(draft_release_revision_folder)
 
 
+@pytest.mark.parametrize(
+    "action,method,src_folder,dest_folder,items,release_before,release_after",
+    [
+        (
+            'copy',
+            'POST',
+            pytest.lazy_fixture('draft_release_revision_folder'),
+            pytest.lazy_fixture('release_folder'),
+            pytest.lazy_fixture('draft_packages'),
+            None,
+            RELEASES[0]['name']
+        ),
+        (
+            'copy',
+            'POST',
+            pytest.lazy_fixture('release_folder'),
+            pytest.lazy_fixture('draft_release_revision_folder'),
+            pytest.lazy_fixture('release_packages'),
+            RELEASES[0]['name'],
+            None
+        ),
+        (
+            'move',
+            'PUT',
+            pytest.lazy_fixture('draft_release_revision_folder'),
+            pytest.lazy_fixture('release_folder'),
+            pytest.lazy_fixture('draft_packages'),
+            None,
+            RELEASES[0]['name']
+        ),
+        (
+            'move',
+            'PUT',
+            pytest.lazy_fixture('release_folder'),
+            pytest.lazy_fixture('draft_release_revision_folder'),
+            pytest.lazy_fixture('release_packages'),
+            RELEASES[0]['name'],
+            None
+        ),
+    ],
+    ids=[
+        'copy_package_from_draft_to_release',
+        'copy_package_from_release_to_draft',
+        'move_package_from_draft_to_release',
+        'move_package_from_release_to_draft'
+    ]
+)
+@pytest.mark.plugin('slicer_package_manager')
+def testApplicationPackageMetadataAutoUpdate(
+        server, user, action, method, src_folder, dest_folder, items, release_before, release_after):
+
+    item = items[0]
+
+    assert ObjectId(item['folderId']) == src_folder['_id']
+    assert item['meta'].get('release', None) == release_before
+
+    resp = server.request(
+        path='/resource/%s' % action,
+        method=method,
+        user=user,
+        params={
+            'resources': json.dumps({'item': [item['_id']]}),
+            'parentType': 'folder',
+            'parentId': dest_folder['_id']
+        }
+    )
+    assertStatusOk(resp)
+
+    resp = server.request(
+        path='/item',
+        method='GET',
+        user=user,
+        params={
+            'folderId': dest_folder['_id'],
+            'name': item['name']
+        }
+    )
+    assertStatusOk(resp)
+    item_after = resp.json[0]
+
+    for key in ['name', 'size']:
+        assert item_after[key] == item[key]
+
+    for key in ['app_id', 'arch', 'baseName', 'os', 'revision']:
+        assert item_after['meta'][key] == item['meta'][key]
+
+    assert ObjectId(item_after['folderId']) == dest_folder['_id']
+    assert item_after['meta'].get('release', None) == release_after
+
+
 def _createApplicationCheck(server, appName, appDescription, collId=None,
                             collName=None, collDescription='', _user=None):
     params = {
@@ -1073,7 +1166,18 @@ def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=Non
         downloaded_checksum = computeContentChecksum('SHA512', _downloadFile(server, uploadedFile['_id'], _user=_user))
         local_checksum = computeFileChecksum('SHA512', filePath)
         assert downloaded_checksum == local_checksum
-    return resp.json
+
+    resp = server.request(
+        path='/app/%s/%s' % (_app['_id'], packageType),
+        method='GET',
+        user=_user,
+        params={'%s_id' % packageType: resp.json['_id']}
+    )
+    assertStatusOk(resp)
+
+    assert len(resp.json) == 1
+
+    return resp.json[0]
 
 
 def _deletePackages(server, packageType, pkg, _user=None, _app=None):

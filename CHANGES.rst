@@ -16,6 +16,8 @@ New Features
 Server
 ^^^^^^
 
+* Automatically update ``release`` metadata when packages are moved (or copied) between draft and release folders.
+
 * Add convenience functions :func:`slicer_package_manager.utilities.isApplicationFolder`,
   :func:`slicer_package_manager.utilities.isReleaseFolder` and :func:`slicer_package_manager.utilities.isDraftReleaseFolder`.
 

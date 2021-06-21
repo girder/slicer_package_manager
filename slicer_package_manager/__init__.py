@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from girder import events, plugin
+from girder.constants import AccessType
 from girder.models.item import Item
 from girder.models.folder import Folder
 from .api.app import App
 from . import constants, utilities
+from .models.package import Package as PackageModel
 
 from ._version import get_versions
 __version__ = get_versions()['version']
@@ -52,6 +54,66 @@ def _onDownloadFileComplete(event):
         amount=1)
 
 
+def _onItemSavedOrCopied(event):
+    item = Item().load(event.info['_id'], force=True)
+
+    if not utilities.isSlicerPackages(item):
+        return
+
+    release = utilities.getReleaseFolder(item)
+    if release is None:
+        return
+
+    meta = item['meta']
+
+    is_draft_release = release['name'] == constants.DRAFT_RELEASE_NAME
+    is_extension_item = 'app_revision' in meta
+
+    if is_extension_item:
+        return
+
+    if is_draft_release:
+        if 'release' not in meta:
+            return
+        del meta['release']
+
+    else:
+        if meta.get('release') == release['name']:
+            return
+        meta['release'] = release['name']
+
+    PackageModel().setMetadata(item, meta)
+
+
+def _onReleaseFolderNameUpdated(event):
+    folder = Folder().load(event.info['_id'], force=True)
+    if not utilities.isReleaseFolder(folder):
+        return
+
+    release = folder
+    if release['name'] == constants.DRAFT_RELEASE_NAME:
+        return
+
+    filters = {
+        '$and': [
+            {'meta.app_id': {'$exists': True}},
+            {'meta.os': {'$exists': True}},
+            {'meta.arch': {'$exists': True}},
+            {'meta.revision': {'$exists': True}}]
+    }
+    items = Folder().childItems(
+        folder=release,
+        filters=filters,
+        level=AccessType.READ
+    )
+    for item in items:
+        item_meta = item['meta']
+        if item_meta.get('release') == release['name']:
+            continue
+        item_meta['release'] = release['name']
+        PackageModel().setMetadata(item, item_meta)
+
+
 class GirderPlugin(plugin.GirderPlugin):
     DISPLAY_NAME = 'Slicer Package Manager'
 
@@ -62,6 +124,11 @@ class GirderPlugin(plugin.GirderPlugin):
 
         # Download statistics
         events.bind('model.file.download.complete', 'slicer_package_manager', _onDownloadFileComplete)
+
+        # Update item "release" metadata
+        events.bind('model.item.save.after', 'slicer_package_manager', _onItemSavedOrCopied)
+        events.bind('model.item.copy.after', 'slicer_package_manager', _onItemSavedOrCopied)
+        events.bind('model.folder.save.after', 'slicer_package_manager', _onReleaseFolderNameUpdated)
 
         # Mongo indexes
         Item().ensureIndex('meta.baseName')
