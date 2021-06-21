@@ -13,6 +13,33 @@ New Features
 
 * Require version information to be specified when uploading application packages. See :issue:`97`.
 
+Server
+^^^^^^
+
+* Automatically update ``release`` metadata when packages are moved (or copied) between draft and release folders.
+
+* Add convenience functions :func:`slicer_package_manager.utilities.isApplicationFolder`,
+  :func:`slicer_package_manager.utilities.isReleaseFolder` and :func:`slicer_package_manager.utilities.isDraftReleaseFolder`.
+
+* Add :func:`slicer_package_manager.utilities.getReleaseFolder` and simplify update of ``downloadStats``
+  release metadata to use the new function.
+
+Bug fixes
+---------
+
+* Remove partially implemented ``codebase`` metadata.
+
+* Remove support for unused ``packagetype`` metadata.
+
+Tests
+-----
+
+* ExternalData:
+
+  * Fix re-download of files if checksum does not match.
+
+  * Re-factor fixture introducing ``downloadExternals``.
+
 
 0.4.0
 =====

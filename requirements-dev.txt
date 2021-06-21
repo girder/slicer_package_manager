@@ -1,6 +1,7 @@
 bson
 pip>=9
 pytest
+pytest-lazy-fixture
 tox
 virtualenv
 # lint

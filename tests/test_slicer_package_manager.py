@@ -1,3 +1,4 @@
+import json
 import os
 
 import pytest
@@ -12,117 +13,243 @@ from girder.models.user import User
 from pytest_girder.assertions import assertStatusOk
 from pytest_girder.utils import getResponseBody
 
-from slicer_package_manager import constants
+from slicer_package_manager import constants, utilities
 
-from . import computeFileChecksum, computeContentChecksum, extensions, FIXTURE_DIR, packages, expectedDownloadStats
+from . import (
+    computeFileChecksum,
+    computeContentChecksum,
+    downloadExternals,
+    expectedDownloadStats,
+    DRAFT_EXTENSIONS,
+    DRAFT_PACKAGES,
+    DRAFT_RELEASES,
+    EXTENSIONS,
+    FIXTURE_DIR,
+    PACKAGES,
+    RELEASE_EXTENSIONS,
+    RELEASE_PACKAGES,
+    RELEASES
+)
 
 
-def _initialize():
-    _user = User().createUser('usr0', 'passwd', 'tst', 'usr', 'u@u.com')
-    _collection = Collection().createCollection(
+@pytest.fixture(name='user')
+def fixture_user():
+    yield User().createUser('usr0', 'passwd', 'tst', 'usr', 'u@u.com')
+
+
+@pytest.fixture(name='collection')
+def fixture_collection(user):
+    yield Collection().createCollection(
         'testCollection',
-        creator=_user,
-        description='Contain applications')
-    _packages = Folder().createFolder(
-        parent=_collection,
+        creator=user,
+        description='Contain applications'
+    )
+
+
+@pytest.fixture(name='packages_folder')
+def fixture_packages_folder(user, collection):
+    yield Folder().createFolder(
+        parent=collection,
         name=constants.TOP_LEVEL_FOLDER_NAME,
         parentType='Collection',
         public=True,
-        creator=_user)
-    _app = Folder().createFolder(
-        parent=_packages,
+        creator=user
+    )
+
+
+@pytest.fixture(name='app_folder')
+def fixture_app_folder(user, packages_folder):
+    folder = Folder().createFolder(
+        parent=packages_folder,
         name='application',
         description='app description',
         parentType='Folder',
         public=True,
-        creator=_user)
-    _app = Folder().setMetadata(
-        _app,
+        creator=user
+    )
+    folder = Folder().setMetadata(
+        folder,
         {
             'applicationPackageNameTemplate': constants.APPLICATION_PACKAGE_TEMPLATE_NAME,
             'extensionPackageNameTemplate': constants.EXTENSION_PACKAGE_TEMPLATE_NAME
         }
     )
-    _draftRelease = Folder().createFolder(
-        parent=_app,
+    yield folder
+
+
+@pytest.fixture(name='draft_release_folder')
+def fixture_draft_release_folder(user, app_folder):
+    yield Folder().createFolder(
+        parent=app_folder,
         name=constants.DRAFT_RELEASE_NAME,
         description='Uploaded each night, always up-to-date',
         parentType='Folder',
         public=True,
-        creator=_user)
-    _draftRevision = Folder().createFolder(
-        parent=_draftRelease,
-        name='0000',
+        creator=user
+    )
+
+
+@pytest.fixture(name='draft_release_revision_folder')
+def fixture_draft_release_revision_folder(user, draft_release_folder):
+    folder = Folder().createFolder(
+        parent=draft_release_folder,
+        name=DRAFT_RELEASES[0]['revision'],
         parentType='Folder',
         public=True,
-        creator=_user)
-    _draftRevision = Folder().setMetadata(
-        _draftRevision,
-        {'revision': '0000'}
+        creator=user
     )
-    _release = Folder().createFolder(
-        parent=_app,
+    folder = Folder().setMetadata(folder, {'revision': DRAFT_RELEASES[0]['revision']})
+    yield folder
+
+
+@pytest.fixture(name='release_folder')
+def fixture_release_folder(user, app_folder):
+    folder = Folder().createFolder(
+        parent=app_folder,
         name='release1',
         description='release description',
         parentType='Folder',
         public=True,
-        creator=_user)
+        creator=user
+    )
+    folder = Folder().setMetadata(folder, {'revision': RELEASES[0]['revision']})
+    yield folder
 
-    _release = Folder().setMetadata(_release, {'revision': '0005'})
-    _extensions = extensions
-    _extensions['extension1']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension1']['meta'])
-    _extensions['extension2']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension2']['meta'])
-    _extensions['extension3']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension3']['meta'])
-    _extensions['extension4']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension4']['meta'])
-    _extensions['extension5']['name'] = constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(
-        **_extensions['extension5']['meta'])
-    _packages = packages
-    _packages['package1']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
-        **_packages['package1']['meta'])
-    _packages['package2']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
-        **_packages['package2']['meta'])
-    _packages['package3']['name'] = constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(
-        **_packages['package3']['meta'])
 
-    return _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages
+@pytest.fixture(name='release_extensions')
+def fixture_release_extensions(server, user, app_folder, release_folder, tmpdir, fsAssetstore):
+    downloadExternals(
+        [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in RELEASE_EXTENSIONS],
+        tmpdir
+    )
+
+    extensions = [_createOrUpdatePackage(
+        server, 'extension', extension['meta'],
+        filePath=tmpdir.join(extension['filepath']),
+        _user=user, _app=app_folder
+    ) for extension in RELEASE_EXTENSIONS]
+
+    for index, extension in enumerate(extensions):
+        assert extension['name'] == RELEASE_EXTENSIONS[index]['name']
+        isRelease = RELEASE_EXTENSIONS[index]['meta']['app_revision'] == release_folder['meta']['revision']
+        assert isRelease
+        extensions_folder = Folder().load(extension['folderId'], user=user)
+        assert ObjectId(extensions_folder['parentId']) == release_folder['_id']
+
+    yield extensions
+
+
+@pytest.fixture(name='draft_extensions')
+def fixture_draft_extensions(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
+    downloadExternals(
+        [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in DRAFT_EXTENSIONS],
+        tmpdir
+    )
+
+    extensions = [_createOrUpdatePackage(
+        server, 'extension', extension['meta'],
+        filePath=tmpdir.join(extension['filepath']),
+        _user=user, _app=app_folder
+    ) for extension in DRAFT_EXTENSIONS]
+
+    for index, extension in enumerate(extensions):
+        assert extension['name'] == DRAFT_EXTENSIONS[index]['name']
+        isRelease = DRAFT_EXTENSIONS[index]['meta']['app_revision'] == release_folder['meta']['revision']
+        assert not isRelease
+
+    yield extensions
+
+
+@pytest.fixture(name='extensions')
+def fixture_extensions(release_extensions, draft_extensions):
+    extensions = []
+    extensions.extend(release_extensions)
+    extensions.extend(draft_extensions)
+    yield extensions
+
+
+@pytest.fixture(name='release_packages')
+def fixture_release_packages(server, user, app_folder, release_folder, tmpdir, fsAssetstore):
+    downloadExternals(
+        [os.path.join(FIXTURE_DIR, package['filepath']) for package in RELEASE_PACKAGES],
+        tmpdir
+    )
+    packages = [_createOrUpdatePackage(
+        server, 'package', package['meta'],
+        filePath=tmpdir.join(package['filepath']),
+        _user=user, _app=app_folder
+    ) for package in RELEASE_PACKAGES]
+
+    for index, package in enumerate(packages):
+        assert package['name'] == RELEASE_PACKAGES[index]['name']
+        isRelease = RELEASE_PACKAGES[index]['meta']['revision'] == release_folder['meta']['revision']
+        assert isRelease
+        assert ObjectId(package['folderId']) == release_folder['_id']
+        assert package['meta']['release'] == release_folder['name']
+
+    yield packages
+
+
+@pytest.fixture(name='draft_packages')
+def fixture_draft_packages(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
+    downloadExternals(
+        [os.path.join(FIXTURE_DIR, package['filepath']) for package in DRAFT_PACKAGES],
+        tmpdir
+    )
+    packages = [_createOrUpdatePackage(
+        server, 'package', package['meta'],
+        filePath=tmpdir.join(package['filepath']),
+        _user=user, _app=app_folder
+    ) for package in DRAFT_PACKAGES]
+
+    for index, package in enumerate(packages):
+        assert package['name'] == DRAFT_PACKAGES[index]['name']
+        isRelease = DRAFT_PACKAGES[index]['meta']['revision'] == release_folder['meta']['revision']
+        assert not isRelease
+        assert 'release' not in package['meta']
+
+    yield packages
+
+
+@pytest.fixture(name='packages')
+def fixture_packages(release_packages, draft_packages):
+    packages = []
+    packages.extend(release_packages)
+    packages.extend(draft_packages)
+    yield packages
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testInitApp(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+def testInitApp(server, user, collection):
     _createApplicationCheck(
         server,
         'App_test',
         'Application without specifying any collection',
         collDescription='Automatic creation of the collection Applications',
-        _user=_user
+        _user=user
     )
     # Without any collection this should load the 'Applications' collection
     _createApplicationCheck(
         server,
         'App_test1',
         'Application without specifying any collection',
-        _user=_user
+        _user=user
     )
     # With a collection ID this should load the collection
     _createApplicationCheck(
         server,
         'App_test2',
         'Application with a collection ID',
-        collId=_collection['_id'],
-        _user=_user
+        collId=collection['_id'],
+        _user=user
     )
     # With a collection name that match an existing collection name
     _createApplicationCheck(
         server,
         'App_test3',
         'Application with a collection name',
-        collName=_collection['name'],
-        _user=_user
+        collName=collection['name'],
+        _user=user
     )
     # With a collection name that does not exist yet
     _createApplicationCheck(
@@ -130,46 +257,46 @@ def testInitApp(server):
         'App_test4',
         'Application with a collection name',
         collName='Collection_for_app',
-        _user=_user
+        _user=user
     )
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testListApp(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+def testListApp(server, user, collection, app_folder):
     # Create applications in the 'Applications' collection
     app1 = _createApplicationCheck(
         server,
         'App_test1',
         'Application without specifying any collection',
         collDescription='Automatic creation of the collection Applications',
-        _user=_user
+        _user=user
     )
     app2 = _createApplicationCheck(
         server,
         'App_test2',
         'Application without specifying any collection',
         collDescription='Automatic creation of the collection Applications',
-        _user=_user
+        _user=user
     )
+
     # Get application with application ID
     resp = server.request(
         path='/app',
         method='GET',
-        user=_user,
-        params={'app_id': _app['_id']}
+        user=user,
+        params={'app_id': app_folder['_id']}
     )
     assertStatusOk(resp)
-    assert ObjectId(resp.json['_id']) == _app['_id']
-    assert resp.json['name'] == _app['name']
-    assert resp.json['description'] == _app['description']
+    assert ObjectId(resp.json['_id']) == app_folder['_id']
+    assert resp.json['name'] == app_folder['name']
+    assert resp.json['description'] == app_folder['description']
     assert resp.json['meta']['applicationPackageNameTemplate'] == constants.APPLICATION_PACKAGE_TEMPLATE_NAME
     assert resp.json['meta']['extensionPackageNameTemplate'] == constants.EXTENSION_PACKAGE_TEMPLATE_NAME
     # List all applications from 'Applications' collection (Default)
     resp = server.request(
         path='/app',
         method='GET',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
     assert len(resp.json) == 2
@@ -179,22 +306,21 @@ def testListApp(server):
     resp = server.request(
         path='/app',
         method='GET',
-        user=_user,
+        user=user,
         params={
-            'collection_id': _collection['_id'],
-            'name': _app['name']}
+            'collection_id': collection['_id'],
+            'name': app_folder['name']}
     )
     assertStatusOk(resp)
-    assert ObjectId(resp.json[0]['_id']) == _app['_id']
-    assert resp.json[0]['name'] == _app['name']
-    assert resp.json[0]['description'] == _app['description']
+    assert ObjectId(resp.json[0]['_id']) == app_folder['_id']
+    assert resp.json[0]['name'] == app_folder['name']
+    assert resp.json[0]['description'] == app_folder['description']
     assert resp.json[0]['meta']['applicationPackageNameTemplate'] == constants.APPLICATION_PACKAGE_TEMPLATE_NAME
     assert resp.json[0]['meta']['extensionPackageNameTemplate'] == constants.EXTENSION_PACKAGE_TEMPLATE_NAME
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteApp(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+def testDeleteApp(server, user):
     # Create the application without any collection,
     # this should create the new 'Applications' collection
     app = _createApplicationCheck(
@@ -202,13 +328,13 @@ def testDeleteApp(server):
         'App_test',
         'Application without specifying any collection',
         collDescription='Automatic creation of the collection Applications',
-        _user=_user
+        _user=user
     )
     # Get the new application by ID
     resp = server.request(
         path='/app',
         method='GET',
-        user=_user,
+        user=user,
         params={'app_id': app['_id']}
     )
     assertStatusOk(resp)
@@ -218,7 +344,7 @@ def testDeleteApp(server):
     resp = server.request(
         path='/app/%s' % app['_id'],
         method='DELETE',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
     assert resp.json['_id'] == app['_id']
@@ -226,7 +352,7 @@ def testDeleteApp(server):
     resp = server.request(
         path='/app',
         method='GET',
-        user=_user,
+        user=user,
         params={'app_id': app['_id']}
     )
     assertStatusOk(resp)
@@ -234,106 +360,103 @@ def testDeleteApp(server):
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testNewRelease(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+def testNewRelease(server, user, app_folder):
     _createReleaseCheck(
         server,
         name='V3.2.1',
-        app_id=_app['_id'],
+        app_id=app_folder['_id'],
         app_revision='001',
         desc='This is a new release',
-        _user=_user
+        _user=user
     )
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testGetRelease(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+def testGetRelease(server, user, app_folder, release_folder, draft_release_folder):
     release1 = _createReleaseCheck(
         server,
         name='V3.2.1',
-        app_id=_app['_id'],
+        app_id=app_folder['_id'],
         app_revision='002',
         desc='This is a new release',
-        _user=_user
+        _user=user
     )
 
     resp = server.request(
-        path='/app/%s/release' % _app['_id'],
+        path='/app/%s/release' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
     # Check if it has return all the stable releases
     assertStatusOk(resp)
     assert len(resp.json) == 2
     assert resp.json[0]['_id'] == release1['_id']
-    assert ObjectId(resp.json[1]['_id']) == _release['_id']
+    assert ObjectId(resp.json[1]['_id']) == release_folder['_id']
 
     # Get one release by ID
     resp = server.request(
-        path='/app/%s/release' % _app['_id'],
-        params={'release_id_or_name': _release['_id']},
+        path='/app/%s/release' % app_folder['_id'],
+        params={'release_id_or_name': release_folder['_id']},
         method='GET',
-        user=_user,
+        user=user,
     )
     assertStatusOk(resp)
-    assert resp.json['name'] == _release['name']
-    assert resp.json['description'] == _release['description']
-    assert ObjectId(resp.json['_id']) == _release['_id']
+    assert resp.json['name'] == release_folder['name']
+    assert resp.json['description'] == release_folder['description']
+    assert ObjectId(resp.json['_id']) == release_folder['_id']
 
     # Get one release by name
     resp = server.request(
-        path='/app/%s/release' % _app['_id'],
-        params={'release_id_or_name': _release['name']},
+        path='/app/%s/release' % app_folder['_id'],
+        params={'release_id_or_name': release_folder['name']},
         method='GET',
-        user=_user,
+        user=user,
     )
     assertStatusOk(resp)
-    assert resp.json['name'] == _release['name']
-    assert resp.json['description'] == _release['description']
-    assert ObjectId(resp.json['_id']) == _release['_id']
+    assert resp.json['name'] == release_folder['name']
+    assert resp.json['description'] == release_folder['description']
+    assert ObjectId(resp.json['_id']) == release_folder['_id']
 
     resp = server.request(
-        path='/app/%s/release' % _app['_id'],
+        path='/app/%s/release' % app_folder['_id'],
         params={'release_id_or_name': constants.DRAFT_RELEASE_NAME},
         method='GET',
-        user=_user,
+        user=user,
     )
     assertStatusOk(resp)
     assert resp.json['name'] == constants.DRAFT_RELEASE_NAME
-    assert ObjectId(resp.json['_id']) == _draftRelease['_id']
+    assert ObjectId(resp.json['_id']) == draft_release_folder['_id']
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testGetAllDraftRelease(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+def testGetAllDraftRelease(server, user, app_folder, draft_release_revision_folder):
     resp = server.request(
-        path='/app/%s/draft' % _app['_id'],
+        path='/app/%s/draft' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
     # Check if it has return all the revision from the default release
     assertStatusOk(resp)
     assert len(resp.json) == 1
-    assert ObjectId(resp.json[0]['_id']) == _draftRevision['_id']
-    assert resp.json[0]['meta']['revision'] == _draftRevision['meta']['revision']
+    assert ObjectId(resp.json[0]['_id']) == draft_release_revision_folder['_id']
+    assert resp.json[0]['meta']['revision'] == draft_release_revision_folder['meta']['revision']
     # With the parameter 'revision'
     resp = server.request(
-        path='/app/%s/draft' % _app['_id'],
+        path='/app/%s/draft' % app_folder['_id'],
         method='GET',
-        user=_user,
-        params={'revision': _draftRevision['meta']['revision']}
+        user=user,
+        params={'revision': draft_release_revision_folder['meta']['revision']}
     )
     # Check if it has return the good revision from the draft folder
     assertStatusOk(resp)
     assert len(resp.json) == 1
-    assert ObjectId(resp.json[0]['_id']) == _draftRevision['_id']
-    assert resp.json[0]['meta']['revision'] == _draftRevision['meta']['revision']
+    assert ObjectId(resp.json[0]['_id']) == draft_release_revision_folder['_id']
+    assert resp.json[0]['meta']['revision'] == draft_release_revision_folder['meta']['revision']
     # With the parameter 'revision' set to a wrong value
     resp = server.request(
-        path='/app/%s/draft' % _app['_id'],
+        path='/app/%s/draft' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={'revision': 'wrongRev'}
     )
     # Check if it has return the good revision from the draft folder
@@ -342,49 +465,23 @@ def testGetAllDraftRelease(server):
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteReleaseByID(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    _deleteRelease(server, '_id', _user=_user, _app=_app)
+def testDeleteReleaseByID(server, user, app_folder):
+    _deleteRelease(server, '_id', _user=user, _app=app_folder)
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteReleaseByName(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    _deleteRelease(server, 'name', _user=_user, _app=_app)
+def testDeleteReleaseByName(server, user, app_folder):
+    _deleteRelease(server, 'name', _user=user, _app=app_folder)
 
 
-@pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'extension3.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension4.tar.gz'),
-)
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteRevisionRelease(server, fsAssetstore, external_data):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    # Create extensions in the "draft" release
-    extension1 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension3']['meta'],
-        external_data.join('extension3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension1['name'] == _extensions['extension3']['name']
-    extension2 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension4']['meta'],
-        external_data.join('extension4.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension2['name'] == _extensions['extension4']['name']
-
+def testDeleteRevisionRelease(server, user, app_folder, packages, extensions):
     resp = server.request(
-        path='/app/%s/draft' % _app['_id'],
+        path='/app/%s/draft' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
+
     # Check if it has return all the revision from the default release
     assertStatusOk(resp)
     assert len(resp.json) == 2
@@ -392,149 +489,54 @@ def testDeleteRevisionRelease(server, fsAssetstore, external_data):
     # Delete by Name the revision release '0001' in the "draft" release
     resp = server.request(
         path='/app/%s/release/%s' %
-             (_app['_id'], _extensions['extension4']['meta']['app_revision']),
+             (app_folder['_id'], EXTENSIONS[3]['meta']['app_revision']),
         method='DELETE',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
 
     resp = server.request(
-        path='/app/%s/draft' % _app['_id'],
+        path='/app/%s/draft' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
     # Check if it has return all the revision from the default release
     assertStatusOk(resp)
     assert len(resp.json) == 1
 
 
-@pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'extension1.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension2.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension3.tar.gz')
-)
 @pytest.mark.plugin('slicer_package_manager')
-def testUploadAndDownloadExtension(server, fsAssetstore, external_data):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    # Create a new extension in the release "_release"
-    extension1 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension1']['meta'],
-        external_data.join('extension1.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension1['name'] == _extensions['extension1']['name']
-    extensions_folder = Folder().load(extension1['folderId'], user=_user)
-    assert ObjectId(extensions_folder['parentId']) == _release['_id']
-    # Create an other extension in the "draft" release
-    extension2 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension2']['meta'],
-        external_data.join('extension2.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension2['name'] == _extensions['extension2']['name']
-    # Create a third extension in the "draft" release
-    extension3 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension3']['meta'],
-        external_data.join('extension3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension3['name'] == _extensions['extension3']['name']
-    # Try to create the same extension should just get the same one
-    extension3 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension3']['meta'],
-        external_data.join('extension3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension3['name'] == _extensions['extension3']['name']
-
-
-@pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'extension2.tar.gz')
-)
-@pytest.mark.plugin('slicer_package_manager')
-def testUpdateExtensions(server, fsAssetstore, external_data):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    extension = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension2']['meta'],
-        external_data.join('extension2.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension['name'] == _extensions['extension2']['name']
+def testUpdateExtensions(server, user, app_folder, extensions):
     # Update the same extension
-    newParams = _extensions['extension2']['meta'].copy()
+    newParams = EXTENSIONS[1]['meta'].copy()
     newParams.update({
         'revision': '0000',
         'repository_type': 'gitlab',
-        'packagetype': 'zip',
-        'codebase': 'SL434334',
         'description': 'Extension for Slicer 4 new version 2'
     })
-    updatedExtension = _createOrUpdatePackage(server, 'extension', newParams, _user=_user, _app=_app)
+    updatedExtension = _createOrUpdatePackage(server, 'extension', newParams, _user=user, _app=app_folder)
     # Check the same extension has different metadata
-    assert updatedExtension['_id'] == extension['_id']
+    assert updatedExtension['_id'] == extensions[1]['_id']
     assert updatedExtension['name'] == constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(**newParams)
-    assert updatedExtension['meta'] != extension['meta']
+    assert updatedExtension['meta'] != extensions[1]['meta']
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testGetExtensions(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    # Create a new extension in the release "_release"
-    extension1 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension1']['meta'],
-        _user=_user,
-        _app=_app
-    )
-    assert extension1['name'] == _extensions['extension1']['name']
-    extensions_folder = Folder().load(extension1['folderId'], user=_user)
-    assert ObjectId(extensions_folder['parentId']) == _release['_id']
-    # Create other extensions in the "draft" release
-    extension2 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension2']['meta'],
-        _user=_user,
-        _app=_app
-    )
-    assert extension2['name'] == _extensions['extension2']['name']
-    extension3 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension3']['meta'],
-        _user=_user,
-        _app=_app
-    )
-    assert extension3['name'] == _extensions['extension3']['name']
+def testGetExtensions(server, user, app_folder, release_folder, extensions):
     # Get all the extension of the application
     resp = server.request(
-        path='/app/%s/extension' % _app['_id'],
+        path='/app/%s/extension' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
-    assert len(resp.json) == 3
+    assert len(resp.json) == len(EXTENSIONS)
+
     # Get all the extension of the application for Linux
     resp = server.request(
-        path='/app/%s/extension' % _app['_id'],
+        path='/app/%s/extension' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={
             'os': 'linux'
         }
@@ -543,11 +545,12 @@ def testGetExtensions(server):
     assert len(resp.json) == 2
     for ext in resp.json:
         assert ext['meta']['os'] == 'linux'
+
     # Get all the extension of the application for Linux and amd64 architecture
     resp = server.request(
-        path='/app/%s/extension' % _app['_id'],
+        path='/app/%s/extension' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={
             'os': 'linux',
             'arch': 'amd64'
@@ -558,49 +561,53 @@ def testGetExtensions(server):
     for ext in resp.json:
         assert ext['meta']['os'] == 'linux'
         assert ext['meta']['arch'] == 'amd64'
+
     # Get all the extension of the application which are in "release1"
     resp = server.request(
-        path='/app/%s/extension' % _app['_id'],
+        path='/app/%s/extension' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={
-            'release_id': _release['_id']
+            'release_id': release_folder['_id']
         }
     )
     assertStatusOk(resp)
     assert len(resp.json) == 1
+
     # Get all the extension of the application which are in the draft release
     draftRelease = list(Folder().childFolders(
-        _app,
+        app_folder,
         'Folder',
-        user=_user,
+        user=user,
         filters={'name': constants.DRAFT_RELEASE_NAME}))
     resp = server.request(
-        path='/app/%s/extension' % _app['_id'],
+        path='/app/%s/extension' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={
             'release_id': draftRelease[0]['_id']
         }
     )
     assertStatusOk(resp)
-    assert len(resp.json) == 2
+    assert len(resp.json) == 4
+
     # Get a specific extension by name
     resp = server.request(
-        path='/app/%s/extension' % _app['_id'],
-        params={'extension_name': extension3['name']},
+        path='/app/%s/extension' % app_folder['_id'],
+        params={'extension_name': extensions[1]['name']},
         method='GET',
-        user=_user,
+        user=user,
     )
     assertStatusOk(resp)
-    assert resp.json[0]['_id'] == extension3['_id']
-    assert resp.json[0]['name'] == extension3['name']
+    assert resp.json[0]['_id'] == extensions[1]['_id']
+    assert resp.json[0]['name'] == extensions[1]['name']
+
     # Get a specific extension with wrong name
     resp = server.request(
-        path='/app/%s/extension' % _app['_id'],
+        path='/app/%s/extension' % app_folder['_id'],
         params={'extension_name': 'wrong_name'},
         method='GET',
-        user=_user,
+        user=user,
     )
     assertStatusOk(resp)
     assert len(resp.json) == 0
@@ -608,154 +615,70 @@ def testGetExtensions(server):
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteExtensionPackages(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
+def testDeleteExtensionPackages(server, user, app_folder, release_folder):
     # Create a new extension in the release "_release"
     extension = _createOrUpdatePackage(
         server,
         'extension',
-        _extensions['extension1']['meta'],
-        _user=_user,
-        _app=_app
+        EXTENSIONS[0]['meta'],
+        _user=user,
+        _app=app_folder
     )
-    assert extension['name'] == _extensions['extension1']['name']
-    extensions_folder = Folder().load(extension['folderId'], user=_user)
-    assert ObjectId(extensions_folder['parentId']) == _release['_id']
+    assert extension['name'] == EXTENSIONS[0]['name']
+    extensions_folder = Folder().load(extension['folderId'], user=user)
+    assert ObjectId(extensions_folder['parentId']) == release_folder['_id']
     # Get, delete, and try to re-get the package
-    _deletePackages(server, 'extension', extension, _user=_user, _app=_app)
+    _deletePackages(server, 'extension', extension, _user=user, _app=app_folder)
 
 
 @pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'pkg1.dmg'),
-    os.path.join(FIXTURE_DIR, 'pkg2.exe'),
-    os.path.join(FIXTURE_DIR, 'pkg3.tar.gz')
+    os.path.join(FIXTURE_DIR, PACKAGES[2]['filepath'])
 )
 @pytest.mark.plugin('slicer_package_manager')
-def testUploadAndDownloadPackages(server, fsAssetstore, external_data):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    # Create a new application package in the release "_release"
-    package1 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package1']['meta'],
-        external_data.join('pkg1.dmg'),
-        _user=_user,
-        _app=_app
-    )
-    assert package1['name'] == _packages['package1']['name']
-    assert ObjectId(package1['folderId']) == _release['_id']
-    # Create an other application package in the "draft" release
+def testUploadAndDownloadPackages(server, user, app_folder, packages, external_data):
+    # Try to create the same application package should just get the same one
     package2 = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package2']['meta'],
-        external_data.join('pkg2.exe'),
-        _user=_user,
-        _app=_app
+        PACKAGES[2]['meta'],
+        external_data.join(PACKAGES[2]['filepath']),
+        _user=user,
+        _app=app_folder
     )
-    assert package2['name'] == _packages['package2']['name']
-    # Create a third application package in the "draft" release
-    package3 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package3']['meta'],
-        external_data.join('pkg3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert package3['name'] == _packages['package3']['name']
-    # Try to create the same application package should just get the same one
-    package3 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package3']['meta'],
-        external_data.join('pkg3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert package3['name'] == _packages['package3']['name']
+    assert package2['name'] == packages[2]['name']
 
 
-@pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'pkg2.exe'),
-    )
 @pytest.mark.plugin('slicer_package_manager')
-def testUpdatePackages(server, fsAssetstore, external_data):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    package = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package2']['meta'],
-        external_data.join('pkg2.exe'),
-        _user=_user,
-        _app=_app
-    )
-    assert package['name'] == _packages['package2']['name']
+def testUpdatePackages(server, user, app_folder, packages):
     # Update the same package
-    newParams = _packages['package2']['meta'].copy()
+    newParams = PACKAGES[1]['meta'].copy()
     newParams.update({
         'repository_url': 'https://AnotherURL.com',
         'repository_type': 'gitlab',
     })
-    updatedPackage = _createOrUpdatePackage(server, 'package', newParams, _user=_user, _app=_app)
+    updatedPackage = _createOrUpdatePackage(server, 'package', newParams, _user=user, _app=app_folder)
     # Check the same package has different metadata
-    assert updatedPackage['_id'] == package['_id']
+    assert updatedPackage['_id'] == packages[1]['_id']
     assert updatedPackage['name'] == constants.APPLICATION_PACKAGE_TEMPLATE_NAME.format(**newParams)
-    assert updatedPackage['meta'] != package['meta']
+    assert updatedPackage['meta'] != packages[1]['meta']
 
 
-@pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'pkg1.dmg'),
-    os.path.join(FIXTURE_DIR, 'pkg2.exe'),
-    os.path.join(FIXTURE_DIR, 'pkg3.tar.gz'),
-    )
 @pytest.mark.plugin('slicer_package_manager')
-def testGetPackages(server, fsAssetstore, external_data):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    # Create a new application package in the release "_release"
-    package1 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package1']['meta'],
-        external_data.join('pkg1.dmg'),
-        _user=_user,
-        _app=_app
-    )
-    assert package1['name'] == _packages['package1']['name']
-    assert ObjectId(package1['folderId']) == _release['_id']
-    # Create an other application package in the "draft" release
-    package2 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package2']['meta'],
-        external_data.join('pkg2.exe'),
-        _user=_user,
-        _app=_app
-    )
-    assert package2['name'] == _packages['package2']['name']
-    # Create a third application package in the "draft" release
-    package3 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package3']['meta'],
-        external_data.join('pkg3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert package3['name'] == _packages['package3']['name']
+def testGetPackages(server, user, app_folder, release_folder, packages):
     # Get all the package of the application
     resp = server.request(
-        path='/app/%s/package' % _app['_id'],
+        path='/app/%s/package' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
     assert len(resp.json) == 3
+
     # Get all the package of the application for Linux
     resp = server.request(
-        path='/app/%s/package' % _app['_id'],
+        path='/app/%s/package' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={
             'os': 'linux'
         }
@@ -763,11 +686,12 @@ def testGetPackages(server, fsAssetstore, external_data):
     assertStatusOk(resp)
     assert len(resp.json) == 1
     assert resp.json[0]['meta']['os'] == 'linux'
+
     # Get all the package of the application for Linux and amd64 architecture
     resp = server.request(
-        path='/app/%s/package' % _app['_id'],
+        path='/app/%s/package' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={
             'os': 'macosx',
             'arch': 'i386'
@@ -775,49 +699,53 @@ def testGetPackages(server, fsAssetstore, external_data):
     )
     assertStatusOk(resp)
     assert len(resp.json) == 0
+
     # Get all the package of the application which are in "release1"
     resp = server.request(
-        path='/app/%s/package' % _app['_id'],
+        path='/app/%s/package' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={
-            'release_id_or_name': _release['_id']
+            'release_id_or_name': release_folder['_id']
         }
     )
     assertStatusOk(resp)
     assert len(resp.json) == 1
+
     # Get all the package of the application which are in the draft release
     draftRelease = list(Folder().childFolders(
-        _app,
+        app_folder,
         'Folder',
-        user=_user,
+        user=user,
         filters={'name': constants.DRAFT_RELEASE_NAME}))
     resp = server.request(
-        path='/app/%s/package' % _app['_id'],
+        path='/app/%s/package' % app_folder['_id'],
         method='GET',
-        user=_user,
+        user=user,
         params={
             'release_id_or_name': draftRelease[0]['_id']
         }
     )
     assertStatusOk(resp)
     assert len(resp.json) == 2
+
     # Get a specific package by name
     resp = server.request(
-        path='/app/%s/package' % _app['_id'],
-        params={'package_name': package3['name']},
+        path='/app/%s/package' % app_folder['_id'],
+        params={'package_name': packages[1]['name']},
         method='GET',
-        user=_user,
+        user=user,
     )
     assertStatusOk(resp)
-    assert resp.json[0]['_id'] == package3['_id']
-    assert resp.json[0]['name'] == package3['name']
+    assert resp.json[0]['_id'] == packages[1]['_id']
+    assert resp.json[0]['name'] == packages[1]['name']
+
     # Get a specific extension with wrong name
     resp = server.request(
-        path='/app/%s/package' % _app['_id'],
+        path='/app/%s/package' % app_folder['_id'],
         params={'package_name': 'wrong_name'},
         method='GET',
-        user=_user,
+        user=user,
     )
     assertStatusOk(resp)
     assert len(resp.json) == 0
@@ -825,135 +753,50 @@ def testGetPackages(server, fsAssetstore, external_data):
 
 
 @pytest.mark.plugin('slicer_package_manager')
-def testDeleteApplicationPackages(server):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    # Create a new application package in the release "_release"
+def testDeleteApplicationPackages(server, user, app_folder, release_folder):
     package = _createOrUpdatePackage(
         server,
         'package',
-        _packages['package1']['meta'],
-        _user=_user,
-        _app=_app
+        PACKAGES[0]['meta'],
+        _user=user,
+        _app=app_folder
     )
-    assert package['name'] == _packages['package1']['name']
-    assert ObjectId(package['folderId']) == _release['_id']
+    assert package['name'] == PACKAGES[0]['name']
+    assert ObjectId(package['folderId']) == release_folder['_id']
+
     # Get, delete, and try to re-get the package
-    _deletePackages(server, 'package', package, _user=_user, _app=_app)
+    _deletePackages(server, 'package', package, _user=user, _app=app_folder)
 
 
-@pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, 'extension1.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension2.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension3.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension4.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'extension5.tar.gz'),
-    os.path.join(FIXTURE_DIR, 'pkg1.dmg'),
-    os.path.join(FIXTURE_DIR, 'pkg2.exe'),
-    os.path.join(FIXTURE_DIR, 'pkg3.tar.gz'),
-    )
 @pytest.mark.plugin('slicer_package_manager')
-def testDownloadStats(server, fsAssetstore, external_data):
-    _user, _collection, _app, _release, _draftRelease, _draftRevision, _extensions, _packages = _initialize()
-    extension1 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension1']['meta'],
-        external_data.join('extension1.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension1['name'] == _extensions['extension1']['name']
-    extension2 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension2']['meta'],
-        external_data.join('extension2.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension2['name'] == _extensions['extension2']['name']
-    extension3 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension3']['meta'],
-        external_data.join('extension3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension3['name'] == _extensions['extension3']['name']
-    extension4 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension4']['meta'],
-        external_data.join('extension4.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension4['name'] == _extensions['extension4']['name']
-    extension5 = _createOrUpdatePackage(
-        server,
-        'extension',
-        _extensions['extension5']['meta'],
-        external_data.join('extension5.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert extension5['name'] == _extensions['extension5']['name']
-    package1 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package1']['meta'],
-        external_data.join('pkg1.dmg'),
-        _user=_user,
-        _app=_app
-    )
-    assert package1['name'] == _packages['package1']['name']
-    package2 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package2']['meta'],
-        external_data.join('pkg2.exe'),
-        _user=_user,
-        _app=_app
-    )
-    assert package2['name'] == _packages['package2']['name']
-    package3 = _createOrUpdatePackage(
-        server,
-        'package',
-        _packages['package3']['meta'],
-        external_data.join('pkg3.tar.gz'),
-        _user=_user,
-        _app=_app
-    )
-    assert package3['name'] == _packages['package3']['name']
-
+def testDownloadStats(server, user, app_folder, draft_release_revision_folder, packages, extensions):
     # Get the downloadStats
     expectedStats = expectedDownloadStats
     resp = server.request(
-        path='/app/%s/downloadstats' % _app['_id'],
+        path='/app/%s/downloadstats' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
     assert resp.json == expectedStats
 
     # Download multiple time an extension
-    ext4_file = list(File().find({'itemId': ObjectId(extension4['_id'])}))
-    ext5_file = list(File().find({'itemId': ObjectId(extension5['_id'])}))
+    ext3_file = list(File().find({'itemId': ObjectId(extensions[3]['_id'])}))
+    ext4_file = list(File().find({'itemId': ObjectId(extensions[4]['_id'])}))
 
     N = 5
     for _idx in range(N):
-        _downloadFile(server, ext4_file[0]['_id'], _user=_user)
-        _downloadFile(server, ext5_file[0]['_id'], _user=_user)
+        _downloadFile(server, ext3_file[0]['_id'], _user=user)
+        _downloadFile(server, ext4_file[0]['_id'], _user=user)
 
-    expectedStats['0001']['extensions']['Ext3']['macosx'].update({
-        'amd64': N + expectedStats['0001']['extensions']['Ext3']['macosx']['amd64'],
-        'i386': N + expectedStats['0001']['extensions']['Ext3']['macosx']['i386']
+    expectedStats['0001']['extensions']['Ext2']['macosx'].update({
+        'amd64': N + expectedStats['0001']['extensions']['Ext2']['macosx']['amd64'],
+        'i386': N + expectedStats['0001']['extensions']['Ext2']['macosx']['i386']
     })
     resp = server.request(
-        path='/app/%s/downloadstats' % _app['_id'],
+        path='/app/%s/downloadstats' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
     assert resp.json == expectedStats
@@ -963,37 +806,174 @@ def testDownloadStats(server, fsAssetstore, external_data):
     # Delete extensions
     resp = server.request(
         path='/app/%(app_id)s/extension/%(ext_id)s' % {
-            'app_id': _app['_id'],
-            'ext_id': extension4['_id']},
+            'app_id': app_folder['_id'],
+            'ext_id': extensions[3]['_id']},
         method='DELETE',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
     resp = server.request(
         path='/app/%(app_id)s/extension/%(ext_id)s' % {
-            'app_id': _app['_id'],
-            'ext_id': extension5['_id']},
+            'app_id': app_folder['_id'],
+            'ext_id': extensions[4]['_id']},
         method='DELETE',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
+
     # Delete the revision '0000' in the "draft" release
     resp = server.request(
         path='/app/%(app_id)s/release/%(release_id)s' % {
-            'app_id': _app['_id'],
-            'release_id': _draftRevision['_id']},
+            'app_id': app_folder['_id'],
+            'release_id': draft_release_revision_folder['_id']},
         method='DELETE',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
+
     # Check if download Stats are the same
     resp = server.request(
-        path='/app/%s/downloadstats' % _app['_id'],
+        path='/app/%s/downloadstats' % app_folder['_id'],
         method='GET',
-        user=_user
+        user=user
     )
     assertStatusOk(resp)
     assert resp.json == expectedStats
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testGetReleaseFolder(server, user, release_folder, packages, extensions):
+    # Release package
+    release_package = packages[0]
+    assert utilities.getReleaseFolder(release_package)['_id'] == release_folder['_id']
+
+    # Draft package
+    draft_package = packages[1]
+    assert utilities.getReleaseFolder(draft_package)['name'] == constants.DRAFT_RELEASE_NAME
+
+    # Release extension
+    release_extension = extensions[0]
+    extensions_folder = Folder().load(release_extension['folderId'], user=user)
+    assert ObjectId(extensions_folder['parentId']) == release_folder['_id']
+    assert utilities.getReleaseFolder(release_extension)['_id'] == release_folder['_id']
+
+    # Draft extension
+    draft_extension = extensions[1]
+    assert utilities.getReleaseFolder(draft_extension)['name'] == constants.DRAFT_RELEASE_NAME
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testIsApplicationFolder(server, app_folder, release_folder, draft_release_folder, draft_release_revision_folder):
+    assert utilities.isApplicationFolder(app_folder)
+    assert not utilities.isApplicationFolder(release_folder)
+    assert not utilities.isApplicationFolder(draft_release_folder)
+    assert not utilities.isApplicationFolder(draft_release_revision_folder)
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testIsReleaseFolder(server, app_folder, release_folder, draft_release_folder, draft_release_revision_folder):
+    assert not utilities.isReleaseFolder(app_folder)
+    assert utilities.isReleaseFolder(release_folder)
+    assert not utilities.isReleaseFolder(draft_release_folder)
+    assert utilities.isReleaseFolder(draft_release_revision_folder)
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testIsDraftReleaseFolder(server, app_folder, release_folder, draft_release_folder, draft_release_revision_folder):
+    assert not utilities.isDraftReleaseFolder(app_folder)
+    assert not utilities.isDraftReleaseFolder(release_folder)
+    assert not utilities.isDraftReleaseFolder(draft_release_folder)
+    assert utilities.isDraftReleaseFolder(draft_release_revision_folder)
+
+
+@pytest.mark.parametrize(
+    "action,method,src_folder,dest_folder,items,release_before,release_after",
+    [
+        (
+            'copy',
+            'POST',
+            pytest.lazy_fixture('draft_release_revision_folder'),
+            pytest.lazy_fixture('release_folder'),
+            pytest.lazy_fixture('draft_packages'),
+            None,
+            RELEASES[0]['name']
+        ),
+        (
+            'copy',
+            'POST',
+            pytest.lazy_fixture('release_folder'),
+            pytest.lazy_fixture('draft_release_revision_folder'),
+            pytest.lazy_fixture('release_packages'),
+            RELEASES[0]['name'],
+            None
+        ),
+        (
+            'move',
+            'PUT',
+            pytest.lazy_fixture('draft_release_revision_folder'),
+            pytest.lazy_fixture('release_folder'),
+            pytest.lazy_fixture('draft_packages'),
+            None,
+            RELEASES[0]['name']
+        ),
+        (
+            'move',
+            'PUT',
+            pytest.lazy_fixture('release_folder'),
+            pytest.lazy_fixture('draft_release_revision_folder'),
+            pytest.lazy_fixture('release_packages'),
+            RELEASES[0]['name'],
+            None
+        ),
+    ],
+    ids=[
+        'copy_package_from_draft_to_release',
+        'copy_package_from_release_to_draft',
+        'move_package_from_draft_to_release',
+        'move_package_from_release_to_draft'
+    ]
+)
+@pytest.mark.plugin('slicer_package_manager')
+def testApplicationPackageMetadataAutoUpdate(
+        server, user, action, method, src_folder, dest_folder, items, release_before, release_after):
+
+    item = items[0]
+
+    assert ObjectId(item['folderId']) == src_folder['_id']
+    assert item['meta'].get('release', None) == release_before
+
+    resp = server.request(
+        path='/resource/%s' % action,
+        method=method,
+        user=user,
+        params={
+            'resources': json.dumps({'item': [item['_id']]}),
+            'parentType': 'folder',
+            'parentId': dest_folder['_id']
+        }
+    )
+    assertStatusOk(resp)
+
+    resp = server.request(
+        path='/item',
+        method='GET',
+        user=user,
+        params={
+            'folderId': dest_folder['_id'],
+            'name': item['name']
+        }
+    )
+    assertStatusOk(resp)
+    item_after = resp.json[0]
+
+    for key in ['name', 'size']:
+        assert item_after[key] == item[key]
+
+    for key in ['app_id', 'arch', 'baseName', 'os', 'revision']:
+        assert item_after['meta'][key] == item['meta'][key]
+
+    assert ObjectId(item_after['folderId']) == dest_folder['_id']
+    assert item_after['meta'].get('release', None) == release_after
 
 
 def _createApplicationCheck(server, appName, appDescription, collId=None,
@@ -1186,7 +1166,18 @@ def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=Non
         downloaded_checksum = computeContentChecksum('SHA512', _downloadFile(server, uploadedFile['_id'], _user=_user))
         local_checksum = computeFileChecksum('SHA512', filePath)
         assert downloaded_checksum == local_checksum
-    return resp.json
+
+    resp = server.request(
+        path='/app/%s/%s' % (_app['_id'], packageType),
+        method='GET',
+        user=_user,
+        params={'%s_id' % packageType: resp.json['_id']}
+    )
+    assertStatusOk(resp)
+
+    assert len(resp.json) == 1
+
+    return resp.json[0]
 
 
 def _deletePackages(server, packageType, pkg, _user=None, _app=None):

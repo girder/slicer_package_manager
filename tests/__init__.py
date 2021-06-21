@@ -1,126 +1,170 @@
 import os
 
+from shutil import copyfile
+
+from slicer_package_manager.constants import (
+    APPLICATION_PACKAGE_TEMPLATE_NAME,
+    EXTENSION_PACKAGE_TEMPLATE_NAME
+)
+
 
 FIXTURE_DIR = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
     'data',
     )
 
+APPS = ['application']
 
-extensions = {
-    'extension1': {
+RELEASES = [
+    {
+        'app_name': APPS[0],
+        'name': 'release1',
+        'revision': '0005',
+        'version': '0.1.0',
+    },
+]
+
+DRAFT_RELEASES = [
+    {
+        'revision': '0000',
+        'version': '0.2.0'
+    },
+    {
+        'revision': '0001',
+        'version': '0.3.0'
+    },
+]
+
+RELEASE_EXTENSIONS = [
+    {
+        'filepath': 'extension0.tar.gz',
         'meta': {
             'os': 'linux',
+            'arch': 'i386',
+            'baseName': 'Ext0',
+            'repository_type': 'git',
+            'repository_url': 'http://slicer.com/extension/Ext',
+            'revision': '35333',
+            'app_revision': RELEASES[0]['revision'],
+            'description': 'Extension for Slicer 4'
+        }
+    }
+]
+
+DRAFT_EXTENSIONS = [
+    {
+        'filepath': 'extension1.tar.gz',
+        'meta': {
+            'os': 'win',
             'arch': 'i386',
             'baseName': 'Ext1',
             'repository_type': 'git',
             'repository_url': 'http://slicer.com/extension/Ext',
-            'revision': '35333',
-            'app_revision': '0005',
-            'packagetype': 'installer',
-            'codebase': 'SL4',
-            'description': 'Extension for Slicer 4'
-        }
-    },
-    'extension2': {
-        'meta': {
-            'os': 'win',
-            'arch': 'i386',
-            'baseName': 'Ext2',
-            'repository_type': 'git',
-            'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '54342',
-            'app_revision': '0000',
-            'packagetype': 'installer',
-            'codebase': 'SL4',
+            'app_revision': DRAFT_RELEASES[0]['revision'],
             'description': 'Extension for Slicer 4 new version'
         }
     },
-    'extension3': {
+    {
+        'filepath': 'extension2.tar.gz',
         'meta': {
             'os': 'linux',
             'arch': 'amd64',
-            'baseName': 'Ext3',
+            'baseName': 'Ext2',
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
-            'app_revision': '0001',
-            'packagetype': 'zip',
-            'codebase': 'SL434334',
+            'app_revision': DRAFT_RELEASES[1]['revision'],
             'description': 'Extension for Slicer 4 new version'
         }
     },
-    'extension4': {
+    {
+        'filepath': 'extension3.tar.gz',
         'meta': {
             'os': 'macosx',
             'arch': 'amd64',
-            'baseName': 'Ext3',
+            'baseName': 'Ext2',
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
-            'app_revision': '0001',
-            'packagetype': 'zip',
-            'codebase': 'SL434334',
+            'app_revision': DRAFT_RELEASES[1]['revision'],
             'description': 'Extension for Slicer 4 new version'
         }
     },
-    'extension5': {
+    {
+        'filepath': 'extension4.tar.gz',
         'meta': {
             'os': 'macosx',
             'arch': 'i386',
-            'baseName': 'Ext3',
+            'baseName': 'Ext2',
             'repository_type': 'gitlab',
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
-            'app_revision': '0001',
-            'packagetype': 'zip',
-            'codebase': 'SL434334',
+            'app_revision': DRAFT_RELEASES[1]['revision'],
             'description': 'Extension for Slicer 4 new version'
         }
     }
-}
+]
 
-packages = {
-    'package1': {
+EXTENSIONS = []
+EXTENSIONS.extend(RELEASE_EXTENSIONS)
+EXTENSIONS.extend(DRAFT_EXTENSIONS)
+
+for extension in EXTENSIONS:
+    extension['name'] = EXTENSION_PACKAGE_TEMPLATE_NAME.format(**extension['meta'])
+
+
+RELEASE_PACKAGES = [
+    {
+        'filepath': 'pkg0.dmg',
         'meta': {
             'os': 'macosx',
             'arch': 'amd64',
+            'baseName': 'pkg0',
+            'repository_type': 'gitlab',
+            'repository_url': 'https://slicer4.com',
+            'revision': RELEASES[0]['revision'],
+            'version': RELEASES[0]['version'],
+        }
+    }
+]
+
+DRAFT_PACKAGES = [
+    {
+        'filepath': 'pkg1.exe',
+        'meta': {
+            'os': 'win',
+            'arch': 'i386',
             'baseName': 'pkg1',
             'repository_type': 'gitlab',
             'repository_url': 'https://slicer4.com',
-            'revision': '0005',
-            'version': '0.1.0',
+            'revision': DRAFT_RELEASES[0]['revision'],
+            'version': DRAFT_RELEASES[0]['version'],
         }
     },
-
-    'package2': {
-        'meta': {
-            'os': 'win',
-            'arch': 'i386',
-            'baseName': 'pkg2',
-            'repository_type': 'gitlab',
-            'repository_url': 'https://slicer4.com',
-            'revision': '0000',
-            'version': '0.2.0',
-        }
-    },
-
-    'package3': {
+    {
+        'filepath': 'pkg2.tar.gz',
         'meta': {
             'os': 'linux',
             'arch': 'amd64',
-            'baseName': 'pkg3',
+            'baseName': 'pkg2',
             'repository_type': 'git',
             'repository_url': 'git://slicer4.com',
-            'revision': '0000',
-            'version': '0.3.0',
+            'revision': DRAFT_RELEASES[0]['revision'],
+            'version': DRAFT_RELEASES[0]['version'],
         }
     }
+]
 
-}
+PACKAGES = []
+PACKAGES.extend(RELEASE_PACKAGES)
+PACKAGES.extend(DRAFT_PACKAGES)
+
+for package in PACKAGES:
+    package['name'] = APPLICATION_PACKAGE_TEMPLATE_NAME.format(**package['meta'])
 
 expectedDownloadStats = {
-    '0000': {
+    DRAFT_RELEASES[0]['revision']: {
         'applications': {
             'win': {
                 'i386': 1
@@ -130,16 +174,16 @@ expectedDownloadStats = {
             }
         },
         'extensions': {
-            'Ext2': {
+            'Ext1': {
                 'win': {
                     'i386': 1
                 }
             }
         }
     },
-    '0001': {
+    DRAFT_RELEASES[1]['revision']: {
         'extensions': {
-            'Ext3': {
+            'Ext2': {
                 'linux': {
                     'amd64': 1
                 },
@@ -150,14 +194,14 @@ expectedDownloadStats = {
             }
         }
     },
-    '0005': {
+    RELEASES[0]['revision']: {
         'applications': {
             'macosx': {
                 'amd64': 1
             }
         },
         'extensions': {
-            'Ext1': {
+            'Ext0': {
                 'linux': {
                     'i386': 1
                 }
@@ -299,7 +343,7 @@ class ExternalData:
                 if current_digest != digest:
                     print('File already exists in cache but checksum is different - re-downloading it.')
                     os.remove(filePath)
-                    return self.downloadFile(uri, self._objectStorePath, name, checksum)
+                    return self._downloadFile(uri, name, checksum)
                 else:
                     self._downloadPercent = 100
                     print('File already exists and checksum is OK - reusing it.')
@@ -330,3 +374,51 @@ class ExternalData:
         raise RuntimeError('Download of %s failed for %d attempts\n  uri: %s\n  errors: %s' % (
             fileName, maximumAttemptsCount, uri, ", ".join(errors)
         ))
+
+
+def downloadExternals(key_files, dest_dir):
+    """
+    Download the data files identified by the key files from https://data.kitware.com.
+
+    :param key_files: List of the data file with a “.sha512” extension appended to the file name.
+    :param dest_dir: Directory where files are downloaded and stored
+    :return: dest_dir
+    """
+    # Collect externals in map where keys are "fileName" and values are "(<algo>, <checksum>)"
+    externals = {}
+    for key_file in key_files:
+        ext_not_found = []
+        for ext in ['sha512']:
+            external = key_file + "." + ext
+            if os.path.exists(external):
+                break
+            else:
+                ext_not_found.append(ext)
+                external = None
+        if external is None:
+            raise ValueError("{}.{} not found".format(key_file, ", ".join(ext_not_found)))
+        with open(external) as content:
+            hashsum = content.read().strip()
+        externals[os.path.basename(key_file)] = (ext, hashsum)
+
+    external_data_dir = os.environ.get(
+        'GIRDER_TEST_DATA_PREFIX', os.path.join(os.path.dirname(__file__), ".external_data"))
+
+    # Download files
+    downloaded_files = []
+    for fileName, value in externals.items():
+        algo, checksum = value
+        print("fileName [%s] algo [%s] checksum [%s]" % (fileName, algo, checksum))
+        downloaded_files.append(
+            ExternalData(external_data_dir).download(
+                uri="https://data.kitware.com/api/v1/file/hashsum/{}/{}/download".format(algo, checksum),
+                fileName=fileName,
+                checksum="{}:{}".format(algo.upper(), checksum)
+            )
+        )
+
+    # Copy download files to temporary directory
+    for downloaded_file in downloaded_files:
+        copyfile(downloaded_file, dest_dir.join(os.path.basename(downloaded_file)))
+
+    return dest_dir

@@ -44,8 +44,8 @@ PACKAGES = [
         'os': 'macosx',
         'arch': 'amd64',
         'baseName': 'pkg1',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:pkg1.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:pkg1.git',
         'revision': DRAFT_RELEASES[0]['revision'],
         'version': DRAFT_RELEASES[0]['version']
     },
@@ -55,8 +55,8 @@ PACKAGES = [
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'pkg2',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:pkg2.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:pkg2.git',
         'revision': DRAFT_RELEASES[1]['revision'],
         'version': DRAFT_RELEASES[1]['version']
     },
@@ -66,8 +66,8 @@ PACKAGES = [
         'os': 'win',
         'arch': 'i386',
         'baseName': 'pkg3',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:pkg3.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:pkg3.git',
         'revision': RELEASES[0]['revision'],
         'version': RELEASES[0]['version']
     }
@@ -80,8 +80,8 @@ EXTENSIONS = [
         'os': 'macosx',
         'arch': 'amd64',
         'baseName': 'ext1',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:ext1.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:ext1.git',
         'app_revision': DRAFT_RELEASES[0]['revision'],
         'revision': 'r300'
     },
@@ -91,8 +91,8 @@ EXTENSIONS = [
         'os': 'linux',
         'arch': 'amd64',
         'baseName': 'ext2',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:ext2.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:ext2.git',
         'app_revision': DRAFT_RELEASES[1]['revision'],
         'revision': 'r301'
     },
@@ -102,8 +102,8 @@ EXTENSIONS = [
         'os': 'win',
         'arch': 'i386',
         'baseName': 'ext3',
-        'repo_type': 'git',
-        'repo_url': 'git@github.com:ext3.git',
+        'repository_type': 'git',
+        'repository_url': 'git@github.com:ext3.git',
         'app_revision': RELEASES[0]['revision'],
         'revision': 'r302'
     }
@@ -151,8 +151,8 @@ def packages(server, spc, releases, files):
             pkg_os=package['os'],
             arch=package['arch'],
             name=package['baseName'],
-            repo_type=package['repo_type'],
-            repo_url=package['repo_url'],
+            repo_type=package['repository_type'],
+            repo_url=package['repository_url'],
             revision=package['revision'],
             version=package['version'])
         time.sleep(0.1)
@@ -172,8 +172,8 @@ def extensions(server, spc, releases, files):
             ext_os=extension['os'],
             arch=extension['arch'],
             name=extension['baseName'],
-            repo_type=extension['repo_type'],
-            repo_url=extension['repo_url'],
+            repo_type=extension['repository_type'],
+            repo_url=extension['repository_url'],
             app_revision=extension['app_revision'],
             revision=extension['revision'])
         time.sleep(0.1)
@@ -337,8 +337,8 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         pkg_os=PACKAGES[0]['os'],
         arch=PACKAGES[0]['arch'],
         name=PACKAGES[0]['baseName'],
-        repo_type=PACKAGES[0]['repo_type'],
-        repo_url=PACKAGES[0]['repo_url'],
+        repo_type=PACKAGES[0]['repository_type'],
+        repo_url=PACKAGES[0]['repository_url'],
         revision=PACKAGES[0]['revision'],
         version=PACKAGES[0]['version'])
     assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
@@ -350,8 +350,8 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         pkg_os=PACKAGES[1]['os'],
         arch=PACKAGES[1]['arch'],
         name=PACKAGES[1]['baseName'],
-        repo_type=PACKAGES[1]['repo_type'],
-        repo_url=PACKAGES[1]['repo_url'],
+        repo_type=PACKAGES[1]['repository_type'],
+        repo_url=PACKAGES[1]['repository_url'],
         revision=PACKAGES[1]['revision'],
         version=PACKAGES[1]['version'])
     assert pkg2['meta']['baseName'] == PACKAGES[1]['baseName']
@@ -387,8 +387,8 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         pkg_os=PACKAGES[0]['os'],
         arch=PACKAGES[0]['arch'],
         name=PACKAGES[0]['baseName'],
-        repo_type=PACKAGES[0]['repo_type'],
-        repo_url=PACKAGES[0]['repo_url'],
+        repo_type=PACKAGES[0]['repository_type'],
+        repo_url=PACKAGES[0]['repository_url'],
         revision=PACKAGES[0]['revision'],
         version=PACKAGES[0]['version'])
     assert pkg1['meta']['baseName'] == PACKAGES[0]['baseName']
@@ -454,8 +454,8 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
         ext_os=EXTENSIONS[0]['os'],
         arch=EXTENSIONS[0]['arch'],
         name=EXTENSIONS[0]['baseName'],
-        repo_type=EXTENSIONS[0]['repo_type'],
-        repo_url=EXTENSIONS[0]['repo_url'],
+        repo_type=EXTENSIONS[0]['repository_type'],
+        repo_url=EXTENSIONS[0]['repository_url'],
         app_revision=releases[0]['meta']['revision'],
         revision=EXTENSIONS[0]['revision'])
     assert ext1['meta']['baseName'] == EXTENSIONS[0]['baseName']
@@ -467,8 +467,8 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
         ext_os=EXTENSIONS[1]['os'],
         arch=EXTENSIONS[1]['arch'],
         name=EXTENSIONS[1]['baseName'],
-        repo_type=EXTENSIONS[1]['repo_type'],
-        repo_url=EXTENSIONS[1]['repo_url'],
+        repo_type=EXTENSIONS[1]['repository_type'],
+        repo_url=EXTENSIONS[1]['repository_url'],
         app_revision=releases[0]['meta']['revision'],
         revision=EXTENSIONS[1]['revision'])
     assert ext2['meta']['baseName'] == EXTENSIONS[1]['baseName']
@@ -508,8 +508,8 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
         ext_os=EXTENSIONS[0]['os'],
         arch=EXTENSIONS[0]['arch'],
         name=EXTENSIONS[0]['baseName'],
-        repo_type=EXTENSIONS[0]['repo_type'],
-        repo_url=EXTENSIONS[0]['repo_url'],
+        repo_type=EXTENSIONS[0]['repository_type'],
+        repo_url=EXTENSIONS[0]['repository_url'],
         app_revision=releases[0]['meta']['revision'],
         revision='newRev')
     assert ext1['meta']['baseName'] == EXTENSIONS[0]['baseName']

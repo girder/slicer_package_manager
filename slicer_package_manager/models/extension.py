@@ -69,7 +69,7 @@ class Extension(Item):
         # Validate the meta field
         if doc.get('meta'):
             base_params = {'app_id', 'os', 'arch', 'revision', 'repository_type', 'repository_url',
-                           'app_revision', 'packagetype', 'codebase', 'baseName', 'description'}
+                           'app_revision', 'baseName', 'description'}
             specs = []
             for meta in base_params:
                 specs.append({
@@ -84,7 +84,7 @@ class Extension(Item):
                     raise ValidationException(spec['exception_msg'])
             extraMeta = set(six.viewkeys(doc['meta'])) - base_params
             if extraMeta:
-                extra_params = {'release', 'icon_url', 'development_status', 'category',
+                extra_params = {'icon_url', 'development_status', 'category',
                                 'enabled', 'homepage', 'screenshots', 'contributors', 'dependency',
                                 'license'}
                 if extraMeta - extra_params:

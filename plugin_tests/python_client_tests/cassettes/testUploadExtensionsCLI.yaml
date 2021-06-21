@@ -495,7 +495,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb770657dd0639692b0c/extension?os=macosx&arch=i386&baseName=ext1&repository_type=git&repository_url=git%40github.com%3Aext1.git&revision=000&app_revision=r000&description=&packagetype=&icon_url=&homepage=
+    uri: http://localhost:8080/api/v1//app/6099bb770657dd0639692b0c/extension?os=macosx&arch=i386&baseName=ext1&repository_type=git&repository_url=git%40github.com%3Aext1.git&revision=000&app_revision=r000&description=&icon_url=&homepage=
   response:
     body:
       string: '{"_id": "6099bb770657dd0639692b12", "baseParentId": "609995b20657dd063969294d",
@@ -899,7 +899,7 @@ interactions:
       User-Agent:
       - python-requests/2.18.4
     method: POST
-    uri: http://localhost:8080/api/v1//app/6099bb770657dd0639692b0c/extension?os=linux&arch=amd64&baseName=ext2&repository_type=git&repository_url=git%40github.com%3Aext2.git&revision=001&app_revision=r000&description=&packagetype=&icon_url=&homepage=
+    uri: http://localhost:8080/api/v1//app/6099bb770657dd0639692b0c/extension?os=linux&arch=amd64&baseName=ext2&repository_type=git&repository_url=git%40github.com%3Aext2.git&revision=001&app_revision=r000&description=&icon_url=&homepage=
   response:
     body:
       string: '{"_id": "6099bb770657dd0639692b15", "baseParentId": "609995b20657dd063969294d",

@@ -542,7 +542,6 @@ class App(Resource):
         .param('app_revision', 'The revision of the application '
                                'that the extension was built against.')
         .param('description', 'Text describing the extension.')
-        .param('packagetype', 'Installer, data, etc.', required=False)
         .param('icon_url', 'The url of the icon for the extension.', required=False)
         .param('category', 'Category under which to place the extension. Subcategories should be '
                'delimited by character. If none is passed, will render under '
@@ -558,14 +557,12 @@ class App(Resource):
                '(stable, active, etc).', required=False)
         .param('enabled', 'Boolean indicating if the extension should be automatically enabled '
                'after its installation.', required=False)
-        .param('release', 'Release identifier (Ex: 0.0.1, 0.0.2, 0.1).', required=False)
-        .param('codebase', 'The codebase baseName (Ex: Slicer4).', required=False)
         .errorResponse()
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
-                                revision, app_revision, packagetype, codebase, description,
-                                release, icon_url, development_status, category, enabled, homepage,
+                                revision, app_revision, description,
+                                icon_url, development_status, category, enabled, homepage,
                                 screenshots, contributors, dependency, license):
         """
         Create or update an extension item.
@@ -585,8 +582,6 @@ class App(Resource):
         :param repository_url: The Url of the repository.
         :param revision: The revision of the extension.
         :param app_revision: The revision of the application.
-        :param packagetype: Type of the extension.
-        :param codebase: The codebase baseName.
         :param description: The description of the extension.
         :return: The created/updated extension.
         """
@@ -624,10 +619,6 @@ class App(Resource):
             'app_revision': app_revision,
             'description': description
         }
-        if packagetype:
-            params['packagetype'] = packagetype
-        if release:
-            params['release'] = release
         if icon_url:
             params['icon_url'] = icon_url
         if development_status:
@@ -646,8 +637,6 @@ class App(Resource):
             params['dependency'] = dependency
         if license:
             params['license'] = license
-        if codebase:
-            params['codebase'] = codebase
 
         name = application['meta']['extensionPackageNameTemplate'].format(**params)
         filters = {
@@ -819,7 +808,7 @@ class App(Resource):
         .param('revision', 'The revision of the application')
         .param('version', 'The version of the application')
         .param('description', 'Text describing the package.', required=False)
-        .param('pre_release', 'Boolean to specify if the package is ready to be distributed',
+        .param('pre_release', 'Boolean to specify if the package is a full release ready to be distributed.',
                dataType='boolean', required=False)
         .errorResponse()
     )
@@ -845,7 +834,7 @@ class App(Resource):
         :param revision: The revision of the application.
         :param version: The version of the application.
         :param description: Description of the application package
-        :param pre_release: Boolean to specify if the package is ready to be distributed
+        :param pre_release: Boolean to specify if the package is a full release ready to be distributed
         :return: The created/updated package.
         """
         creator = self.getCurrentUser()
