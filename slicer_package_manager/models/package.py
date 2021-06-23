@@ -42,6 +42,7 @@ class Package(Item):
         :param creator: The creator user
         :param folder: The release folder within the package will be created.
         :param params: All the metadata to set on the new application package
+        :param description: A description for the application package.
         :return: The new application package item
         """
         item = self.createItem(
@@ -77,6 +78,11 @@ class Package(Item):
                     'type': six.string_types,
                     'exception_msg': 'Package field "%s" must be a non-empty string.' % meta
                 })
+            specs.append({
+                'name': 'build_date ',
+                'type': datetime.datetime,
+                'exception_msg': 'Package field "%s" must be a datetime.' % 'build_date'
+            })
             for spec in specs:
                 if doc['meta'].get(spec['name']) and not isinstance(
                    doc['meta'][spec['name']], spec['type']):

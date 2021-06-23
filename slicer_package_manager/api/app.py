@@ -5,14 +5,18 @@ The internal server API of Slicer Package Manager. Use these endpoints to
 create new applications, new releases, and upload or download application and extensions
 packages.
 """
+import datetime
+
 from bson.objectid import ObjectId
 
 from girder.api import access
 from girder.constants import TokenScope, AccessType, SortDir
 from girder.api.describe import Description, autoDescribeRoute
 from girder.api.rest import Resource
+from girder.exceptions import RestException
 from girder.models.folder import Folder
 from girder.models.collection import Collection
+from girder.utility import parseTimestamp
 
 from ..models.extension import Extension as ExtensionModel
 from ..models.package import Package as PackageModel
@@ -810,11 +814,13 @@ class App(Resource):
         .param('description', 'Text describing the package.', required=False)
         .param('pre_release', 'Boolean to specify if the package is a full release ready to be distributed.',
                dataType='boolean', required=False)
+        .param('build_date', 'Build timestamp specified as a datetime string. Default set to current date and time.',
+               required=False)
         .errorResponse()
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
-                              revision, version, description, pre_release):
+                              revision, version, description, pre_release, build_date):
         """
         Create or update a package item.
 
@@ -835,6 +841,7 @@ class App(Resource):
         :param version: The version of the application.
         :param description: Description of the application package
         :param pre_release: Boolean to specify if the package is a full release ready to be distributed
+        :param build_date: The build timestamp specified as datetime string. Default set to current date and time.
         :return: The created/updated package.
         """
         creator = self.getCurrentUser()
@@ -843,6 +850,14 @@ class App(Resource):
             application=application,
             user=creator,
             app_revision=revision)
+
+        if not build_date:
+            build_date = datetime.datetime.utcnow()
+        else:
+            try:
+                build_date = parseTimestamp(build_date)
+            except ValueError:
+                raise RestException('Parameter "build_date" is incorrectly formatted.')
 
         params = {
             'app_id': app_id,
@@ -853,7 +868,8 @@ class App(Resource):
             'repository_url': repository_url,
             'revision': revision,
             'version': version,
-            'pre_release': pre_release
+            'pre_release': pre_release,
+            'build_date': build_date
         }
 
         name = application['meta']['applicationPackageNameTemplate'].format(**params)

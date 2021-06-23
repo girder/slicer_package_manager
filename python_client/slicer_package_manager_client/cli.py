@@ -587,6 +587,9 @@ def _cli_deleteExtension(sc, *args, **kwargs):
 @click.option('--version', prompt=True,
               help='The version of the application',
               cls=_AdvancedOption)
+@click.option('--build_date', default=None,
+              help='Build date of the package. [default: <now>]',
+              cls=_AdvancedOption)
 @click.option('--coll_id', default=None, envvar='COLLECTION_ID',
               help='ID of an existing collection',
               show_default=True,
