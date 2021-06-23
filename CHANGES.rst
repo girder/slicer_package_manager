@@ -13,6 +13,9 @@ New Features
 
 * Require version information to be specified when uploading application packages. See :issue:`97`.
 
+* Add application package ``build_date`` metadata. User may specify a custom value formatted as a datetime string
+  using the API endpoint or the python client. Default is set to current date and time.
+
 Server
 ^^^^^^
 

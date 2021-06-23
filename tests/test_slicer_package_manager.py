@@ -10,7 +10,7 @@ from girder.models.folder import Folder
 from girder.models.file import File
 from girder.models.user import User
 
-from pytest_girder.assertions import assertStatusOk
+from pytest_girder.assertions import assertStatus, assertStatusOk
 from pytest_girder.utils import getResponseBody
 
 from slicer_package_manager import constants, utilities
@@ -976,6 +976,47 @@ def testApplicationPackageMetadataAutoUpdate(
     assert item_after['meta'].get('release', None) == release_after
 
 
+@pytest.mark.parametrize(
+    'build_date,expected_build_date,status_code', [
+        (None, None, 200),
+        ('2021-06-21 22:00:26', '2021-06-21T22:00:26+00:00', 200),
+        ('2021-06-21T22:00:26+0000', '2021-06-21T22:00:26+00:00', 200),
+        ('2021-06-21T22:00:26+00:00', '2021-06-21T22:00:26+00:00', 200),
+        ('2021-06-21 11:37:36 -0400', '2021-06-21T15:37:36+00:00', 200),
+        ('2021-06-23 02:54:11-04:00', '2021-06-23T06:54:11+00:00', 200),
+        ('abcdef', None, 400)
+    ],
+    ids=[
+        'default',
+        'no-timezone',
+        'timezone-without-colon',
+        'timezone-with-colon',
+        'git-date-iso-local',
+        'date-rfc-3339-seconds',
+        'invalid'
+    ]
+)
+@pytest.mark.plugin('slicer_package_manager')
+def testMetadataBuildDate(build_date, expected_build_date, status_code, server, user, app_folder, draft_release_folder):
+    newParams = PACKAGES[0]['meta'].copy()
+    if build_date is not None:
+        newParams['build_date'] = build_date
+    package = _createOrUpdatePackage(
+        server,
+        'package',
+        newParams,
+        _user=user,
+        _app=app_folder,
+        status_code=status_code
+    )
+    if status_code != 200:
+        return
+    assert package['name'] == PACKAGES[0]['name']
+    assert package['meta'].get('build_date')
+    if expected_build_date is not None:
+        assert package['meta'].get('build_date') == expected_build_date
+
+
 def _createApplicationCheck(server, appName, appDescription, collId=None,
                             collName=None, collDescription='', _user=None):
     params = {
@@ -1142,18 +1183,25 @@ def _downloadFile(server, id, _user=None):
     return getResponseBody(resp, text=False)
 
 
-def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=None, _app=None):
+def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=None, _app=None, status_code=200):
     resp = server.request(
         path='/app/%s/%s' % (_app['_id'], packageType),
         method='POST',
         user=_user,
         params=params)
-    assertStatusOk(resp)
+    assertStatus(resp, status_code)
 
-    # Remove the app_id to check the metadata with these set during the creation
-    metadata = resp.json['meta'].copy()
-    metadata.pop('app_id')
-    assert metadata == params
+    if status_code != 200:
+        return None
+
+    def _filtered(metadata):
+        return {k: v for (k, v) in metadata.items() if k not in (
+            'app_id',
+            'build_date',
+        )}
+
+    # assert every other field (besides unique ones) are identical
+    assert _filtered(resp.json['meta']) == _filtered(params)
 
     if filePath:
         # Upload a package file

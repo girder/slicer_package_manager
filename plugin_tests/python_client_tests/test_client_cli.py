@@ -155,6 +155,8 @@ def _cli_upload_package(package):
                 '--version', package['version'],
                 '--repo_type', package['repository_type'],
                 '--repo_url', package['repository_url']])
+    if package.get('build_date') is not None:
+        cmd.extend(['--build_date', package['build_date']])
     return _cli_runner_invoke(main, cmd)
 
 
@@ -373,6 +375,28 @@ def testUploadPackagesCLI(server, apps, files):
     res = _cli_upload_package(PACKAGES[2])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getAppPkgName(PACKAGES[2])), res.output)
+
+
+@pytest.mark.parametrize(
+    'build_date,exit_code', [
+        ('2021-06-21T00:00:00+00:00', 0),
+        ('abcdef', 1)
+    ],
+    ids=[
+        'timezone',
+        'invalid'
+    ]
+)
+@pytest.mark.vcr()
+@pytest.mark.plugin('slicer_package_manager')
+def testUploadPackagesWithBuildDateCLI(build_date, exit_code, server, apps, files):
+    package = PACKAGES[0].copy()
+    package['build_date'] = build_date
+    res = _cli_upload_package(package)
+    assert res.exit_code == exit_code
+    if exit_code != 0:
+        return
+    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getAppPkgName(package)), res.output)
 
 
 @pytest.mark.vcr()

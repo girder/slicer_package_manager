@@ -411,7 +411,8 @@ class SlicerPackageClient(GirderClient):
         return self._deletePackage('extension', app_name, id_or_name, coll_id)
 
     def uploadApplicationPackage(self, filepath, app_name, pkg_os, arch, name, repo_type,
-                                 repo_url, revision, version, coll_id=None, desc='', pre_release=False):
+                                 repo_url, revision, version, build_date=None, coll_id=None, desc='',
+                                 pre_release=False):
         """
         Upload an application package by providing a path to the file.
         It can also be used to update an existing one.
@@ -425,6 +426,7 @@ class SlicerPackageClient(GirderClient):
         :param repo_url: Url of the repository
         :param revision: The revision of the application
         :param version: The version of the application
+        :param build_date: The build timestamp specified as a datetime string. Default set to current date and time.
         :param coll_id: Collection ID
         :param desc: The description of the application package
         :param pre_release: Boolean to specify if the package is ready to be distributed
@@ -443,7 +445,7 @@ class SlicerPackageClient(GirderClient):
             revision=revision)
         if not package:
             # Create the package into Girder hierarchy
-            package = self.post('/app/%s/package' % app['_id'], parameters={
+            parameters = {
                 'os': pkg_os,
                 'arch': arch,
                 'baseName': name,
@@ -453,7 +455,10 @@ class SlicerPackageClient(GirderClient):
                 'version': version,
                 'description': desc,
                 'pre_release': pre_release
-            })
+            }
+            if build_date is not None:
+                parameters['build_date'] = build_date
+            package = self.post('/app/%s/package' % app['_id'], parameters=parameters)
 
             # Upload the package
             self.uploadFileToItem(
@@ -482,7 +487,7 @@ class SlicerPackageClient(GirderClient):
                 progressCallback=_displayProgress)
 
             # Update the package into Girder hierarchy
-            package = self.post('/app/%s/package' % app['_id'], parameters={
+            parameters = {
                 'os': pkg_os,
                 'arch': arch,
                 'baseName': name,
@@ -491,7 +496,10 @@ class SlicerPackageClient(GirderClient):
                 'revision': revision,
                 'version': version,
                 'description': desc
-            })
+            }
+            if build_date is not None:
+                parameters['build_date'] = build_date
+            package = self.post('/app/%s/package' % app['_id'], parameters=parameters)
 
             files = list(self.listFile(package['_id']))
             if len(files) == 2:

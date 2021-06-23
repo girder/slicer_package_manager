@@ -4,7 +4,18 @@ import time
 import os
 import pytest
 
+from girder_client import HttpError
 from slicer_package_manager_client import SlicerPackageClient, SlicerPackageManagerError
+
+try:
+    # Only available in Python 3.7+
+    from contextlib import nullcontext as does_not_raise
+except ImportError:
+    from contextlib import contextmanager
+
+    @contextmanager
+    def does_not_raise():
+        yield
 
 
 APPS = ['App', 'App1', 'App2']
@@ -405,6 +416,34 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
         assert downloaded_f1_bis.read() == f1_bis.read()
 
     os.remove('%s.txt' % downloaded_pkg1_name_bis)
+
+
+@pytest.mark.parametrize(
+    'build_date,expectation', [
+        ('2021-06-21T00:00:00+00:00', does_not_raise()),
+        ('abcdef', pytest.raises(HttpError, match="Parameter \\\\\"build_date\\\\\" is incorrectly formatted."))
+    ],
+    ids=[
+        'timezone',
+        'invalid'
+    ]
+)
+@pytest.mark.vcr()
+@pytest.mark.plugin('slicer_package_manager')
+def testUploadApplicationPackageWithBuildDate(build_date, expectation, server, spc, apps, releases, files):
+    with expectation:
+        pkg = spc.uploadApplicationPackage(
+            filepath=PACKAGES[0]['filepath'],
+            app_name=apps[0]['name'],
+            pkg_os=PACKAGES[0]['os'],
+            arch=PACKAGES[0]['arch'],
+            name=PACKAGES[0]['baseName'],
+            build_date=build_date,
+            repo_type=PACKAGES[0]['repository_type'],
+            repo_url=PACKAGES[0]['repository_url'],
+            revision=PACKAGES[0]['revision'],
+            version=PACKAGES[0]['version'])
+        assert pkg['meta']['baseName'] == PACKAGES[0]['baseName']
 
 
 @pytest.mark.vcr()
