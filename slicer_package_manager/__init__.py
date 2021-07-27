@@ -60,7 +60,7 @@ def _onItemSavedOrCopied(event):
     if not utilities.isSlicerPackages(item):
         return
 
-    release = utilities.getReleaseFolder(item)
+    release = utilities.getReleaseFolder(item, force=True)
     if release is None:
         return
 

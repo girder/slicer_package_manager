@@ -8,6 +8,15 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Bug fixes
+---------
+
+Server
+^^^^^^
+
+* Fix creation of extension in private application.
+
+
 0.5.0
 =====
 
