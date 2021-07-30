@@ -347,8 +347,8 @@ class App(Resource):
             user=user,
             filters=filters))
         if not release:
-            raise Exception('There is no %s release in this application.'
-                            % constants.DRAFT_RELEASE_NAME)
+            raise RestException('There is no %s release in this application.'
+                                % constants.DRAFT_RELEASE_NAME)
         release = release[0]
         draft_filters = {'meta.revision': {'$exists': True}}
         if revision:
@@ -398,7 +398,7 @@ class App(Resource):
                     user=user,
                     filters={'lowerName': constants.DRAFT_RELEASE_NAME.lower()}))
                 if not release_folder:
-                    raise Exception("Couldn't find release %s" % release_id_or_name)
+                    raise RestException("Couldn't find release %s" % release_id_or_name)
                 revision_folder = list(self._model.childFolders(
                     release_folder[0],
                     'Folder',
@@ -406,7 +406,7 @@ class App(Resource):
                     filters={'lowerName': release_id_or_name.lower()}
                 ))
                 if not revision_folder:
-                    raise Exception("Couldn't find release %s" % release_id_or_name)
+                    raise RestException("Couldn't find release %s" % release_id_or_name)
                 release = revision_folder[0]
             else:
                 release = release_folder[0]
@@ -661,13 +661,13 @@ class App(Resource):
             files = ExtensionModel().childFiles(extension)
             if not files.count():
                 # Extension empty
-                raise Exception("Extension existing without any binary file.")
+                raise RestException("Extension existing without any binary file.")
 
             # Update the extension
             extension['name'] = name
             extension = ExtensionModel().setMetadata(extension, params)
         else:
-            raise Exception('Too many extensions found for the same name :"%s"' % name)
+            raise RestException('Too many extensions found for the same name :"%s"' % name)
 
         # Ready to upload the binary file
         return extension
@@ -892,12 +892,12 @@ class App(Resource):
             files = PackageModel().childFiles(package)
             if not files.count():
                 # Package empty
-                raise Exception("Application Package existing without any binary file.")
+                raise RestException("Application Package existing without any binary file.")
             # Update the package
             package['name'] = name
             package = PackageModel().setMetadata(package, params)
         else:
-            raise Exception('Too many packages found for the same name :"%s"' % name)
+            raise RestException('Too many packages found for the same name :"%s"' % name)
 
         # Ready to upload the binary file
         return package

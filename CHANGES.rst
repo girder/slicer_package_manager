@@ -16,6 +16,9 @@ Server
 
 * Fix creation of extension in private application.
 
+* Ensure user or administrator errors associated with API endpoints are displayed and associated
+  with HTTP error code 400 by raising a :exc:`RestException` instead of a generic :exc:`Exception`.
+
 
 0.5.0
 =====
