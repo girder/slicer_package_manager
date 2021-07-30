@@ -8,6 +8,12 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+New Features
+------------
+
+* Support listing extension with a ``query`` parameter specifying the text expected
+  to be found in the extension name or description.
+
 Bug fixes
 ---------
 

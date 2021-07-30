@@ -510,6 +510,9 @@ def _cli_downloadExtension(sc, *args, **kwargs):
 @click.option('--release', default=Constant.DRAFT_RELEASE_NAME,
               help='List all extension within the release',
               cls=_AdvancedOption)
+@click.option('--query', default=None,
+              help='Text expected to be found in the extension name or description',
+              cls=_AdvancedOption)
 @click.option('--limit', default=Constant.DEFAULT_LIMIT,
               help='The limit number of listed extensions ',
               cls=_AdvancedOption)

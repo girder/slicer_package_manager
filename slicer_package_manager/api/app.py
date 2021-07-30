@@ -6,6 +6,7 @@ create new applications, new releases, and upload or download application and ex
 packages.
 """
 import datetime
+import re
 
 from bson.objectid import ObjectId
 
@@ -429,12 +430,13 @@ class App(Resource):
                required=False, enum=['i386', 'amd64'])
         .param('app_revision', 'The revision of the application.', required=False)
         .param('baseName', 'The baseName of the extension', required=False)
+        .param('q', 'The search query.', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
     )
     @access.public(scope=TokenScope.DATA_READ)
     def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
-                      app_revision, baseName, limit, sort, offset=0):
+                      app_revision, baseName, q, limit, sort, offset=0):
         """
         Get a list of extension which is filtered by some optional parameters. If the ``release_id``
         provided correspond to the draft release, then you must provide the app_revision to use
@@ -448,6 +450,7 @@ class App(Resource):
         :param arch: The architecture compatible with the extension.
         :param app_revision: The revision of the application
         :param baseName: The baseName of the extension
+        :param q: Text expected to be found in the extension name or description
         :return: The list of extensions
         """
         user = self.getCurrentUser()
@@ -472,6 +475,12 @@ class App(Resource):
         if baseName:
             # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
+        if q:
+            escaped_query = re.escape(q)
+            filters['$or'] = [
+                {'meta.baseName': {'$regex': escaped_query, '$options': 'i'}},
+                {'meta.description': {'$regex': escaped_query, '$options': 'i'}}
+            ]
         if ObjectId.is_valid(release_id):
             release = self._model.load(release_id, user=user, level=AccessType.READ)
             if release['name'] == constants.DRAFT_RELEASE_NAME:
