@@ -451,6 +451,7 @@ class App(Resource):
         :return: The list of extensions
         """
         user = self.getCurrentUser()
+        utilities.checkAccess(app_id, user)
         filters = {
             '$and': [
                 {'meta.app_id': {'$eq': app_id}},

@@ -19,6 +19,7 @@ Server
 * Ensure user or administrator errors associated with API endpoints are displayed and associated
   with HTTP error code 400 by raising a :exc:`RestException` instead of a generic :exc:`Exception`.
 
+* Update API endpoint `GET /app/{app_id}/extension` to always check user credentials.
 
 0.5.0
 =====

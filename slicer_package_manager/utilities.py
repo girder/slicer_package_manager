@@ -176,3 +176,15 @@ def deleteFolder(folder, progress, user):
             ctx.update(total=Folder().subtreeCount(folder))
         Folder().remove(folder, progress=ctx)
     return folder
+
+
+def checkAccess(app_id, user):
+    """
+    Check user has access to the application.
+
+    :param app_id: The ID of the application.
+    :param user: The user to check access against.
+    :raises girder.exceptions.AccessException: If the access check failed.
+    :return:
+    """
+    Folder().load(app_id, level=AccessType.READ, user=user)
