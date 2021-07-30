@@ -51,7 +51,7 @@ class App(Resource):
         .responseClass('Folder')
         .notes('If collectionId is missing or collectionName does not match an existing '
                'collection, a fresh new collection will be created with the "collection_name" '
-               'given in parameters. '
+               'given in parameters.<br/>'
                'By default the name "Applications" will be given to the collection.')
         .param('name', 'The name of the application.')
         .param('app_description', 'Application description.', required=False)
@@ -416,7 +416,7 @@ class App(Resource):
     @autoDescribeRoute(  # noqa: C901
         Description('List or search available extensions.')
         .notes('If the "release_id" provided correspond to the "draft" release,'
-               ' then you must provide the app_revision to use this parameters. '
+               ' then you must provide the "app_revision" to use this parameters. '
                'If not, it will just be ignored.')
         .responseClass('Extension')
         .param('app_id', 'The ID of the application.', paramType='path')
@@ -694,7 +694,7 @@ class App(Resource):
     @autoDescribeRoute(
         Description('List or search available packages.')
         .notes('If the "release_id" provided correspond to the "draft" release,'
-               ' then you must provide the revision to use this parameters. '
+               ' then you must provide the "revision" to use this parameters. '
                'If not, it will just be ignored.')
         .responseClass('Package')
         .param('app_id', 'The ID of the application.', paramType='path')
