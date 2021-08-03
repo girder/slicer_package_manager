@@ -349,7 +349,7 @@ class SlicerPackageClient(GirderClient):
                                      dir_path=dir_path, coll_id=coll_id)
 
     def listExtension(self, app_name, coll_id=None, name=None, ext_os=None, arch=None,
-                      app_revision=None, release=Constant.DRAFT_RELEASE_NAME,
+                      app_revision=None, release=Constant.DRAFT_RELEASE_NAME, query=None,
                       limit=Constant.DEFAULT_LIMIT, all=False):
         """
         List the extensions of a specific application ``app_name``.
@@ -370,6 +370,7 @@ class SlicerPackageClient(GirderClient):
         :param arch: The os chip architecture
         :param app_revision: Revision of the application
         :param release: Name of the release
+        :param query: Text expected to be found in the extension name or description
         :param limit: Limit of the number of extensions listed (see :const:`Constant.DEFAULT_LIMIT`)
         :param all: Boolean that allow to list extensions from all the release
         :return: A list of extensions filtered by optional parameters
@@ -393,6 +394,7 @@ class SlicerPackageClient(GirderClient):
             'baseName': name,
             'app_revision': app_revision,
             'release_id': release_id,
+            'q': query,
             'limit': limit,
             'sort': 'created',
             'sortDir': -1

@@ -114,7 +114,7 @@ def getOrCreateReleaseFolder(application, user, app_revision):
     return release_folder
 
 
-def getReleaseFolder(item):
+def getReleaseFolder(item, force=False):
     """
     Get item release folder.
 
@@ -143,22 +143,24 @@ def getReleaseFolder(item):
         |        |         |        |      |          |---- Extension1
 
     :param item: A package or extension instance.
+    :param force: If you explicitly want to circumvent access
+                      checking on this resource, set this to True.
     :return: The parent release folder or None.
     """
     if not isSlicerPackages(item):
         return None
 
-    folder = Folder().load(item['folderId'], level=AccessType.READ)
+    folder = Folder().load(item['folderId'], level=AccessType.READ, force=force)
 
     # Check if item folder is "extensions". If yes, get parent folder.
     if folder['name'] == constants.EXTENSIONS_FOLDER_NAME:
         extensions_folder = folder
-        folder = Folder().load(extensions_folder['parentId'], level=AccessType.READ)
+        folder = Folder().load(extensions_folder['parentId'], level=AccessType.READ, force=force)
 
     package_folder = folder
 
     # Check if grand parent folder is "draft". If yes return it.
-    grantparent_folder = Folder().load(package_folder['parentId'], level=AccessType.READ)
+    grantparent_folder = Folder().load(package_folder['parentId'], level=AccessType.READ, force=force)
     if grantparent_folder['name'] == constants.DRAFT_RELEASE_NAME:
         return grantparent_folder
     else:
@@ -174,3 +176,15 @@ def deleteFolder(folder, progress, user):
             ctx.update(total=Folder().subtreeCount(folder))
         Folder().remove(folder, progress=ctx)
     return folder
+
+
+def checkAccess(app_id, user):
+    """
+    Check user has access to the application.
+
+    :param app_id: The ID of the application.
+    :param user: The user to check access against.
+    :raises girder.exceptions.AccessException: If the access check failed.
+    :return:
+    """
+    Folder().load(app_id, level=AccessType.READ, user=user)

@@ -6,6 +6,7 @@ create new applications, new releases, and upload or download application and ex
 packages.
 """
 import datetime
+import re
 
 from bson.objectid import ObjectId
 
@@ -51,7 +52,7 @@ class App(Resource):
         .responseClass('Folder')
         .notes('If collectionId is missing or collectionName does not match an existing '
                'collection, a fresh new collection will be created with the "collection_name" '
-               'given in parameters. '
+               'given in parameters.<br/>'
                'By default the name "Applications" will be given to the collection.')
         .param('name', 'The name of the application.')
         .param('app_description', 'Application description.', required=False)
@@ -212,20 +213,20 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_WRITE)
     @autoDescribeRoute(
         Description('Delete an Application by ID.')
-        .modelParam('app_id', model=Folder, level=AccessType.ADMIN)
+        .modelParam('app_id', destName='app_folder', model=Folder, level=AccessType.ADMIN)
         .param('progress', 'Whether to record progress on this task.',
                required=False, dataType='boolean', default=False)
         .errorResponse('ID was invalid.')
         .errorResponse('Admin access was denied for the application.', 403)
     )
-    def deleteApp(self, folder, progress):
+    def deleteApp(self, app_folder, progress):
         """
-        Delete the application by ID.
+        Delete an application by ID.
 
-        :param id: Id of the application
+        :param app_folder: Application folder loaded using ``app_id`` route parameter.
         :return: Confirmation message with the deleted application name
         """
-        return utilities.deleteFolder(folder, progress, self.getCurrentUser())
+        return utilities.deleteFolder(app_folder, progress, self.getCurrentUser())
 
     @autoDescribeRoute(
         Description('Create a new release.')
@@ -347,8 +348,8 @@ class App(Resource):
             user=user,
             filters=filters))
         if not release:
-            raise Exception('There is no %s release in this application.'
-                            % constants.DRAFT_RELEASE_NAME)
+            raise RestException('There is no %s release in this application.'
+                                % constants.DRAFT_RELEASE_NAME)
         release = release[0]
         draft_filters = {'meta.revision': {'$exists': True}}
         if revision:
@@ -365,18 +366,18 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_WRITE)
     @autoDescribeRoute(
         Description('Delete a release by ID or name.')
-        .modelParam('app_id', model=Folder, level=AccessType.ADMIN)
+        .modelParam('app_id', destName='app_folder', model=Folder, level=AccessType.ADMIN)
         .param('release_id_or_name', "The release's ID or name.", paramType='path')
         .param('progress', 'Whether to record progress on this task.',
                required=False, dataType='boolean', default=False)
         .errorResponse('ID was invalid.')
         .errorResponse('Admin access was denied for the release.', 403)
     )
-    def deleteReleaseByIdOrName(self, folder, release_id_or_name, progress):
+    def deleteReleaseByIdOrName(self, app_folder, release_id_or_name, progress):
         """
         Delete a release by ID or name.
 
-        :param app_id: Application ID
+        :param app_folder: Application folder loaded using ``app_id`` route parameter.
         :param release_id_or_name: Could be either the release ID or the release name
         :param progress: Whether to record progress on this task
         :return: Confirmation message with the deleted release name
@@ -387,18 +388,18 @@ class App(Resource):
             release = self._model.load(release_id_or_name, user=user)
         else:
             release_folder = list(self._model.childFolders(
-                folder,
+                app_folder,
                 'Folder',
                 user=user,
                 filters={'lowerName': release_id_or_name.lower()}))
             if not release_folder:
                 release_folder = list(self._model.childFolders(
-                    folder,
+                    app_folder,
                     'Folder',
                     user=user,
                     filters={'lowerName': constants.DRAFT_RELEASE_NAME.lower()}))
                 if not release_folder:
-                    raise Exception("Couldn't find release %s" % release_id_or_name)
+                    raise RestException("Couldn't find release %s" % release_id_or_name)
                 revision_folder = list(self._model.childFolders(
                     release_folder[0],
                     'Folder',
@@ -406,7 +407,7 @@ class App(Resource):
                     filters={'lowerName': release_id_or_name.lower()}
                 ))
                 if not revision_folder:
-                    raise Exception("Couldn't find release %s" % release_id_or_name)
+                    raise RestException("Couldn't find release %s" % release_id_or_name)
                 release = revision_folder[0]
             else:
                 release = release_folder[0]
@@ -416,7 +417,7 @@ class App(Resource):
     @autoDescribeRoute(  # noqa: C901
         Description('List or search available extensions.')
         .notes('If the "release_id" provided correspond to the "draft" release,'
-               ' then you must provide the app_revision to use this parameters. '
+               ' then you must provide the "app_revision" to use this parameters. '
                'If not, it will just be ignored.')
         .responseClass('Extension')
         .param('app_id', 'The ID of the application.', paramType='path')
@@ -429,12 +430,13 @@ class App(Resource):
                required=False, enum=['i386', 'amd64'])
         .param('app_revision', 'The revision of the application.', required=False)
         .param('baseName', 'The baseName of the extension', required=False)
+        .param('q', 'The search query.', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse()
     )
     @access.public(scope=TokenScope.DATA_READ)
     def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
-                      app_revision, baseName, limit, sort, offset=0):
+                      app_revision, baseName, q, limit, sort, offset=0):
         """
         Get a list of extension which is filtered by some optional parameters. If the ``release_id``
         provided correspond to the draft release, then you must provide the app_revision to use
@@ -448,9 +450,11 @@ class App(Resource):
         :param arch: The architecture compatible with the extension.
         :param app_revision: The revision of the application
         :param baseName: The baseName of the extension
+        :param q: Text expected to be found in the extension name or description
         :return: The list of extensions
         """
         user = self.getCurrentUser()
+        utilities.checkAccess(app_id, user)
         filters = {
             '$and': [
                 {'meta.app_id': {'$eq': app_id}},
@@ -471,6 +475,12 @@ class App(Resource):
         if baseName:
             # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
+        if q:
+            escaped_query = re.escape(q)
+            filters['$or'] = [
+                {'meta.baseName': {'$regex': escaped_query, '$options': 'i'}},
+                {'meta.description': {'$regex': escaped_query, '$options': 'i'}}
+            ]
         if ObjectId.is_valid(release_id):
             release = self._model.load(release_id, user=user, level=AccessType.READ)
             if release['name'] == constants.DRAFT_RELEASE_NAME:
@@ -661,13 +671,13 @@ class App(Resource):
             files = ExtensionModel().childFiles(extension)
             if not files.count():
                 # Extension empty
-                raise Exception("Extension existing without any binary file.")
+                raise RestException("Extension existing without any binary file.")
 
             # Update the extension
             extension['name'] = name
             extension = ExtensionModel().setMetadata(extension, params)
         else:
-            raise Exception('Too many extensions found for the same name :"%s"' % name)
+            raise RestException('Too many extensions found for the same name :"%s"' % name)
 
         # Ready to upload the binary file
         return extension
@@ -675,26 +685,26 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Delete an Extension by ID.')
         .param('app_id', 'The ID of the App.', paramType='path')
-        .modelParam('ext_id', model=ExtensionModel, level=AccessType.WRITE)
+        .modelParam('ext_id', destName='ext_model', model=ExtensionModel, level=AccessType.WRITE)
         .errorResponse('ID was invalid.')
         .errorResponse('Admin access was denied for the extension.', 403)
     )
     @access.user(scope=TokenScope.DATA_WRITE)
-    def deleteExtension(self, app_id, item):
+    def deleteExtension(self, app_id, ext_model):
         """
-        Delete the extension by ID.
+        Delete an extension by ID.
 
         :param app_id: Application ID
-        :param ext_id: Extension ID
+        :param ext_model: Extension model loaded using ``ext_id`` route parameter.
         :return: The deleted extension
         """
-        ExtensionModel().remove(item)
-        return item
+        ExtensionModel().remove(ext_model)
+        return ext_model
 
     @autoDescribeRoute(
         Description('List or search available packages.')
         .notes('If the "release_id" provided correspond to the "draft" release,'
-               ' then you must provide the revision to use this parameters. '
+               ' then you must provide the "revision" to use this parameters. '
                'If not, it will just be ignored.')
         .responseClass('Package')
         .param('app_id', 'The ID of the application.', paramType='path')
@@ -892,12 +902,12 @@ class App(Resource):
             files = PackageModel().childFiles(package)
             if not files.count():
                 # Package empty
-                raise Exception("Application Package existing without any binary file.")
+                raise RestException("Application Package existing without any binary file.")
             # Update the package
             package['name'] = name
             package = PackageModel().setMetadata(package, params)
         else:
-            raise Exception('Too many packages found for the same name :"%s"' % name)
+            raise RestException('Too many packages found for the same name :"%s"' % name)
 
         # Ready to upload the binary file
         return package
@@ -905,21 +915,21 @@ class App(Resource):
     @autoDescribeRoute(
         Description('Delete a Package by ID.')
         .param('app_id', 'The ID of the App.', paramType='path')
-        .modelParam('pkg_id', model=PackageModel, level=AccessType.WRITE)
+        .modelParam('pkg_id', destName='pkg_model', model=PackageModel, level=AccessType.WRITE)
         .errorResponse('ID was invalid.')
         .errorResponse('Admin access was denied for the package.', 403)
     )
     @access.user(scope=TokenScope.DATA_WRITE)
-    def deletePackage(self, app_id, item):
+    def deletePackage(self, app_id, pkg_model):
         """
-        Delete the package by ID.
+        Delete an application package by ID.
 
         :param app_id: Application ID
-        :param pkg_id: Package ID
+        :param pkg_model: Package model loaded using ``pkg_id`` route parameter.
         :return: The deleted package
         """
-        PackageModel().remove(item)
-        return item
+        PackageModel().remove(pkg_model)
+        return pkg_model
 
     @autoDescribeRoute(
         Description('Get download stats of application and extensions packages '
