@@ -100,6 +100,7 @@ Table of Contents
 
    user_guide
    commands_shell
+   user_faq
 
 .. toctree::
    :maxdepth: 2
