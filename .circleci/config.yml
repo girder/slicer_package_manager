@@ -4,8 +4,10 @@ jobs:
   test:
     docker:
       - image: girder/girder_test:latest
-      - image: circleci/mongo:4.0-ram
-        command: ["mongod", "--storageEngine", "ephemeralForTest", "--dbpath", "/dev/shm/mongo"]
+      # Use the oldest supported MongoDB
+      # This is equivalent to the deprecated circleci/mongo:<version>-ram image
+      - image: mongo:3.6
+        command: bash -c "mkdir /dev/shm/mongo && mongod --storageEngine ephemeralForTest --nojournal --dbpath=/dev/shm/mongo --noauth --bind_ip_all"
 
     steps:
       - checkout
@@ -16,9 +18,10 @@ jobs:
   test-cli:
     docker:
       - image: circleci/python:3.8
-      - image: circleci/mongo:4.0-ram
-        command: ["mongod", "--storageEngine", "ephemeralForTest", "--dbpath", "/dev/shm/mongo"]
-
+      # Use the oldest supported MongoDB
+      # This is equivalent to the deprecated circleci/mongo:<version>-ram image
+      - image: mongo:3.6
+        command: bash -c "mkdir /dev/shm/mongo && mongod --storageEngine ephemeralForTest --nojournal --dbpath=/dev/shm/mongo --noauth --bind_ip_all"
     steps:
       - checkout
       - run:
