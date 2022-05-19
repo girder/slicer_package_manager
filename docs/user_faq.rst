@@ -4,6 +4,33 @@ FAQ
 
 *Frequently Asked Questions*
 
+What is Girder?
+---------------
+
+Girder is a free and open source web-based **data management platform** developed by Kitware_.
+What does that mean? Girder is both a standalone application and a platform for building new web services.
+To know more about Girder let's take a look at the documentation_.
+
+.. _documentation: https://girder.readthedocs.io
+
+.. _Kitware: https://www.kitware.com
+
+What is a Slicer package?
+---------------------------
+
+A slicer package is just an installer package for a specific release of Slicer. There is a specific Slicer package
+for each different platform (Windows, MACOSX, Linux).
+
+What is a Slicer Extension?
+---------------------------
+
+An extension could be seen as a delivery package bundling together one or more Slicer modules.
+After installing an extension, the associated modules will be presented to the user as built-in ones.
+
+To know more about Slicer extension, see the `Extensions Manager`_ documentation.
+
+.. _Extensions Manager: https://slicer.readthedocs.io/en/latest/user_guide/extensions_manager.html
+
 How to create a new release with existing uploaded packages?
 ------------------------------------------------------------
 
