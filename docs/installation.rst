@@ -1,8 +1,8 @@
 .. _installation:
 
-============
-Installation
-============
+==========
+Deployment
+==========
 
 The section below describes a convenient way to setup a server for evaluation purpose.
 
