@@ -19,9 +19,9 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9'
     ],
     description='Manage Slicer application and extension packages.',
     install_requires=requirements,
@@ -32,6 +32,7 @@ setup(
     keywords='girder-plugin, slicer_package_manager',
     name='slicer_package_manager',
     packages=find_packages(exclude=['test', 'test.*']),
+    python_require='>=3.7',
     url='https://github.com/girder/slicer_package_manager',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),

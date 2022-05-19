@@ -8,6 +8,11 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Internal
+--------
+
+* Require Python >= 3.7 for both python client and server.
+
 0.6.0
 =====
 
