@@ -32,7 +32,7 @@ jobs:
           command: pip install .
       - run:
           name: Install CLI
-          command: pip install -e .
+          command: pip install -e .[test]
           working_directory: python_client
       - run:
           name: Run CLI tests
