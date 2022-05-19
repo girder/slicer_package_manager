@@ -117,7 +117,16 @@ Setting up environment
 
   .. code::
 
-    $ python setup.py sdist bdist_wheel
+    $ pipx run build
+
+  .. note::
+
+    `pipx <https://pypa.github.io/pipx/>`_ allows to directly run the `build frontend <https://pypa-build.readthedocs.io>`_
+    without having to explicitly install it.
+
+    To install `pipx`::
+
+        $ python3 -m pip install --user pipx
 
 
 8. Publish the both release tag and the master branch
@@ -132,13 +141,13 @@ Setting up environment
 
   .. code::
 
-    twine upload dist/*
+    $ pipx run twine upload dist/*
 
   .. note::
 
     To first upload on `TestPyPI`_ , do the following::
 
-        $ twine upload -r pypitest dist/*
+        $ pipx run twine upload -r pypitest dist/*
 
 
 10. Create a clean testing environment to test the installation
