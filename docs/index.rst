@@ -96,18 +96,17 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: Administrator Documentation:
-
-   installation
-
-
-.. toctree::
-   :maxdepth: 2
    :caption: User Documentation:
 
    user_guide
    commands_shell
    authors
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Administrator Documentation:
+
+   installation
 
 .. toctree::
    :maxdepth: 1
