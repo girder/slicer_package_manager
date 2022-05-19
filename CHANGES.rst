@@ -15,6 +15,9 @@ Internal
 
 * Update development status to ``Production/Stable``.
 
+* Vendorize ``bson.objectid`` from PyMongo to support installing the client alongside the server
+  and workaround incompatibilities between standalone ``bson`` package and the one provided by PyMongo.
+
 Python Client
 ^^^^^^^^^^^^^
 

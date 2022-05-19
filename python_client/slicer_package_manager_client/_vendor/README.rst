@@ -31,3 +31,8 @@ Vendoring Policy
 Vendored Libraries
 ==================
 
+* pymongo==3.12.3
+  - https://github.com/mongodb/mongo-python-driver/tree/3.12.3
+  - keep ``bson/errors.py``, ``bson/objectid.py``, ``bson/py3compat.py``and ``bson/tz_util.py``
+  - empty ``bson/__init__.py``
+  - update ``bson/objectid.py``to use relative imports for ``errors``, ``objectid`` and ``tz_util``.

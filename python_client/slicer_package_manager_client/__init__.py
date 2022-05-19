@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-from bson.objectid import ObjectId
 
 from girder_client import GirderClient
+
+from ._vendor.bson.objectid import ObjectId
+
 
 __version__ = '0.6.0'
 __license__ = 'Apache 2.0'
