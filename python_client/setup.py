@@ -22,7 +22,7 @@ setup(
     url='https://slicer-package-manager.readthedocs.io/en/latest/commands_shell.html#slicer-package-manager-client',
     license='Apache 2.0',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
