@@ -4,30 +4,22 @@
 Installation
 ============
 
-Install from source
--------------------
+The section below describes a convenient way to setup a server for evaluation purpose.
 
-To install from the latest source, first obtain the source code
-
-* Using HTTPS::
-
-    $ git clone https://github.com/girder/slicer_package_manager.git
-
-* Or using SSH::
-
-    $ git clone git@github.com:girder/slicer_package_manager.git
-
-Then::
-
-    $ cd slicer_package_manager
+For production deployment, read more details in the ``Administrator Documentation`` section
+at https://girder.readthedocs.io.
 
 Run via Docker
 --------------
 
-If you do not have all required system packages installed let's read the :doc:`prerequisites`.
+First, install Docker and Docker compose follow the instruction on the official website.
+The community edition (CE) is sufficient for using this plugin. See https://docs.docker.com/install/
+and https://docs.docker.com/compose/install/.
 
-Then to run the server just use the following command::
+Then, assuming the sources are available in ``slicer_package_manager`` folder, you may run
+the server running the following commands::
 
+    $ cd slicer_package_manager
     $ docker-compose up -d
 
 .. note::
