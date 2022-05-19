@@ -98,7 +98,6 @@ Table of Contents
    :maxdepth: 2
    :caption: Administrator Documentation:
 
-   prerequisites
    installation
 
 
