@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # Slicer Package Manager documentation build configuration file, created by
 # sphinx-quickstart on Mon Feb 12 16:59:31 2018.
 #

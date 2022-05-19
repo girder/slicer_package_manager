@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 The internal server API of Slicer Package Manager. Use these endpoints to
 create new applications, new releases, and upload or download application and extensions

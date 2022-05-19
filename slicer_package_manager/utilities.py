@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from girder.constants import AccessType
 from girder.models.folder import Folder
 from girder.utility.progress import ProgressContext

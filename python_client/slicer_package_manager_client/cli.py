@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import click
 import platform
 from tabulate import tabulate

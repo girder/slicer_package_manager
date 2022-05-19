@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from girder_client import GirderClient
 
 if __name__ == "__main__":
