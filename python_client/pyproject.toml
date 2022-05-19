@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slicer-package-manager-client"
+description = "Python client for interacting with the Slicer package manager endpoint."
+authors = [
+    {name = "Pierre Assemat", email = "pierre.assemat@kitware.com"},
+    {name = "Jean-Christophe Fillion-Robin", email = "jchris.fillionr@kitware.com"},
+]
+maintainers = [
+    {name = "Jean-Christophe Fillion-Robin", email = "jchris.fillionr@kitware.com"},
+]
+readme = "README.rst"
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.7"
+dynamic = ["version"]
+dependencies = [
+    "bson",
+    "click>=6.7",
+    "girder_client",
+    "tabulate",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest-vcr",
+]
+
+[project.urls]
+Documentation = "https://slicer-package-manager.readthedocs.io/en/latest/commands_shell.html#slicer-package-manager-client"
+Source = "https://github.com/girder/slicer_package_manager/tree/master/python_client"
+
+[project.scripts]
+slicer_package_manager_client = "slicer_package_manager_client.cli:main"
+
+[tool.setuptools]
+packages = ["slicer_package_manager_client"]
+zip-safe = false
+
+[tool.setuptools.dynamic]
+version = {attr = "slicer_package_manager_client.__version__"}

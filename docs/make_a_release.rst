@@ -5,7 +5,7 @@ Making a release
 ================
 
 A core developer should use the following steps to create a release `X.Y.Z` of
-**slicer-package-manager** on `PyPI`_.
+**slicer-package-manager** and **slicer-package-manager-client** on `PyPI`_.
 
 -------------
 Prerequisites
@@ -92,20 +92,22 @@ Setting up environment
       expression: ``^[0-9]+(\.[0-9]+)*(\.post[0-9]+)?$``.
 
 
-5. In `CHANGES.rst` replace ``Next Release`` section header with
-   ``X.Y.Z`` and commit the changes.
+5. In ``CHANGES.rst`` replace ``Next Release`` section header with ``X.Y.Z``,
+   in ``python_client/slicer_package_manager_client/__init__.py`` update version
+   with ``X.Y.Z`` and commit the changes.
 
   .. code::
 
     $ git add CHANGES.rst && \
-      git commit -m "slicer-package-manager ${release}"
+      git add python_client/slicer_package_manager_client/__init__.py && \
+      git commit -m "slicer-package-manager[-client] ${release}"
 
 
 6. Tag the release
 
   .. code::
 
-    $ git tag --sign -m "slicer-package-manager ${release}" ${release} master
+    $ git tag --sign -m "slicer-package-manager[-client] ${release}" ${release} master
 
   .. warning::
 
@@ -113,7 +115,7 @@ Setting up environment
       to sign the tag.
 
 
-7. Create the source distribution and wheel
+7. Create the source distribution and wheel for **slicer-package-manager**
 
   .. code::
 
@@ -129,6 +131,13 @@ Setting up environment
         $ python3 -m pip install --user pipx
 
 
+8. Create the source distribution and wheel for **slicer-package-manager-client**
+
+  .. code::
+
+    $ pipx run build ./python_client
+
+
 8. Publish the both release tag and the master branch
 
   .. code::
@@ -142,12 +151,14 @@ Setting up environment
   .. code::
 
     $ pipx run twine upload dist/*
+    $ pipx run twine upload python_client/dist/*
 
   .. note::
 
     To first upload on `TestPyPI`_ , do the following::
 
         $ pipx run twine upload -r pypitest dist/*
+        $ pipx run twine upload -r pypitest python_client/dist/*
 
 
 10. Create a clean testing environment to test the installation
@@ -157,6 +168,11 @@ Setting up environment
     $ pushd $(mktemp -d) && \
       mkvirtualenv slicer-package-manager-${release}-install-test && \
       pip install slicer-package-manager==${release}
+
+    $ pushd $(mktemp -d) && \
+      mkvirtualenv slicer-package-manager-client-${release}-install-test && \
+      pip install slicer-package-manager-client==${release} && \
+      slicer_package_manager_client --version
 
   .. note::
 
@@ -175,7 +191,9 @@ Setting up environment
     $ popd && \
       deactivate  && \
       rm -rf dist/* && \
-      rmvirtualenv slicer-package-manager-${release}-install-test
+      rmvirtualenv slicer-package-manager-${release}-install-test && \
+      rm -rf python_client/dist/* && \
+      rmvirtualenv slicer-package-manager-client-${release}-install-test
 
 
 13. Add a ``Next Release`` section back in `CHANGES.rst`, commit and push local changes.
