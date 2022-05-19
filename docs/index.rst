@@ -100,7 +100,6 @@ Table of Contents
 
    user_guide
    commands_shell
-   authors
 
 .. toctree::
    :maxdepth: 2
@@ -115,6 +114,7 @@ Table of Contents
    developer_guide
    slicer_package_manager
    slicer_package_manager_client
+   authors
    changes
 
 .. toctree::
