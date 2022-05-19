@@ -15,6 +15,11 @@ Internal
 
 * Update development status to ``Production/Stable``.
 
+Python Client
+^^^^^^^^^^^^^
+
+* Support publishing python client sdist and wheel named ``slicer-package-manager-client``.
+
 0.6.0
 =====
 
