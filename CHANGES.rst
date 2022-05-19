@@ -13,6 +13,8 @@ Internal
 
 * Require Python >= 3.7 for both python client and server.
 
+* Update development status to ``Production/Stable``.
+
 0.6.0
 =====
 

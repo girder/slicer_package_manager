@@ -15,7 +15,7 @@ setup(
     author='Jean-Christophe Fillion-Robin',
     author_email='slicer-packages-support@kitware.com',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
