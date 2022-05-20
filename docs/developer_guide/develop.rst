@@ -27,9 +27,8 @@ See the `Client Development documentation <https://girder.readthedocs.io/en/late
 Python client development
 -------------------------
 
-The development of the **Slicer Package Manager Client** is in Python, it must work on both 2.7
-and 3.5 version of python, and follow flake8_ (the wrapper which verifies ``pep8``, ``pyflakes``
-and ``circular complexity``).
+The development of the **Slicer Package Manager Client** is in Python, and it uses flake8_  for code
+style validation.
 
 The python client use click_, a command line library for Python.
 
@@ -100,9 +99,7 @@ there are several test going on:
 
 * :ref:`server_side_testing`
 
-    It will occurs each time a commit will be pushed on the repository (Source code at
-    `s_e_m_test.py <https://github.com/girder/slicer_package_manager/blob/main/plugin_tests/
-    s_e_m_test.py>`_).
+    It will occurs each time a commit will be pushed on the repository.
 
 * :ref:`python_client_testing`
 
