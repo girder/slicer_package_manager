@@ -6,39 +6,25 @@
 Welcome to Slicer Package Manager's documentation!
 ==================================================
 
-Table of Contents
-=================
+The **Slicer Package Manager** includes a REST API service and CLI built on `Girder`_ for downloading, uploading
+and organizing application and extension packages for both `3D Slicer`_ and `3D Slicer-based`_ applications.
+
+.. _Girder: https://github.com/girder/girder
+.. _3D Slicer: https://slicer.org
+.. _3D Slicer-based: https://github.com/KitwareMedical/SlicerCustomAppTemplate
 
 .. toctree::
-   :maxdepth: 2
-   :caption: User Documentation:
+   :maxdepth: 1
 
    overview
-   user_guide
+   concepts
    commands_shell
-   user_faq
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Administrator Documentation:
-
+   faq
    installation
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Developer Documentation:
-
-   developer_guide
-   slicer_package_manager
-   slicer_package_manager_client
+   developer_guide/index
    authors
-   changes
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Maintainer Documentation:
-
    make_a_release
+   changes
 
 Indices and tables
 ==================

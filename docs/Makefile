@@ -21,11 +21,11 @@ help:
 
 # Custom targets specific to this project
 docs-only:
-	rm -f slicer_package_manager.api.rst
-	rm -f slicer_package_manager.models.rst
+	rm -f developer_guide/slicer_package_manager.api.rst
+	rm -f developer_guide/slicer_package_manager.models.rst
 	rm -rf _build/
-	sphinx-apidoc -o . --no-toc --module-first ../slicer_package_manager/
-	sphinx-apidoc -o . --no-toc --module-first ../python_client/slicer_package_manager_client/
+	sphinx-apidoc -o ./developer_guide/ --no-toc --module-first ../slicer_package_manager/
+	sphinx-apidoc -o ./developer_guide/ --no-toc --module-first ../python_client/slicer_package_manager_client/
 	$(MAKE) clean
 	$(MAKE) html
 
