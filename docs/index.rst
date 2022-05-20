@@ -33,11 +33,3 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-
-Resources
-=========
-
-* Free software: Apache-2.0_
-* Source code: https://github.com/girder/slicer_package_manager
-
-.. _Apache-2.0: https://www.apache.org/licenses/LICENSE-2.0
