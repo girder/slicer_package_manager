@@ -1,29 +1,51 @@
 .. _commands_shell:
 
-==============
-Commands shell
-==============
+====================
+Commands shell (CLI)
+====================
+
+Overview
+--------
+
+The command ``slicer_package_manager_client`` allows to to interact with
+a Slicer Package Manager server.
+
+There are 5 different subcommands that can be used to manage data:
+
+
+* :ref:`app <application>` command to create, list and delete applications.
+* :ref:`release <release>`  command to create, list and delete releases.
+* :ref:`draft <draft>` command to list and delete draft releases.
+* :ref:`package <package>` command to upload, download or just list application packages.
+* :ref:`extension <extension>` command to upload, download or just list extensions packages.
+
+.. warning::
+
+    To run command requiring higher privileges, you will have to :ref:`authenticate <authentication>`.
+
 
 Installation
 ------------
 
-To install the latest version of the ``slicer_package_manager_client``, from the
-*slicer_package_manager* directory run::
+Install with::
 
-    $ cd python_client
-
-then::
-
-    $ pip install .
+    $ pip install slicer-package-manager-client
 
 or::
 
+    $ git clone https://github.com/girder/slicer_package_manager.git
+    $ cd slicer_package_manager/python_client
     $ pip install -e .
 
-for development
+for development.
 
-Use
----
+Configuration
+-------------
+
+.. _authentication:
+
+Authentication
+^^^^^^^^^^^^^^
 
 There are few solutions to authenticate on your Girder instance when using the client:
 
@@ -51,51 +73,45 @@ or by using the ``GIRDER_API_KEY`` environment variable::
     (The IP is given as an example)
 
 Then you can start using the API that allow you to easily create applications, manage releases,
-upload and download packages, see :ref:`slicer_package_manager_client` documentation
+upload and download packages, see :ref:`commands_shell` documentation
 for more details.
 
 .. _api-key: https://girder.readthedocs.io/en/latest/user-guide.html#api-keys
 .. _documentation: https://girder.readthedocs.io/en/latest/user-guide.html#api-keys
 
-.. _slicer_package_manager_client:
+Bash completion
+^^^^^^^^^^^^^^^
 
-Slicer Package Manager Client
--------------------------------
+To use the **Bash completion** feature you just have to run the following command each time
+you use a new terminal::
 
-The command ``slicer_package_manager_client`` allows to use a simplified API to interact with
-the Python Client API. There are 5 different commands that can be used to manage models:
+$ eval "$(_SLICER_PACKAGE_MANAGER_CLIENT_COMPLETE=source slicer_package_manager_client)"
 
-* Application
-* Release
-* Draft
-* Package
-* Extension
+Or you can add it on your ``.bashrc`` file to always have this feature available.
 
-To use this client you will need to authenticate with an admin user on the Girder instance.
-Let's read the :doc:`commands_shell` documentation first.
-
-.. note::
-
-    To use the **Bash completion** feature you just have to run the following command each time
-    you use a new terminal::
-
-    $ eval "$(_SLICER_PACKAGE_MANAGER_CLIENT_COMPLETE=source slicer_package_manager_client)"
-
-    Or you can add it on your ``.bashrc`` file to always have this feature available.
+Custom application collection
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In each command, the optional parameter ``coll_id`` allow to use the Slicer Package Manager
 Client within an existing collection and not in the default *Applications* collection.
+
 When this is the case, to avoid repeating this parameter in each command it's also possible
 to set an environment variable named ``COLLECTION_ID``.
 
-Application
+
+Subcommands
 -----------
 
-Use ``slicer_package_manager_client app`` to manage applications: create, list and delete them.
+.. _application:
+
+Application
+^^^^^^^^^^^
+
+Use ``slicer_package_manager_client app`` to create, list and delete applications.
 
 
 Create & Initialized a new application
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""""""""
 
 You can either choose an existing collection by providing ``coll_id`` or create a specific one
 by providing ``coll_name``. If none of this optional parameters are provided, the default
@@ -120,7 +136,7 @@ Options:
 * ``--public`` - Whether the collection should be publicly visible
 
 List all the application within a collection
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""""""""""""""
 
 By providing ``coll_id``, you are able to list all the applications from a specific collection.
 By default it will list the applications within the collection *Applications*.
@@ -131,7 +147,7 @@ By default it will list the applications within the collection *Applications*.
 
 
 Delete an application
-^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""
 
 ::
 
@@ -143,13 +159,15 @@ Arguments:
 * ``--coll_id`` - ID of an existing collection
 
 
-Release
--------
+.. _release:
 
-Use ``slicer_package_manager_client release`` to manage releases: create, list and delete them.
+Release
+^^^^^^^
+
+Use ``slicer_package_manager_client release`` to create, list and delete releases.
 
 Create a new release
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 
 ::
 
@@ -168,7 +186,7 @@ Options:
 * ``--desc`` - The description of the new application
 
 List all the release from an application
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""""""""""
 
 ::
 
@@ -183,7 +201,7 @@ Options:
 * ``--coll_id`` - ID of an existing collection
 
 Delete a release
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 
 ::
 
@@ -198,14 +216,15 @@ Options:
 
 * ``--coll_id`` - ID of an existing collection
 
+.. _draft:
 
 Draft
------
+^^^^^
 
 Use ``slicer_package_manager_client draft`` to list and delete draft releases.
 
 List all the draft release within an application
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""""""""""""""""""
 
 Provide ``revision`` will list only one draft release corresponding to the revision store as
 metadata. The ``--offset`` option allow to list only the older draft release.
@@ -225,7 +244,7 @@ Options:
 * ``--coll_id`` - ID of an existing collection
 
 Delete a specific draft release
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""""""""
 
 ::
 
@@ -240,15 +259,15 @@ Options:
 
 * ``--coll_id`` - ID of an existing collection
 
+.. _package:
 
 Package
--------
+^^^^^^^
 
-Use ``slicer_package_manager_client package`` to upload, download or just list application
-packages.
+Use ``slicer_package_manager_client package`` to upload, download or just list application packages.
 
 Upload a new application package
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""
 
 Give the ``FILE_PATH`` argument to be able to upload an application package.
 The application package will automatically be added to the release which has the same revision
@@ -287,7 +306,7 @@ Options:
 
 
 List application packages
-^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""
 
 Use options to filter the listed application packages. By default, the command will list all
 the application packages from the 'draft' release. It is possible to use the ``--release``
@@ -312,7 +331,7 @@ Options:
 * ``--coll_id`` - ID of an existing collection
 
 Download an application package
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""""""""
 
 By default the package will be store in the current folder
 
@@ -331,7 +350,7 @@ Options:
 * ``--coll_id`` - ID of an existing collection
 
 Delete an application package
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""""""
 
 Provide either the ID or the name of the application package to delete it.
 
@@ -348,13 +367,15 @@ Options:
 
 * ``--coll_id`` - ID of an existing collection
 
-Extension
----------
+.. _extension:
 
-Use ``slicer_package_manager_client extension`` to upload, download or just list extensions
+Extension
+^^^^^^^^^
+
+Use ``slicer_package_manager_client extension`` to upload, download or just list extension packages.
 
 Upload a new extension
-^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""
 
 Give the ``FILE_PATH`` argument to be able to upload an extension. The extension will then
 automatically be added to the release which has the same revision than the ``--app_revision``
@@ -389,7 +410,7 @@ Options:
 * ``--desc`` - The description of the new application
 
 List extensions
-^^^^^^^^^^^^^^^
+"""""""""""""""
 
 Use options to filter the listed extensions. By default, the command will list all the extension
 from the 'draft' release. It is possible to use the ``--release`` option to list the extension
@@ -418,7 +439,7 @@ Options:
 
 
 Download an extension
-^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""
 
 ::
 
@@ -436,7 +457,7 @@ Options:
 
 
 Delete an extension
-^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""
 
 Provide either the ID or the name of the extension to delete it.
 
