@@ -33,7 +33,7 @@ test = [
 
 [project.urls]
 Documentation = "https://slicer-package-manager.readthedocs.io/en/latest/commands_shell.html#slicer-package-manager-client"
-Source = "https://github.com/girder/slicer_package_manager/tree/master/python_client"
+Source = "https://github.com/girder/slicer_package_manager/tree/main/python_client"
 
 [project.scripts]
 slicer_package_manager_client = "slicer_package_manager_client.cli:main"

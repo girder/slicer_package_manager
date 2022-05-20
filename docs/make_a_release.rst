@@ -107,7 +107,7 @@ Setting up environment
 
   .. code::
 
-    $ git tag --sign -m "slicer-package-manager[-client] ${release}" ${release} master
+    $ git tag --sign -m "slicer-package-manager[-client] ${release}" ${release} main
 
   .. warning::
 
@@ -138,12 +138,12 @@ Setting up environment
     $ pipx run build ./python_client
 
 
-8. Publish the both release tag and the master branch
+8. Publish the both release tag and the main branch
 
   .. code::
 
     $ git push origin ${release} && \
-      git push origin master
+      git push origin main
 
 
 9. Upload the distributions on `PyPI`_
@@ -202,7 +202,7 @@ Setting up environment
 
     $ git add CHANGES.rst && \
       git commit -m "CHANGES.rst: Add \"Next Release\" section [ci skip]" && \
-      git push origin master
+      git push origin main
 
 
 .. _virtualenvwrapper: https://virtualenvwrapper.readthedocs.io/

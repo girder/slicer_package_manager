@@ -77,7 +77,7 @@ To run manually these test run the following command::
 
 The CLI is also briefly tested using a shell script. To see an example let's take a look at the
 `Source Code <https://github.com/girder/slicer_package_manager/blob/
-master/plugin_tests/python_client_tests/slicer_package_manager_client_test.sh>`_
+main/plugin_tests/python_client_tests/slicer_package_manager_client_test.sh>`_
 
 This test is also used within CircleCi.
 
@@ -95,13 +95,13 @@ CircleCI tests
 ^^^^^^^^^^^^^^
 
 In the `CircleCI configuration file
-<https://github.com/girder/slicer_package_manager/blob/master/.circleci/config.yml>`_,
+<https://github.com/girder/slicer_package_manager/blob/main/.circleci/config.yml>`_,
 there are several test going on:
 
 * :ref:`server_side_testing`
 
     It will occurs each time a commit will be pushed on the repository (Source code at
-    `s_e_m_test.py <https://github.com/girder/slicer_package_manager/blob/master/plugin_tests/
+    `s_e_m_test.py <https://github.com/girder/slicer_package_manager/blob/main/plugin_tests/
     s_e_m_test.py>`_).
 
 * :ref:`python_client_testing`
@@ -118,7 +118,7 @@ Regenerate Documentation Locally
 
 When developing new feature it's very important to add some documentation to explain the community
 what is it and how to use it. The Slicer Package Manager Documentation is build thanks to
-`Sphinx <https://www.sphinx-doc.org/en/master/>`_, an open source documentation generator.
+`Sphinx <https://www.sphinx-doc.org/>`_, an open source documentation generator.
 
 
 Here is some tools very useful to rapidly see what is result of your documentation.

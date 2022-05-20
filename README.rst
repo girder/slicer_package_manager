@@ -22,5 +22,5 @@ and organizing application and extension packages for both `3D Slicer`_ and `3D 
 
 Documentation is available at https://slicer-package-manager.readthedocs.io
 
-This software is licensed under the terms of the `Apache Licence Version 2.0 <https://github.com/girder/slicer_package_manager/blob/master/LICENSE>`_.
+This software is licensed under the terms of the `Apache Licence Version 2.0 <https://github.com/girder/slicer_package_manager/blob/main/LICENSE>`_.
 
