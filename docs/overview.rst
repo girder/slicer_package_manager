@@ -10,7 +10,7 @@ and organizing application and extension packages for both `3D Slicer`_ and `3D 
 .. _3D Slicer: https://slicer.org
 .. _3D Slicer-based: https://github.com/KitwareMedical/SlicerCustomAppTemplate
 
-This software is licensed under the terms of the `Apache Licence Version 2.0 <https://github.com/girder/slicer_package_manager/blob/master/LICENSE>`_
+This software is licensed under the terms of the `Apache Licence Version 2.0 <https://github.com/girder/slicer_package_manager/blob/main/LICENSE>`_
 and the source code is available at https://github.com/girder/slicer_package_manager.
 
 In a nutshell:

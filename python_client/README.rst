@@ -32,4 +32,4 @@ To learn more about the Slicer package manager server and associated client, che
 License
 -------
 
-This software is licensed under the terms of the `Apache Licence Version 2.0 <https://github.com/girder/slicer_package_manager/blob/master/LICENSE>`_.
+This software is licensed under the terms of the `Apache Licence Version 2.0 <https://github.com/girder/slicer_package_manager/blob/main/LICENSE>`_.
