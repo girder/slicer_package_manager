@@ -1,46 +1,8 @@
-==========
-User Guide
-==========
-
-The **Slicer Package Manager** is a Girder plugin to easily manage application packages
-and extension packages from an Application. It is used by the Slicer community to share
-Slicer extensions by allowing to Upload and Download them. Build onto the open source
-data management platform: **Girder**, the **Slicer Package Manager** use some of the
-`girder concepts`_ developed in Girder and embedded new ones as Application, Release,
-Draft, Package or Extension.
-
-This plugin is designed to be robust, fast, extensible and easy to use.
-
-The server side is built in Python under the open source
-`Apache License, version  2.0 <https://www.apache.org/licenses/LICENSE-2.0.html>`_.
-
-How to use the Slicer Package Manager?
-----------------------------------------
-
-There are 3 different ways to use the Slicer Package Manager:
-
-* By using the User Interface (Work In Progress):
-
-    If you don't want to use neither the Shell or python script, this UI is made for you.
-    Let see the [documentation] to know how to use it.
-
-* By using the :doc:`slicer_package_manager_client` within Python script:
-
-    Using the Python Client API allow you to write scripts for create application, new release and
-    automatically upload or download application or extensions packages.
-
-* By using the :doc:`commands_shell`:
-
-    This is the more easy way to use the basic feature of the Slicer Package Manager.
-    These commands allow you to easily create, list, or delete applications and releases,
-    and also list, upload, download or delete application or extension packages.
-
-.. _girder concepts: https://girder.readthedocs.io/en/latest/user-guide.html#concepts
-
 .. _concepts:
 
+========
 Concepts
---------
+========
 
 * **Application**:
 
@@ -126,56 +88,3 @@ Concepts
     See the `list of parameters of Extension <https://slicer-package-manager.readthedocs.io/en/latest/server.api.html
     #server.api.app.App.createOrUpdateExtension>`_ on the server API to have an exhausted list of all the metadata.
 
-
-Schema of concepts
-------------------
-::
-
-    Applications
-       |--- packages
-       |        |----- Slicer
-       |        |         |----- 1.0
-       |        |         |        |---- Slicer-linux.tar.gz
-       |        |         |        |---- Slicer-macos.dmg
-       |        |         |        |---- Slicer-win.exe
-       |        |         |        |---- extensions
-       |        |         |        |         |---- Extension1
-       |        |         |        |         |---- Extension2
-       |        |         |        |         |---- Extension3
-       |        |         |        |         |---- Extension4
-       .        .         .        .         .
-       .        .         .
-       |        |         |----- 2.0
-       .        .         .        |
-       .        .         .
-       |        |         |----- draft
-       |        |         |        |--- r100
-       |        |         |        |      |---- Slicer-linux.tar.gz
-       |        |         |        |      |---- Slicer-macos.dmg
-       |        |         |        |      |---- Slicer-win.exe
-       |        |         |        |      |----- extensions
-       |        |         |        |      |          |---- Extension1
-       .        .         .        .      .          .
-       .        .         .        .
-       |        |         |        |--- r101
-       .        .         .        .      |
-       .        .
-       |        |
-       |        |------SlicerCustom
-
-Download Statistics
--------------------
-
-Each time an extension is downloaded (using the Client or the UI), a metadata is incremented on the release folder.
-This allow to referenced all downloaded extension even after their deletion.
-
-The download count is stored in the metadata following this rule::
-
-    $ {
-        'downloadExtensions': {
-            baseName: {
-                os: {
-                    arch: downloadCount
-                }
-            }
-        }

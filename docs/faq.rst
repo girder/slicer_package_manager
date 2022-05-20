@@ -31,6 +31,45 @@ To know more about Slicer extension, see the `Extensions Manager`_ documentation
 
 .. _Extensions Manager: https://slicer.readthedocs.io/en/latest/user_guide/extensions_manager.html
 
+
+Does the server collect download statistics ?
+---------------------------------------------
+
+Each time an extension is downloaded (using the Client or the UI), a metadata is incremented on the release folder.
+This allow to referenced all downloaded extension even after their deletion.
+
+The download count is stored in the metadata following this rule::
+
+    $ {
+        'downloadExtensions': {
+            baseName: {
+                os: {
+                    arch: downloadCount
+                }
+            }
+        }
+
+How to interface with the Slicer Package Manager server ?
+---------------------------------------------------------
+
+There are 3 different ways to use the Slicer Package Manager server:
+
+* By using the :doc:`commands_shell`:
+
+    This is the more easy way to use the basic feature of the Slicer Package Manager.
+    These commands allow you to easily create, list, or delete applications and releases,
+    and also list, upload, download or delete application or extension packages.
+
+* By using the :doc:`developer_guide/slicer_package_manager_client` within Python script:
+
+    Using the Python Client API allow you to write scripts for create application, new release and
+    automatically upload or download application or extensions packages.
+
+* By using the User Interface:
+
+    The default girder user interface allows to browse through the `Application`, `Release` and `Draft`
+    Girder folders and their associated `Package` and `Extension` Girder items.
+
 How to create a new release with existing uploaded packages?
 ------------------------------------------------------------
 

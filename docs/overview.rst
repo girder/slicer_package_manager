@@ -2,7 +2,8 @@
 Overview
 ========
 
-The ``Slicer Package Manager`` includes a REST API service and CLI built on `Girder`_ for downloading, uploading
+
+The **Slicer Package Manager** includes a REST API service and CLI built on `Girder`_ for downloading, uploading
 and organizing application and extension packages for both `3D Slicer`_ and `3D Slicer-based`_ applications.
 
 .. _Girder: https://github.com/girder/girder
@@ -12,7 +13,8 @@ and organizing application and extension packages for both `3D Slicer`_ and `3D 
 In a nutshell:
 
 * :ref:`Data model <concepts>` specific to this project is implemented by organizing data using standard
-  Girder constructs (collection, folder and item) and by associating metadata.
+  `Girder constructs <https://girder.readthedocs.io/en/latest/user-guide.html#concepts>`_ (collection, folder and item)
+  and by associating metadata.
 
 * By default, a top-level collection named ``Applications`` is created with a ``packages`` folder
   organizing the different application.
@@ -50,7 +52,7 @@ The diagram below represents the organization::
        |        |         |        |      |---- Slicer-linux.tar.gz
        |        |         |        |      |---- Slicer-macos.dmg
        |        |         |        |      |---- Slicer-win.exe
-       |        |         |        |      |----- extensions
+       |        |         |        |      |---- extensions
        |        |         |        |      |          |---- Extension1
        .        .         .        .      .          .
        .        .         .        .
@@ -60,3 +62,9 @@ The diagram below represents the organization::
        |        |
        |        |------SlicerCustom
 
+where
+
+* ``Slicer`` and ``SlicerCustom`` are Girder items representing **Application**
+* ``1.0`` and ``2.0`` are Girder folders representing **Release**
+* ``Slicer-linux.tar.gz`` and ``Slicer-macos.dmg`` are Girder items representing **Package** (application package)
+* ``Extension1`` and ``Extension2`` are Girder items representing **Extension** (extension package)
