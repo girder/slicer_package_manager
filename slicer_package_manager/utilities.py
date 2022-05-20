@@ -122,23 +122,23 @@ def getReleaseFolder(item, force=False):
 
     ::
 
-    Applications
-        |--- packages
-        |        |----- Slicer
-        |        |         |----- 1.0
-        |        |         |        |---- Package1
-        .        .         .        .
-        |        |         |        |---- extensions
-        |        |         |        |         |---- Extension1
-        .        .         .        .         .
-        .        .         .
-        .        .         .
-        |        |         |----- draft
-        |        |         |        |--- r100
-        |        |         |        |      |---- Package1
-        .        .         .        .      .
-        |        |         |        |      |----- extensions
-        |        |         |        |      |          |---- Extension1
+        Applications
+            |--- packages
+            |        |----- Slicer
+            |        |         |----- 1.0
+            |        |         |        |---- Package1
+            .        .         .        .
+            |        |         |        |---- extensions
+            |        |         |        |         |---- Extension1
+            .        .         .        .         .
+            .        .         .
+            .        .         .
+            |        |         |----- draft
+            |        |         |        |--- r100
+            |        |         |        |      |---- Package1
+            .        .         .        .      .
+            |        |         |        |      |----- extensions
+            |        |         |        |      |          |---- Extension1
 
     :param item: A package or extension instance.
     :param force: If you explicitly want to circumvent access
