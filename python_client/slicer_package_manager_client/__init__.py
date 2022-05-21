@@ -7,7 +7,7 @@ from girder_client import GirderClient
 from ._vendor.bson.objectid import ObjectId
 
 
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 __license__ = 'Apache 2.0'
 
 appName = 'Slicer'

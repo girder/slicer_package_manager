@@ -5,6 +5,18 @@ Release Notes
 This is the list of **Slicer Package Manager** changes between each release. For full
 details, see the commit logs at https://github.com/girder/slicer_package_manager
 
+0.7.1
+=====
+
+Bug fixes
+---------
+
+Python Client
+^^^^^^^^^^^^^
+
+* Fix wheel ensuring ``_vendor.bson`` package is distributed.
+
+
 0.7.0
 =====
 
