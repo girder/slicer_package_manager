@@ -30,11 +30,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install pytest_girder
-          command: pip install pytest_girder
-      - run:
           name: Install server plugin
-          command: pip install .
+          command: pip install .[test]
       - run:
           name: Install CLI
           command: pip install -e .[test]

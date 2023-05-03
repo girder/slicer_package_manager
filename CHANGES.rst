@@ -19,6 +19,13 @@ Tests
 
 * Improve PackageMetadataChecksumUpdate tests to check extensions package.
 
+Internal
+--------
+
+* Fix documentation build adding `.readthedocs.yml`
+
+* Switch server plugin Python wheel build-system to `pyproject.toml`.
+
 
 0.8.0
 =====

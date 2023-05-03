@@ -1,45 +1,11 @@
 import versioneer
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
-with open('README.rst') as readme_file:
-    readme = readme_file.read()
-
-requirements = [
-    'girder~=3.1.20',
-    'girder-hashsum-download~=3.1.20',
-]
+# This file is required to support editable install
+# See https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 
 setup(
-    author='Jean-Christophe Fillion-Robin',
-    author_email='slicer-packages-support@kitware.com',
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'License :: OSI Approved :: Apache Software License',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-    ],
-    description='Manage Slicer application and extension packages.',
-    install_requires=requirements,
-    license='Apache Software License 2.0',
-    long_description=readme,
-    long_description_content_type='text/x-rst',
-    include_package_data=True,
-    keywords='girder-plugin, slicer_package_manager',
-    name='slicer_package_manager',
-    packages=find_packages(exclude=['test', 'test.*']),
-    python_requires='>=3.6',
-    url='https://github.com/girder/slicer_package_manager',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    zip_safe=False,
-    entry_points={
-        'girder.plugin': [
-            'slicer_package_manager = slicer_package_manager:GirderPlugin',
-        ],
-    },
 )
