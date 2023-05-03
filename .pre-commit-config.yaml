@@ -14,3 +14,8 @@ repos:
   - id: check-toml
   # Check for debugger imports and py37+ breakpoint() calls in python source.
   - id: debug-statements
+
+- repo: https://github.com/codespell-project/codespell
+  rev: "v2.2.4"
+  hooks:
+  - id: codespell
