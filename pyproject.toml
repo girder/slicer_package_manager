@@ -1,3 +1,82 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    # Required to support dynmamic version
+    "girder~=3.1.20",
+    "girder-hashsum-download~=3.1.20",
+    'tomli; python_version<"3.11"',
+    "versioneer",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slicer-package-manager"
+description = "Manage Slicer application and extension packages."
+authors = [
+    {name = "Pierre Assemat", email = "pierre.assemat@kitware.com"},
+    {name = "Jean-Christophe Fillion-Robin", email = "jchris.fillionr@kitware.com"},
+]
+maintainers = [
+    {name = "Jean-Christophe Fillion-Robin", email = "jchris.fillionr@kitware.com"},
+]
+readme = "README.rst"
+keywords = ["girder-plugin", "slicer_package_manager"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
+requires-python = ">=3.7"
+dynamic = ["version"]
+dependencies = [
+    "girder~=3.1.20",
+    "girder-hashsum-download~=3.1.20",
+]
+
+[project.entry-points."girder.plugin"]
+slicer_package_manager = "slicer_package_manager:GirderPlugin"
+
+[project.optional-dependencies]
+test = [
+    "pytest~=7.4.0", # See https://github.com/TvoroG/pytest-lazy-fixture/issues/63
+    "pytest-girder~=3.1.20",
+    "pytest-lazy-fixture",
+    "tox",
+    "virtualenv",
+    # lint
+    "ruff",
+]
+
+[project.urls]
+Documentation = "https://slicer-package-manager.readthedocs.io"
+Source = "https://github.com/girder/slicer_package_manager"
+
+[tool.setuptools]
+packages = [
+    "slicer_package_manager",
+    "slicer_package_manager.api",
+    "slicer_package_manager.models",
+    "tests",
+]
+py-modules = [
+    "slicer_package_manager._version",
+]
+zip-safe = false
+
+[tool.setuptools.dynamic]
+version = {attr = "slicer_package_manager.__version__"}
+
+[tool.versioneer]
+VCS = "git"
+versionfile_source = "slicer_package_manager/_version.py"
+versionfile_build = "slicer_package_manager/_version.py"
+style = "pep440-post"
+tag_prefix = ""
+
 [tool.ruff]
 select = [
   "A",           # flake8-builtins
@@ -27,7 +106,6 @@ select = [
   "YTT",         # flake8-2020
 ]
 extend-exclude = [
-  "versioneer.py",
   "*/_vendor/bson/*.py",
   "slicer_package_manager/_version.py",
 ]
