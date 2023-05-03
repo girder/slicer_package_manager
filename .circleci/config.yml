@@ -12,6 +12,14 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Display Python & Tox versions
+          command: |
+            python --version
+            tox --version
+      - run:
+          name: Update tox
+          command: python -m pip install --user "tox>=3.28,<4"
+      - run:
           name: Run server tests
           command: tox
 
