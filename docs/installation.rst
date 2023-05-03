@@ -24,7 +24,7 @@ the server running the following commands::
 
 .. note::
 
-    The ``-d`` option is running the container in deamon mode. Remove it to display the logs
+    The ``-d`` option is running the container in daemon mode. Remove it to display the logs
     on the running containers.
 
     To rebuild the container after changing the source code use the ``--build`` option when

@@ -276,7 +276,7 @@ class ExternalData:
         """Given a checksum string formatted as ``<algo>:<digest>`` returns the tuple ``(algo, digest)``.
 
         ``<algo>`` is expected to be `SHA256`, `SHA512`, or `MD5`.
-        ``<digest>`` is expected to be the full length hexdecimal digest.
+        ``<digest>`` is expected to be the full length hexadecimal digest.
 
         :raises ValueError: if checksum is incorrectly formatted.
         """
