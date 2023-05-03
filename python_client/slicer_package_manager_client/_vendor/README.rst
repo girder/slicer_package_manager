@@ -36,3 +36,4 @@ Vendored Libraries
   - keep ``bson/errors.py``, ``bson/objectid.py``, ``bson/py3compat.py``and ``bson/tz_util.py``
   - empty ``bson/__init__.py``
   - update ``bson/objectid.py``to use relative imports for ``errors``, ``objectid`` and ``tz_util``.
+  - backport ``bson/objectid.py`` typo fix from https://github.com/mongodb/mongo-python-driver/pull/1203
