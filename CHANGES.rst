@@ -21,6 +21,16 @@ Internal
     image `girder/girder_test:latest <https://hub.docker.com/r/girder/girder_test/tags>`_  built from
     `girder/.circleci/Dockerfile <https://github.com/girder/girder/blob/d994d93a00257a17eeeab7e0b6fa4a54f5658550/.circleci/Dockerfile>`_.
 
+Tests
+-----
+
+* Add GitHub Actions workflow to run `pre-commit <https://github.com/pre-commit/pre-commit-hooks#hooks-available>`_ hooks.
+
+  * Add "codespell" pre-commit hook and fix typos.
+
+  * Add `pyupgrade <https://github.com/asottile/pyupgrade>`_ pre-commit hook specifying "--py36-plus"
+    and updates codes accordingly.
+
 
 0.7.1
 =====

@@ -19,3 +19,10 @@ repos:
   rev: "v2.2.4"
   hooks:
   - id: codespell
+
+- repo: https://github.com/asottile/pyupgrade
+  rev: v3.2.2
+  hooks:
+  - id: pyupgrade
+    args: ["--py36-plus", "--keep-percent-format"]
+    exclude: "^versioneer.py|slicer_package_manager/_version.py|python_client/slicer_package_manager_client/_vendor/bson/objectid.py$"
