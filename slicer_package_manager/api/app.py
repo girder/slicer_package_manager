@@ -412,7 +412,7 @@ class App(Resource):
 
         return utilities.deleteFolder(release, progress, self.getCurrentUser())
 
-    @autoDescribeRoute(  # noqa: C901
+    @autoDescribeRoute(
         Description('List or search available extensions.')
         .notes('If the "release_id" provided correspond to the "draft" release,'
                ' then you must provide the "app_revision" to use this parameters. '
@@ -541,7 +541,7 @@ class App(Resource):
             offset=offset,
             sort=sort))
 
-    @autoDescribeRoute(  # noqa: 901
+    @autoDescribeRoute(
         Description('Create or Update an extension package.')
         .param('app_id', 'The ID of the App.', paramType='path')
         .param('os', 'The target operating system of the package.',
