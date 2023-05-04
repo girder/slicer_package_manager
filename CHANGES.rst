@@ -8,6 +8,20 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Internal
+--------
+
+* Require Python ``>= 3.6`` for both python client and server:
+
+  * The required version previously set to "3.7" in version "0.7.0" was not enforced due to
+    an incorrect setup parameter. It should have been specified as ``python_requires`` instead
+    of ``python_require`` (as defined in PEP 440).
+
+  * Requiring Python >= 3.6 is now consistent with the version associated with the Girder test Docker
+    image `girder/girder_test:latest <https://hub.docker.com/r/girder/girder_test/tags>`_  built from
+    `girder/.circleci/Dockerfile <https://github.com/girder/girder/blob/d994d93a00257a17eeeab7e0b6fa4a54f5658550/.circleci/Dockerfile>`_.
+
+
 0.7.1
 =====
 

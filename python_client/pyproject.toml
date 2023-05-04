@@ -17,8 +17,9 @@ classifiers = [
     "Environment :: Console",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.6"
 dynamic = ["version"]
 dependencies = [
     "click>=6.7",
