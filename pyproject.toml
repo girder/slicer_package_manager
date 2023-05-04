@@ -16,6 +16,7 @@ select = [
   "PL",          # pylint
   "Q",           # flake8-quotes
   "RUF",         # Ruff-specific
+  "S",           # flake8-bandit
   "SIM",         # flake8-simplify
   "YTT",         # flake8-2020
 ]
@@ -47,6 +48,9 @@ extend-ignore = [
   "PLR5501",  # Consider using `elif` instead of `else` then `if` to remove one indentation level
   "Q000",  # Remove bad quotes (bad-quotes-inline-string)
   "Q003",  # Change outer quotes to avoid escaping inner quotes
+  "S101",  # assert
+  "S105",  # hardcoded-password-string
+  "S310",  # Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.
 ]
 target-version = "py37"
 line-length = 120
