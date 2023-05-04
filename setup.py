@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import versioneer
 
 from setuptools import setup, find_packages
