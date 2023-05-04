@@ -5,10 +5,17 @@ select = [
   "COM",         # flake8-commas
   "D",           # pydocstyle (aka flake8-docstrings)
   "E", "F", "W", # flake8
+  "EXE",         # flake8-executable
+  "G",           # flake8-logging-format
+  "ICN",         # flake8-import-conventions
+  "ISC",         # flake8-implicit-str-concat
   "N",           # pep8-naming
+  "PIE",         # flake8-pie
+  "PGH",         # pygrep-hooks
   "Q",           # flake8-quotes
   "RUF",         # Ruff-specific
   "SIM",         # flake8-simplify
+  "YTT",         # flake8-2020
 ]
 extend-exclude = [
   "versioneer.py",
