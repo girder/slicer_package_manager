@@ -12,6 +12,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Display Python & Tox versions
+          command: |
+            python --version
+            tox --version
+      - run:
           name: Run server tests
           command: tox
 
