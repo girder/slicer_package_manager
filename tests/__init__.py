@@ -221,7 +221,8 @@ def computeContentChecksum(algo, content):
     import hashlib
 
     if algo not in ['SHA256', 'SHA512', 'MD5']:
-        raise ValueError("unsupported hashing algorithm %s" % algo)
+        msg = f"unsupported hashing algorithm {algo}"
+        raise ValueError(msg)
 
     hash = hashlib.new(algo)
     hash.update(content)
@@ -240,7 +241,8 @@ def computeFileChecksum(algo, filePath):
     import hashlib
 
     if algo not in ['SHA256', 'SHA512', 'MD5']:
-        raise ValueError("unsupported hashing algorithm %s" % algo)
+        msg = f"unsupported hashing algorithm {algo}"
+        raise ValueError(msg)
 
     with open(filePath, 'rb') as content:
         hash = hashlib.new(algo)
@@ -283,15 +285,20 @@ class ExternalData:
         if checksum is None:
             return None, None
         if len(checksum.split(':')) != 2:
-            raise ValueError("invalid checksum '%s'. Expected format is '<algo>:<digest>'." % checksum)
+            msg = f"invalid checksum '{checksum}'. Expected format is '<algo>:<digest>'."
+            raise ValueError(msg)
         (algo, digest) = checksum.split(':')
         expected_algos = ['SHA256', 'SHA512', 'MD5']
         if algo not in expected_algos:
-            raise ValueError("invalid algo '%s'. Algo must be one of %s" % (algo, ", ".join(expected_algos)))
+            msg = f"Invalid algo '{algo}'. Algo must be one of {', '.join(expected_algos)}."
+            raise ValueError(msg)
         expected_digest_length = {'SHA256': 64, 'SHA512': 128, 'MD5': 32}
         if len(digest) != expected_digest_length[algo]:
-            raise ValueError("invalid digest length %d. Expected digest length for %s is %d" % (
-                len(digest), algo, expected_digest_length[algo]))
+            msg  = (
+                f"Invalid digest length {len(digest)}. "
+                f"Expected digest length for {algo} is {expected_digest_length[algo]}."
+            )
+            raise ValueError(msg)
         return algo, digest
 
     def _reportHook(self, blocksSoFar, blockSize, totalSize):
@@ -323,7 +330,8 @@ class ExternalData:
                 urllib.request.urlretrieve(uri, filePath, self._reportHook)
                 print('Download finished')
             except OSError as exc:
-                raise ValueError(f"Failed to download {uri} to {filePath}: %s" % exc)
+                msg = f"Failed to download {uri} to {filePath}: {exc}"
+                raise ValueError(msg)
 
             if algo is not None:
                 print('Verifying checksum')
@@ -371,9 +379,12 @@ class ExternalData:
             except ValueError as exc:
                 errors.add(str(exc))
                 continue
-        raise RuntimeError('Download of %s failed for %d attempts\n  uri: %s\n  errors: %s' % (
-            fileName, maximumAttemptsCount, uri, ", ".join(errors),
-        ))
+        msg = (
+            f"Download of {fileName} failed for {maximumAttemptsCount} attempts\n"
+            f"  uri: {uri}\n"
+            f"  errors: {', '.join(map(str, errors))}"
+        )
+        raise RuntimeError(msg)
 
 
 def downloadExternals(key_files, dest_dir):
@@ -396,7 +407,8 @@ def downloadExternals(key_files, dest_dir):
                 ext_not_found.append(ext)
                 external = None
         if external is None:
-            raise ValueError("{}.{} not found".format(key_file, ", ".join(ext_not_found)))
+            msg = f"{key_file}.{', '.join(ext_not_found)} not found"
+            raise ValueError(msg)
         with open(external) as content:
             hashsum = content.read().strip()
         externals[os.path.basename(key_file)] = (ext, hashsum)

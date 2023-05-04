@@ -60,8 +60,8 @@ class Extension(Item):
         doc = super().validate(doc)
 
         if not isinstance(doc.get('created'), datetime.datetime):
-            raise ValidationException(
-                'Extension field "created" must be a datetime.')
+            msg = 'Extension field "created" must be a datetime.'
+            raise ValidationException(msg)
 
         # Validate the meta field
         if doc.get('meta'):
@@ -72,41 +72,40 @@ class Extension(Item):
                 specs.append({
                     'name': meta,
                     'type': (str,),
-                    'exception_msg': 'Extension field "{}" must be a non-empty string.'
-                                     .format(meta),
+                    'exception_msg': f'Extension field "{meta}" must be a non-empty string.',
                 })
             for spec in specs:
                 if doc['meta'].get(spec['name']) and not isinstance(
                    doc['meta'][spec['name']], spec['type']):
-                    raise ValidationException(spec['exception_msg'])
+                    msg=spec['exception_msg']
+                    raise ValidationException(msg)
             extraMeta = set(doc['meta'].keys()) - base_params
             if extraMeta:
                 extra_params = {'icon_url', 'development_status', 'category',
                                 'enabled', 'homepage', 'screenshots', 'contributors', 'dependency',
                                 'license'}
                 if extraMeta - extra_params:
-                    raise ValidationException('Extension has extra fields: %s.' %
-                                              ', '.join(sorted(extraMeta)))
+                    msg = f'Extension has extra fields: {", ".join(sorted(extraMeta))}.'
+                    raise ValidationException(msg)
                 specs = []
                 for meta in extra_params:
                     if meta == 'enabled':
                         specs.append({
                             'name': meta,
                             'type': bool,
-                            'exception_msg': 'Extension field "{}" must be a boolean.'
-                                             .format(meta),
+                            'exception_msg': f'Extension field "{meta}" must be a boolean.',
                         })
                     else:
                         specs.append({
                             'name': meta,
                             'type': (str,),
-                            'exception_msg': 'Extension field "{}" must be a non-empty string.'
-                                             .format(meta),
+                            'exception_msg': f'Extension field "{meta}" must be a non-empty string.',
                         })
                 for spec in specs:
                     if doc['meta'].get(spec['name']) and not isinstance(
                        doc['meta'][spec['name']], spec['type']):
-                        raise ValidationException(spec['exception_msg'])
+                        msg = spec['exception_msg']
+                        raise ValidationException(msg)
             duplicateQuery = {
                 'name': doc['name'],
                 'os': doc['meta']['os'],
@@ -116,6 +115,6 @@ class Extension(Item):
             if '_id' in doc:
                 duplicateQuery['_id'] = {'$ne': doc['_id']}
             if self.findOne(duplicateQuery, fields=['_id']):
-                raise ValidationException(
-                    'An Extension with this name and characteristics already exists.')
+                msg = 'An Extension with this name and characteristics already exists.'
+                raise ValidationException(msg)
         return doc

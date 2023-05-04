@@ -7,6 +7,7 @@ select = [
   "D",           # pydocstyle (aka flake8-docstrings)
   "E", "F", "W", # flake8
   "EXE",         # flake8-executable
+  "EM",          # flake8-errmsg
   "G",           # flake8-logging-format
   "ICN",         # flake8-import-conventions
   "ISC",         # flake8-implicit-str-concat
