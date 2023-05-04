@@ -1,5 +1,4 @@
 import datetime
-import six
 
 from girder.models.folder import Folder
 from girder.models.item import Item
@@ -73,7 +72,7 @@ class Package(Item):
             for meta in base_params:
                 specs.append({
                     'name': meta,
-                    'type': six.string_types,
+                    'type': (str,),
                     'exception_msg': 'Package field "%s" must be a non-empty string.' % meta
                 })
             specs.append({
