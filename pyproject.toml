@@ -1,0 +1,11 @@
+[tool.ruff]
+select = [
+  "COM",         # flake8-commas
+]
+extend-exclude = [
+  "versioneer.py",
+  "*/_vendor/bson/*.py",
+  "slicer_package_manager/_version.py",
+]
+force-exclude = true
+target-version = "py37"

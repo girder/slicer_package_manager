@@ -26,3 +26,9 @@ repos:
   - id: pyupgrade
     args: ["--py36-plus", "--keep-percent-format"]
     exclude: "^versioneer.py|slicer_package_manager/_version.py|python_client/slicer_package_manager_client/_vendor/bson/objectid.py$"
+
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: v0.0.261
+  hooks:
+  - id: ruff
+    args: ["--fix", "--show-fixes"]
