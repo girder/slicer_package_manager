@@ -27,12 +27,12 @@ See the `Client Development documentation <https://girder.readthedocs.io/en/late
 Python client development
 -------------------------
 
-The development of the **Slicer Package Manager Client** is in Python, and it uses flake8_  for code
+The development of the **Slicer Package Manager Client** is in Python, and it uses ruff_  for code
 style validation.
 
 The python client use click_, a command line library for Python.
 
-.. _flake8: https://pypi.python.org/pypi/flake8
+.. _ruff: https://beta.ruff.rs/docs/
 .. _click: https://click.pocoo.org
 
 

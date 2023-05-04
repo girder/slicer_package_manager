@@ -1,6 +1,12 @@
 [tool.ruff]
 select = [
+  "B",           # flake8-bugbear
+  "BLE",         # flake8-blind-except
   "COM",         # flake8-commas
+  "D",           # pydocstyle (aka flake8-docstrings)
+  "E", "F", "W", # flake8
+  "N",           # pep8-naming
+  "Q",           # flake8-quotes
 ]
 extend-exclude = [
   "versioneer.py",
@@ -8,4 +14,24 @@ extend-exclude = [
   "slicer_package_manager/_version.py",
 ]
 force-exclude = true
+extend-ignore = [
+  "B904",  # raise-without-from-inside-except
+  "D10",  # Missing docstring in *
+  "D200",  # One-line docstring should fit on one line with quotes (fits-on-one-line)
+  "D203",  # 1 blank line required before class docstring
+  "D205",  # 1 blank line required between summary line and description
+  "D211",  # No blank lines allowed before class docstring
+  "D212",  # Multi-line docstring summary should start at the first line
+  "D213",  # Multi-line docstring summary should start at the second line
+  "D400",  # First line should end with a period
+  "D401",  # First line should be in imperative mood; try rephrasing
+  "D415",  # First line should end with a period, question mark, or exclamation point
+  "N802",  # Function name should be lowercase.
+  "N803",  # Argument name should be lowercase.
+  "N806",  # Variable in function should be lowercase.
+  "N816",  # mixedCase variable in global scope
+  "Q000",  # Remove bad quotes (bad-quotes-inline-string)
+  "Q003",  # Change outer quotes to avoid escaping inner quotes
+]
 target-version = "py37"
+line-length = 120
