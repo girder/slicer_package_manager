@@ -7,19 +7,12 @@ from . import SlicerPackageManagerError, SlicerPackageClient, __version__, Const
 
 w = Constant.WIDTH
 
-
-# ---------------- UTILITIES ---------------- #
-
 def _getOs():
-    os = platform.system()
-    if os == 'Linux':
-        return 'linux'
-    elif os == 'Darwin':
-        return 'macosx'
-    elif os == 'Windows':
-        return 'win'
-
-# ------------------------------------------- #
+    return {
+        "Linux": "linux",
+        "Darwin": "macosx",
+        "Windows": "win",
+        }.get(platform.system(), None)
 
 
 class SlicerPackageCli(SlicerPackageClient):
@@ -310,10 +303,7 @@ def _cli_listRelease(sc, *args, **kwargs):
         releases = sc.listRelease(*args, **kwargs)
         table = []
         for rls in releases:
-            if 'meta' in rls and 'revision' in rls['meta']:
-                revision = rls['meta']['revision']
-            else:
-                revision = ''
+            revision = rls.get('meta', {}).get('revision', '')
             table.append([revision, rls['name'], rls['_id']])
         print(tabulate(
             table,
@@ -366,10 +356,7 @@ def _cli_listDraftRelease(sc, *args, **kwargs):
         releases = sc.listDraftRelease(*args, **kwargs)
         table = []
         for rls in releases:
-            if 'meta' in rls and 'revision' in rls['meta']:
-                revision = rls['meta']['revision']
-            else:
-                revision = ''
+            revision = rls.get('meta', {}).get('revision', '')
             table.append([revision, rls['name'], rls['_id']])
         print(tabulate(
             table,

@@ -552,10 +552,9 @@ class SlicerPackageClient(GirderClient):
         :return: A list of application package filtered by optional parameters
         """
         app = self._getApp(app_name=app_name, coll_id=coll_id)
-        if release and not ObjectId.is_valid(release):
-            if not self.listRelease(app_name, release):
-                raise SlicerPackageManagerError(
-                    'The release "%s" doesn\'t exist.' % release)
+        if release and not ObjectId.is_valid(release) and not self.listRelease(app_name, release):
+            raise SlicerPackageManagerError(
+                'The release "%s" does not exist.' % release)
 
         pkg = self.get('/app/%s/package' % app['_id'], parameters={
             'os': pkg_os,

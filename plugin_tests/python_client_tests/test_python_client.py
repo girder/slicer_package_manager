@@ -1,3 +1,4 @@
+import contextlib
 import time
 import os
 import pytest
@@ -196,10 +197,8 @@ def extensions(server, spc, releases, files):
 def TearDown(server, spc, request):
     yield
     for idx in range(len(APPS)):
-        try:
+        with contextlib.suppress(SlicerPackageManagerError):
             spc.deleteApp(name=APPS[idx])
-        except SlicerPackageManagerError:
-            pass
 
 
 @pytest.mark.vcr()

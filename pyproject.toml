@@ -8,6 +8,7 @@ select = [
   "N",           # pep8-naming
   "Q",           # flake8-quotes
   "RUF",         # Ruff-specific
+  "SIM",         # flake8-simplify
 ]
 extend-exclude = [
   "versioneer.py",
