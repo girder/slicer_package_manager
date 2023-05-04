@@ -144,20 +144,19 @@ def main(ctx, username, password,
     for name in url_part_options:
         has_url_part = ctx.params.get(name, None)
         if has_api_url and has_url_part:
-            raise click.BadArgumentUsage(
-                'Option "--api-url" and option "--%s" are mutually exclusive.' %
-                name.replace("_", "-"))
+            msg = f'Option "--api-url" and option "--{name.replace("_", "-")}" are mutually exclusive.'
+            raise click.BadArgumentUsage(msg)
     if certificate and no_ssl_verify:
-        raise click.BadArgumentUsage(
-            'Option "--no-ssl-verify" and option "--certificate" are mutually exclusive.')
+        msg = 'Option "--no-ssl-verify" and option "--certificate" are mutually exclusive.'
+        raise click.BadArgumentUsage(msg)
 
     ctx.obj = SlicerPackageCli(
         username, password, host=host, port=port, apiRoot=api_root,
         scheme=scheme, apiUrl=api_url, apiKey=api_key)
 
     if certificate and ctx.obj.scheme != 'https':
-        raise click.BadArgumentUsage(
-            'A URI scheme of "https" is required for option "--certificate"')
+        msg = 'A URI scheme of "https" is required for option "--certificate"'
+        raise click.BadArgumentUsage(msg)
 
 
 @main.group(context_settings=_CONTEXT_SETTINGS)

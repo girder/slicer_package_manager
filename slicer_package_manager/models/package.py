@@ -61,8 +61,8 @@ class Package(Item):
         doc = super().validate(doc)
 
         if not isinstance(doc.get('created'), datetime.datetime):
-            raise ValidationException(
-                'Package field "created" must be a datetime.')
+            msg = 'Package field "created" must be a datetime.'
+            raise ValidationException(msg)
 
         # Validate the meta field
         if doc.get('meta'):
@@ -73,17 +73,18 @@ class Package(Item):
                 specs.append({
                     'name': meta,
                     'type': (str,),
-                    'exception_msg': 'Package field "%s" must be a non-empty string.' % meta,
+                    'exception_msg': f'Package field "{meta}" must be a non-empty string.',
                 })
             specs.append({
                 'name': 'build_date ',
                 'type': datetime.datetime,
-                'exception_msg': 'Package field "%s" must be a datetime.' % 'build_date',
+                'exception_msg': 'Package field "build_date" must be a datetime.',
             })
             for spec in specs:
                 if doc['meta'].get(spec['name']) and not isinstance(
                    doc['meta'][spec['name']], spec['type']):
-                    raise ValidationException(spec['exception_msg'])
+                    msg = spec['exception_msg']
+                    raise ValidationException(msg)
             duplicateQuery = {
                 'name': doc['name'],
                 'os': doc['meta']['os'],
@@ -93,6 +94,6 @@ class Package(Item):
             if '_id' in doc:
                 duplicateQuery['_id'] = {'$ne': doc['_id']}
             if self.findOne(duplicateQuery, fields=['_id']):
-                raise ValidationException(
-                    'A Package with this name and characteristics already exists.')
+                msg = 'A Package with this name and characteristics already exists.'
+                raise ValidationException(msg)
         return doc
