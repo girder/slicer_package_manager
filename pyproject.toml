@@ -13,6 +13,7 @@ select = [
   "N",           # pep8-naming
   "PIE",         # flake8-pie
   "PGH",         # pygrep-hooks
+  "PL",          # pylint
   "Q",           # flake8-quotes
   "RUF",         # Ruff-specific
   "SIM",         # flake8-simplify
@@ -40,6 +41,10 @@ extend-ignore = [
   "N803",  # Argument name should be lowercase.
   "N806",  # Variable in function should be lowercase.
   "N816",  # mixedCase variable in global scope
+  "PLR0912",  # Too many branches
+  "PLR0913",  # Too many arguments to function call
+  "PLR2004",  # agic value used in comparison, consider replacing 2 with a constant variable
+  "PLR5501",  # Consider using `elif` instead of `else` then `if` to remove one indentation level
   "Q000",  # Remove bad quotes (bad-quotes-inline-string)
   "Q003",  # Change outer quotes to avoid escaping inner quotes
 ]
