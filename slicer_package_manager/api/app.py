@@ -696,6 +696,8 @@ class App(Resource):
         :param ext_model: Extension model loaded using ``ext_id`` route parameter.
         :return: The deleted extension
         """
+        user = self.getCurrentUser()
+        utilities.checkAccess(app_id, user)
         ExtensionModel().remove(ext_model)
         return ext_model
 
@@ -926,6 +928,8 @@ class App(Resource):
         :param pkg_model: Package model loaded using ``pkg_id`` route parameter.
         :return: The deleted package
         """
+        user = self.getCurrentUser()
+        utilities.checkAccess(app_id, user)
         PackageModel().remove(pkg_model)
         return pkg_model
 

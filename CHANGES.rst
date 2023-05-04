@@ -8,6 +8,13 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Bug fixes
+---------
+Server
+^^^^^^
+
+* Update extension & package delete endpoints to explicitly check that user can access the associated application folder.
+
 Internal
 --------
 
