@@ -194,7 +194,7 @@ def extensions(server, spc, releases, files):
 
 @pytest.mark.vcr()
 @pytest.fixture(autouse=True)
-def TearDown(server, spc, request):
+def TearDown(server, spc):
     yield
     for idx in range(len(APPS)):
         with contextlib.suppress(SlicerPackageManagerError):
