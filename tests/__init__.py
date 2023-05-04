@@ -322,7 +322,7 @@ class ExternalData:
             try:
                 urllib.request.urlretrieve(uri, filePath, self._reportHook)
                 print('Download finished')
-            except IOError as exc:
+            except OSError as exc:
                 raise ValueError(f"Failed to download {uri} to {filePath}: %s" % exc)
 
             if algo is not None:
