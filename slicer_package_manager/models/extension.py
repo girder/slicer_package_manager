@@ -1,5 +1,4 @@
 import datetime
-import six
 
 from girder.models.folder import Folder
 from girder.models.item import Item
@@ -72,7 +71,7 @@ class Extension(Item):
             for meta in base_params:
                 specs.append({
                     'name': meta,
-                    'type': six.string_types,
+                    'type': (str,),
                     'exception_msg': 'Extension field "{}" must be a non-empty string.'
                                      .format(meta)
                 })
@@ -80,7 +79,7 @@ class Extension(Item):
                 if doc['meta'].get(spec['name']) and not isinstance(
                    doc['meta'][spec['name']], spec['type']):
                     raise ValidationException(spec['exception_msg'])
-            extraMeta = set(six.viewkeys(doc['meta'])) - base_params
+            extraMeta = set(doc['meta'].keys()) - base_params
             if extraMeta:
                 extra_params = {'icon_url', 'development_status', 'category',
                                 'enabled', 'homepage', 'screenshots', 'contributors', 'dependency',
@@ -100,7 +99,7 @@ class Extension(Item):
                     else:
                         specs.append({
                             'name': meta,
-                            'type': six.string_types,
+                            'type': (str,),
                             'exception_msg': 'Extension field "{}" must be a non-empty string.'
                                              .format(meta)
                         })
