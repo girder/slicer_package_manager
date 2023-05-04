@@ -411,9 +411,9 @@ def downloadExternals(key_files, dest_dir):
         print("fileName [%s] algo [%s] checksum [%s]" % (fileName, algo, checksum))
         downloaded_files.append(
             ExternalData(external_data_dir).download(
-                uri="https://data.kitware.com/api/v1/file/hashsum/{}/{}/download".format(algo, checksum),
+                uri=f"https://data.kitware.com/api/v1/file/hashsum/{algo}/{checksum}/download",
                 fileName=fileName,
-                checksum="{}:{}".format(algo.upper(), checksum)
+                checksum=f"{algo.upper()}:{checksum}"
             )
         )
 
