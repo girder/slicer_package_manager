@@ -4,7 +4,7 @@ from shutil import copyfile
 
 from slicer_package_manager.constants import (
     APPLICATION_PACKAGE_TEMPLATE_NAME,
-    EXTENSION_PACKAGE_TEMPLATE_NAME
+    EXTENSION_PACKAGE_TEMPLATE_NAME,
 )
 
 
@@ -27,11 +27,11 @@ RELEASES = [
 DRAFT_RELEASES = [
     {
         'revision': '0000',
-        'version': '0.2.0'
+        'version': '0.2.0',
     },
     {
         'revision': '0001',
-        'version': '0.3.0'
+        'version': '0.3.0',
     },
 ]
 
@@ -46,9 +46,9 @@ RELEASE_EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '35333',
             'app_revision': RELEASES[0]['revision'],
-            'description': 'Extension for Slicer 4'
-        }
-    }
+            'description': 'Extension for Slicer 4',
+        },
+    },
 ]
 
 DRAFT_EXTENSIONS = [
@@ -62,8 +62,8 @@ DRAFT_EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '54342',
             'app_revision': DRAFT_RELEASES[0]['revision'],
-            'description': 'Extension for Slicer 4 new version'
-        }
+            'description': 'Extension for Slicer 4 new version',
+        },
     },
     {
         'filepath': 'extension2.tar.gz',
@@ -75,8 +75,8 @@ DRAFT_EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
             'app_revision': DRAFT_RELEASES[1]['revision'],
-            'description': 'Extension for Slicer 4 new version'
-        }
+            'description': 'Extension for Slicer 4 new version',
+        },
     },
     {
         'filepath': 'extension3.tar.gz',
@@ -88,8 +88,8 @@ DRAFT_EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
             'app_revision': DRAFT_RELEASES[1]['revision'],
-            'description': 'Extension for Slicer 4 new version'
-        }
+            'description': 'Extension for Slicer 4 new version',
+        },
     },
     {
         'filepath': 'extension4.tar.gz',
@@ -101,9 +101,9 @@ DRAFT_EXTENSIONS = [
             'repository_url': 'http://slicer.com/extension/Ext',
             'revision': '542',
             'app_revision': DRAFT_RELEASES[1]['revision'],
-            'description': 'Extension for Slicer 4 new version'
-        }
-    }
+            'description': 'Extension for Slicer 4 new version',
+        },
+    },
 ]
 
 EXTENSIONS = []
@@ -125,8 +125,8 @@ RELEASE_PACKAGES = [
             'repository_url': 'https://slicer4.com',
             'revision': RELEASES[0]['revision'],
             'version': RELEASES[0]['version'],
-        }
-    }
+        },
+    },
 ]
 
 DRAFT_PACKAGES = [
@@ -140,7 +140,7 @@ DRAFT_PACKAGES = [
             'repository_url': 'https://slicer4.com',
             'revision': DRAFT_RELEASES[0]['revision'],
             'version': DRAFT_RELEASES[0]['version'],
-        }
+        },
     },
     {
         'filepath': 'pkg2.tar.gz',
@@ -152,8 +152,8 @@ DRAFT_PACKAGES = [
             'repository_url': 'git://slicer4.com',
             'revision': DRAFT_RELEASES[0]['revision'],
             'version': DRAFT_RELEASES[0]['version'],
-        }
-    }
+        },
+    },
 ]
 
 PACKAGES = []
@@ -167,47 +167,47 @@ expectedDownloadStats = {
     DRAFT_RELEASES[0]['revision']: {
         'applications': {
             'win': {
-                'i386': 1
+                'i386': 1,
             },
             'linux': {
-                'amd64': 1
-            }
+                'amd64': 1,
+            },
         },
         'extensions': {
             'Ext1': {
                 'win': {
-                    'i386': 1
-                }
-            }
-        }
+                    'i386': 1,
+                },
+            },
+        },
     },
     DRAFT_RELEASES[1]['revision']: {
         'extensions': {
             'Ext2': {
                 'linux': {
-                    'amd64': 1
+                    'amd64': 1,
                 },
                 'macosx': {
                     'amd64': 1,
-                    'i386': 1
-                }
-            }
-        }
+                    'i386': 1,
+                },
+            },
+        },
     },
     RELEASES[0]['revision']: {
         'applications': {
             'macosx': {
-                'amd64': 1
-            }
+                'amd64': 1,
+            },
         },
         'extensions': {
             'Ext0': {
                 'linux': {
-                    'i386': 1
-                }
-            }
-        }
-    }
+                    'i386': 1,
+                },
+            },
+        },
+    },
 }
 
 
@@ -372,7 +372,7 @@ class ExternalData:
                 errors.add(str(exc))
                 continue
         raise RuntimeError('Download of %s failed for %d attempts\n  uri: %s\n  errors: %s' % (
-            fileName, maximumAttemptsCount, uri, ", ".join(errors)
+            fileName, maximumAttemptsCount, uri, ", ".join(errors),
         ))
 
 
@@ -413,8 +413,8 @@ def downloadExternals(key_files, dest_dir):
             ExternalData(external_data_dir).download(
                 uri=f"https://data.kitware.com/api/v1/file/hashsum/{algo}/{checksum}/download",
                 fileName=fileName,
-                checksum=f"{algo.upper()}:{checksum}"
-            )
+                checksum=f"{algo.upper()}:{checksum}",
+            ),
         )
 
     # Copy download files to temporary directory

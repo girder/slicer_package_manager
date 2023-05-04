@@ -21,18 +21,18 @@ RELEASES = [
         'name': 'Release1',
         'revision': 'r001',
         'version': '2.0',
-    }
+    },
 ]
 
 DRAFT_RELEASES = [
     {
         'revision': 'r002',
-        'version': '3.0'
+        'version': '3.0',
     },
     {
         'revision': 'r003',
-        'version': '3.0'
-    }
+        'version': '3.0',
+    },
 ]
 
 PACKAGES = [
@@ -45,7 +45,7 @@ PACKAGES = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:pkg1.git',
         'revision': DRAFT_RELEASES[0]['revision'],
-        'version': DRAFT_RELEASES[0]['version']
+        'version': DRAFT_RELEASES[0]['version'],
     },
     {
         'filepath': './file2.txt',
@@ -56,7 +56,7 @@ PACKAGES = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:pkg2.git',
         'revision': DRAFT_RELEASES[0]['revision'],
-        'version': DRAFT_RELEASES[0]['version']
+        'version': DRAFT_RELEASES[0]['version'],
     },
     {
         'filepath': './file3.txt',
@@ -67,7 +67,7 @@ PACKAGES = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:pkg3.git',
         'revision': DRAFT_RELEASES[0]['revision'],
-        'version': DRAFT_RELEASES[0]['version']
+        'version': DRAFT_RELEASES[0]['version'],
     },
     {
         'filepath': './file4.txt',
@@ -78,8 +78,8 @@ PACKAGES = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:pkg4.git',
         'revision': DRAFT_RELEASES[1]['revision'],
-        'version': DRAFT_RELEASES[1]['version']
-    }
+        'version': DRAFT_RELEASES[1]['version'],
+    },
 ]
 
 EXTENSIONS = [
@@ -92,7 +92,7 @@ EXTENSIONS = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:ext1.git',
         'app_revision': RELEASES[0]['revision'],
-        'revision': '000'
+        'revision': '000',
     },
     {
         'filepath': './file2.txt',
@@ -103,7 +103,7 @@ EXTENSIONS = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:ext2.git',
         'app_revision': RELEASES[0]['revision'],
-        'revision': '001'
+        'revision': '001',
     },
     {
         'filepath': './file3.txt',
@@ -114,7 +114,7 @@ EXTENSIONS = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:ext3.git',
         'app_revision': DRAFT_RELEASES[0]['revision'],
-        'revision': '000'
+        'revision': '000',
     },
     {
         'filepath': './file4.txt',
@@ -125,14 +125,14 @@ EXTENSIONS = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:ext4.git',
         'app_revision': DRAFT_RELEASES[1]['revision'],
-        'revision': '000'
-    }
+        'revision': '000',
+    },
 ]
 
 CLI_COMMON_ARGS = [
     '--api-url', 'http://localhost:8080/api/v1',
     '--username', 'admin',
-    '--password', 'password'
+    '--password', 'password',
 ]
 
 
@@ -378,12 +378,12 @@ def testUploadPackagesCLI(server, apps, files):
 @pytest.mark.parametrize(
     'build_date,exit_code', [
         ('2021-06-21T00:00:00+00:00', 0),
-        ('abcdef', 1)
+        ('abcdef', 1),
     ],
     ids=[
         'timezone',
-        'invalid'
-    ]
+        'invalid',
+    ],
 )
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')

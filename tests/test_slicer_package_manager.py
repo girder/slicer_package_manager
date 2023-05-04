@@ -28,7 +28,7 @@ from . import (
     PACKAGES,
     RELEASE_EXTENSIONS,
     RELEASE_PACKAGES,
-    RELEASES
+    RELEASES,
 )
 
 
@@ -42,7 +42,7 @@ def fixture_collection(user):
     yield Collection().createCollection(
         'testCollection',
         creator=user,
-        description='Contain applications'
+        description='Contain applications',
     )
 
 
@@ -53,7 +53,7 @@ def fixture_packages_folder(user, collection):
         name=constants.TOP_LEVEL_FOLDER_NAME,
         parentType='Collection',
         public=True,
-        creator=user
+        creator=user,
     )
 
 
@@ -65,14 +65,14 @@ def fixture_app_folder(user, packages_folder):
         description='app description',
         parentType='Folder',
         public=True,
-        creator=user
+        creator=user,
     )
     folder = Folder().setMetadata(
         folder,
         {
             'applicationPackageNameTemplate': constants.APPLICATION_PACKAGE_TEMPLATE_NAME,
-            'extensionPackageNameTemplate': constants.EXTENSION_PACKAGE_TEMPLATE_NAME
-        }
+            'extensionPackageNameTemplate': constants.EXTENSION_PACKAGE_TEMPLATE_NAME,
+        },
     )
     yield folder
 
@@ -85,7 +85,7 @@ def fixture_draft_release_folder(user, app_folder):
         description='Uploaded each night, always up-to-date',
         parentType='Folder',
         public=True,
-        creator=user
+        creator=user,
     )
 
 
@@ -96,7 +96,7 @@ def fixture_draft_release_revision_folder(user, draft_release_folder):
         name=DRAFT_RELEASES[0]['revision'],
         parentType='Folder',
         public=True,
-        creator=user
+        creator=user,
     )
     folder = Folder().setMetadata(folder, {'revision': DRAFT_RELEASES[0]['revision']})
     yield folder
@@ -110,7 +110,7 @@ def fixture_release_folder(user, app_folder):
         description='release description',
         parentType='Folder',
         public=True,
-        creator=user
+        creator=user,
     )
     folder = Folder().setMetadata(folder, {'revision': RELEASES[0]['revision']})
     yield folder
@@ -120,13 +120,13 @@ def fixture_release_folder(user, app_folder):
 def fixture_release_extensions(server, user, app_folder, release_folder, tmpdir, fsAssetstore):
     downloadExternals(
         [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in RELEASE_EXTENSIONS],
-        tmpdir
+        tmpdir,
     )
 
     extensions = [_createOrUpdatePackage(
         server, 'extension', extension['meta'],
         filePath=tmpdir.join(extension['filepath']),
-        _user=user, _app=app_folder
+        _user=user, _app=app_folder,
     ) for extension in RELEASE_EXTENSIONS]
 
     for index, extension in enumerate(extensions):
@@ -143,13 +143,13 @@ def fixture_release_extensions(server, user, app_folder, release_folder, tmpdir,
 def fixture_draft_extensions(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
     downloadExternals(
         [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in DRAFT_EXTENSIONS],
-        tmpdir
+        tmpdir,
     )
 
     extensions = [_createOrUpdatePackage(
         server, 'extension', extension['meta'],
         filePath=tmpdir.join(extension['filepath']),
-        _user=user, _app=app_folder
+        _user=user, _app=app_folder,
     ) for extension in DRAFT_EXTENSIONS]
 
     for index, extension in enumerate(extensions):
@@ -172,12 +172,12 @@ def fixture_extensions(release_extensions, draft_extensions):
 def fixture_release_packages(server, user, app_folder, release_folder, tmpdir, fsAssetstore):
     downloadExternals(
         [os.path.join(FIXTURE_DIR, package['filepath']) for package in RELEASE_PACKAGES],
-        tmpdir
+        tmpdir,
     )
     packages = [_createOrUpdatePackage(
         server, 'package', package['meta'],
         filePath=tmpdir.join(package['filepath']),
-        _user=user, _app=app_folder
+        _user=user, _app=app_folder,
     ) for package in RELEASE_PACKAGES]
 
     for index, package in enumerate(packages):
@@ -194,12 +194,12 @@ def fixture_release_packages(server, user, app_folder, release_folder, tmpdir, f
 def fixture_draft_packages(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
     downloadExternals(
         [os.path.join(FIXTURE_DIR, package['filepath']) for package in DRAFT_PACKAGES],
-        tmpdir
+        tmpdir,
     )
     packages = [_createOrUpdatePackage(
         server, 'package', package['meta'],
         filePath=tmpdir.join(package['filepath']),
-        _user=user, _app=app_folder
+        _user=user, _app=app_folder,
     ) for package in DRAFT_PACKAGES]
 
     for index, package in enumerate(packages):
@@ -226,14 +226,14 @@ def testInitApp(server, user, collection):
         'App_test',
         'Application without specifying any collection',
         collDescription='Automatic creation of the collection Applications',
-        _user=user
+        _user=user,
     )
     # Without any collection this should load the 'Applications' collection
     _createApplicationCheck(
         server,
         'App_test1',
         'Application without specifying any collection',
-        _user=user
+        _user=user,
     )
     # With a collection ID this should load the collection
     _createApplicationCheck(
@@ -241,7 +241,7 @@ def testInitApp(server, user, collection):
         'App_test2',
         'Application with a collection ID',
         collId=collection['_id'],
-        _user=user
+        _user=user,
     )
     # With a collection name that match an existing collection name
     _createApplicationCheck(
@@ -249,7 +249,7 @@ def testInitApp(server, user, collection):
         'App_test3',
         'Application with a collection name',
         collName=collection['name'],
-        _user=user
+        _user=user,
     )
     # With a collection name that does not exist yet
     _createApplicationCheck(
@@ -257,7 +257,7 @@ def testInitApp(server, user, collection):
         'App_test4',
         'Application with a collection name',
         collName='Collection_for_app',
-        _user=user
+        _user=user,
     )
 
 
@@ -269,14 +269,14 @@ def testListApp(server, user, collection, app_folder):
         'App_test1',
         'Application without specifying any collection',
         collDescription='Automatic creation of the collection Applications',
-        _user=user
+        _user=user,
     )
     app2 = _createApplicationCheck(
         server,
         'App_test2',
         'Application without specifying any collection',
         collDescription='Automatic creation of the collection Applications',
-        _user=user
+        _user=user,
     )
 
     # Get application with application ID
@@ -284,7 +284,7 @@ def testListApp(server, user, collection, app_folder):
         path='/app',
         method='GET',
         user=user,
-        params={'app_id': app_folder['_id']}
+        params={'app_id': app_folder['_id']},
     )
     assertStatusOk(resp)
     assert ObjectId(resp.json['_id']) == app_folder['_id']
@@ -296,7 +296,7 @@ def testListApp(server, user, collection, app_folder):
     resp = server.request(
         path='/app',
         method='GET',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
     assert len(resp.json) == 2
@@ -309,7 +309,7 @@ def testListApp(server, user, collection, app_folder):
         user=user,
         params={
             'collection_id': collection['_id'],
-            'name': app_folder['name']}
+            'name': app_folder['name']},
     )
     assertStatusOk(resp)
     assert ObjectId(resp.json[0]['_id']) == app_folder['_id']
@@ -328,14 +328,14 @@ def testDeleteApp(server, user):
         'App_test',
         'Application without specifying any collection',
         collDescription='Automatic creation of the collection Applications',
-        _user=user
+        _user=user,
     )
     # Get the new application by ID
     resp = server.request(
         path='/app',
         method='GET',
         user=user,
-        params={'app_id': app['_id']}
+        params={'app_id': app['_id']},
     )
     assertStatusOk(resp)
     assert resp.json['_id'] == app['_id']
@@ -344,7 +344,7 @@ def testDeleteApp(server, user):
     resp = server.request(
         path='/app/%s' % app['_id'],
         method='DELETE',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
     assert resp.json['_id'] == app['_id']
@@ -353,7 +353,7 @@ def testDeleteApp(server, user):
         path='/app',
         method='GET',
         user=user,
-        params={'app_id': app['_id']}
+        params={'app_id': app['_id']},
     )
     assertStatusOk(resp)
     assert resp.json is None
@@ -367,7 +367,7 @@ def testNewRelease(server, user, app_folder):
         app_id=app_folder['_id'],
         app_revision='001',
         desc='This is a new release',
-        _user=user
+        _user=user,
     )
 
 
@@ -379,13 +379,13 @@ def testGetRelease(server, user, app_folder, release_folder, draft_release_folde
         app_id=app_folder['_id'],
         app_revision='002',
         desc='This is a new release',
-        _user=user
+        _user=user,
     )
 
     resp = server.request(
         path='/app/%s/release' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
     # Check if it has return all the stable releases
     assertStatusOk(resp)
@@ -433,7 +433,7 @@ def testGetAllDraftRelease(server, user, app_folder, draft_release_revision_fold
     resp = server.request(
         path='/app/%s/draft' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
     # Check if it has return all the revision from the default release
     assertStatusOk(resp)
@@ -445,7 +445,7 @@ def testGetAllDraftRelease(server, user, app_folder, draft_release_revision_fold
         path='/app/%s/draft' % app_folder['_id'],
         method='GET',
         user=user,
-        params={'revision': draft_release_revision_folder['meta']['revision']}
+        params={'revision': draft_release_revision_folder['meta']['revision']},
     )
     # Check if it has return the good revision from the draft folder
     assertStatusOk(resp)
@@ -457,7 +457,7 @@ def testGetAllDraftRelease(server, user, app_folder, draft_release_revision_fold
         path='/app/%s/draft' % app_folder['_id'],
         method='GET',
         user=user,
-        params={'revision': 'wrongRev'}
+        params={'revision': 'wrongRev'},
     )
     # Check if it has return the good revision from the draft folder
     assertStatusOk(resp)
@@ -479,7 +479,7 @@ def testDeleteRevisionRelease(server, user, app_folder, packages, extensions):
     resp = server.request(
         path='/app/%s/draft' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
 
     # Check if it has return all the revision from the default release
@@ -491,14 +491,14 @@ def testDeleteRevisionRelease(server, user, app_folder, packages, extensions):
         path='/app/%s/release/%s' %
              (app_folder['_id'], EXTENSIONS[3]['meta']['app_revision']),
         method='DELETE',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
 
     resp = server.request(
         path='/app/%s/draft' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
     # Check if it has return all the revision from the default release
     assertStatusOk(resp)
@@ -512,7 +512,7 @@ def testUpdateExtensions(server, user, app_folder, extensions):
     newParams.update({
         'revision': '0000',
         'repository_type': 'gitlab',
-        'description': 'Extension for Slicer 4 new version 2'
+        'description': 'Extension for Slicer 4 new version 2',
     })
     updatedExtension = _createOrUpdatePackage(server, 'extension', newParams, _user=user, _app=app_folder)
     # Check the same extension has different metadata
@@ -527,7 +527,7 @@ def testGetExtensions(server, user, app_folder, release_folder, extensions):
     resp = server.request(
         path='/app/%s/extension' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
     assert len(resp.json) == len(EXTENSIONS)
@@ -538,8 +538,8 @@ def testGetExtensions(server, user, app_folder, release_folder, extensions):
         method='GET',
         user=user,
         params={
-            'os': 'linux'
-        }
+            'os': 'linux',
+        },
     )
     assertStatusOk(resp)
     assert len(resp.json) == 2
@@ -553,8 +553,8 @@ def testGetExtensions(server, user, app_folder, release_folder, extensions):
         user=user,
         params={
             'os': 'linux',
-            'arch': 'amd64'
-        }
+            'arch': 'amd64',
+        },
     )
     assertStatusOk(resp)
     assert len(resp.json) == 1
@@ -568,8 +568,8 @@ def testGetExtensions(server, user, app_folder, release_folder, extensions):
         method='GET',
         user=user,
         params={
-            'release_id': release_folder['_id']
-        }
+            'release_id': release_folder['_id'],
+        },
     )
     assertStatusOk(resp)
     assert len(resp.json) == 1
@@ -585,8 +585,8 @@ def testGetExtensions(server, user, app_folder, release_folder, extensions):
         method='GET',
         user=user,
         params={
-            'release_id': draftRelease[0]['_id']
-        }
+            'release_id': draftRelease[0]['_id'],
+        },
     )
     assertStatusOk(resp)
     assert len(resp.json) == 4
@@ -622,7 +622,7 @@ def testDeleteExtensionPackages(server, user, app_folder, release_folder):
         'extension',
         EXTENSIONS[0]['meta'],
         _user=user,
-        _app=app_folder
+        _app=app_folder,
     )
     assert extension['name'] == EXTENSIONS[0]['name']
     extensions_folder = Folder().load(extension['folderId'], user=user)
@@ -632,7 +632,7 @@ def testDeleteExtensionPackages(server, user, app_folder, release_folder):
 
 
 @pytest.mark.external_data(
-    os.path.join(FIXTURE_DIR, PACKAGES[2]['filepath'])
+    os.path.join(FIXTURE_DIR, PACKAGES[2]['filepath']),
 )
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadPackages(server, user, app_folder, packages, external_data):
@@ -643,7 +643,7 @@ def testUploadAndDownloadPackages(server, user, app_folder, packages, external_d
         PACKAGES[2]['meta'],
         external_data.join(PACKAGES[2]['filepath']),
         _user=user,
-        _app=app_folder
+        _app=app_folder,
     )
     assert package2['name'] == packages[2]['name']
 
@@ -669,7 +669,7 @@ def testGetPackages(server, user, app_folder, release_folder, packages):
     resp = server.request(
         path='/app/%s/package' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
     assert len(resp.json) == 3
@@ -680,8 +680,8 @@ def testGetPackages(server, user, app_folder, release_folder, packages):
         method='GET',
         user=user,
         params={
-            'os': 'linux'
-        }
+            'os': 'linux',
+        },
     )
     assertStatusOk(resp)
     assert len(resp.json) == 1
@@ -694,8 +694,8 @@ def testGetPackages(server, user, app_folder, release_folder, packages):
         user=user,
         params={
             'os': 'macosx',
-            'arch': 'i386'
-        }
+            'arch': 'i386',
+        },
     )
     assertStatusOk(resp)
     assert len(resp.json) == 0
@@ -706,8 +706,8 @@ def testGetPackages(server, user, app_folder, release_folder, packages):
         method='GET',
         user=user,
         params={
-            'release_id_or_name': release_folder['_id']
-        }
+            'release_id_or_name': release_folder['_id'],
+        },
     )
     assertStatusOk(resp)
     assert len(resp.json) == 1
@@ -723,8 +723,8 @@ def testGetPackages(server, user, app_folder, release_folder, packages):
         method='GET',
         user=user,
         params={
-            'release_id_or_name': draftRelease[0]['_id']
-        }
+            'release_id_or_name': draftRelease[0]['_id'],
+        },
     )
     assertStatusOk(resp)
     assert len(resp.json) == 2
@@ -759,7 +759,7 @@ def testDeleteApplicationPackages(server, user, app_folder, release_folder):
         'package',
         PACKAGES[0]['meta'],
         _user=user,
-        _app=app_folder
+        _app=app_folder,
     )
     assert package['name'] == PACKAGES[0]['name']
     assert ObjectId(package['folderId']) == release_folder['_id']
@@ -775,7 +775,7 @@ def testDownloadStats(server, user, app_folder, draft_release_revision_folder, p
     resp = server.request(
         path='/app/%s/downloadstats' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
     assert resp.json == expectedStats
@@ -791,12 +791,12 @@ def testDownloadStats(server, user, app_folder, draft_release_revision_folder, p
 
     expectedStats['0001']['extensions']['Ext2']['macosx'].update({
         'amd64': N + expectedStats['0001']['extensions']['Ext2']['macosx']['amd64'],
-        'i386': N + expectedStats['0001']['extensions']['Ext2']['macosx']['i386']
+        'i386': N + expectedStats['0001']['extensions']['Ext2']['macosx']['i386'],
     })
     resp = server.request(
         path='/app/%s/downloadstats' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
     assert resp.json == expectedStats
@@ -809,7 +809,7 @@ def testDownloadStats(server, user, app_folder, draft_release_revision_folder, p
             'app_id': app_folder['_id'],
             'ext_id': extensions[3]['_id']},
         method='DELETE',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
     resp = server.request(
@@ -817,7 +817,7 @@ def testDownloadStats(server, user, app_folder, draft_release_revision_folder, p
             'app_id': app_folder['_id'],
             'ext_id': extensions[4]['_id']},
         method='DELETE',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
 
@@ -827,7 +827,7 @@ def testDownloadStats(server, user, app_folder, draft_release_revision_folder, p
             'app_id': app_folder['_id'],
             'release_id': draft_release_revision_folder['_id']},
         method='DELETE',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
 
@@ -835,7 +835,7 @@ def testDownloadStats(server, user, app_folder, draft_release_revision_folder, p
     resp = server.request(
         path='/app/%s/downloadstats' % app_folder['_id'],
         method='GET',
-        user=user
+        user=user,
     )
     assertStatusOk(resp)
     assert resp.json == expectedStats
@@ -896,7 +896,7 @@ def testIsDraftReleaseFolder(server, app_folder, release_folder, draft_release_f
             pytest.lazy_fixture('release_folder'),
             pytest.lazy_fixture('draft_packages'),
             None,
-            RELEASES[0]['name']
+            RELEASES[0]['name'],
         ),
         (
             'copy',
@@ -905,7 +905,7 @@ def testIsDraftReleaseFolder(server, app_folder, release_folder, draft_release_f
             pytest.lazy_fixture('draft_release_revision_folder'),
             pytest.lazy_fixture('release_packages'),
             RELEASES[0]['name'],
-            None
+            None,
         ),
         (
             'move',
@@ -914,7 +914,7 @@ def testIsDraftReleaseFolder(server, app_folder, release_folder, draft_release_f
             pytest.lazy_fixture('release_folder'),
             pytest.lazy_fixture('draft_packages'),
             None,
-            RELEASES[0]['name']
+            RELEASES[0]['name'],
         ),
         (
             'move',
@@ -923,15 +923,15 @@ def testIsDraftReleaseFolder(server, app_folder, release_folder, draft_release_f
             pytest.lazy_fixture('draft_release_revision_folder'),
             pytest.lazy_fixture('release_packages'),
             RELEASES[0]['name'],
-            None
+            None,
         ),
     ],
     ids=[
         'copy_package_from_draft_to_release',
         'copy_package_from_release_to_draft',
         'move_package_from_draft_to_release',
-        'move_package_from_release_to_draft'
-    ]
+        'move_package_from_release_to_draft',
+    ],
 )
 @pytest.mark.plugin('slicer_package_manager')
 def testApplicationPackageMetadataAutoUpdate(
@@ -949,8 +949,8 @@ def testApplicationPackageMetadataAutoUpdate(
         params={
             'resources': json.dumps({'item': [item['_id']]}),
             'parentType': 'folder',
-            'parentId': dest_folder['_id']
-        }
+            'parentId': dest_folder['_id'],
+        },
     )
     assertStatusOk(resp)
 
@@ -960,8 +960,8 @@ def testApplicationPackageMetadataAutoUpdate(
         user=user,
         params={
             'folderId': dest_folder['_id'],
-            'name': item['name']
-        }
+            'name': item['name'],
+        },
     )
     assertStatusOk(resp)
     item_after = resp.json[0]
@@ -984,7 +984,7 @@ def testApplicationPackageMetadataAutoUpdate(
         ('2021-06-21T22:00:26+00:00', '2021-06-21T22:00:26+00:00', 200),
         ('2021-06-21 11:37:36 -0400', '2021-06-21T15:37:36+00:00', 200),
         ('2021-06-23 02:54:11-04:00', '2021-06-23T06:54:11+00:00', 200),
-        ('abcdef', None, 400)
+        ('abcdef', None, 400),
     ],
     ids=[
         'default',
@@ -993,8 +993,8 @@ def testApplicationPackageMetadataAutoUpdate(
         'timezone-with-colon',
         'git-date-iso-local',
         'date-rfc-3339-seconds',
-        'invalid'
-    ]
+        'invalid',
+    ],
 )
 @pytest.mark.plugin('slicer_package_manager')
 def testMetadataBuildDate(build_date, expected_build_date, status_code, server, user, app_folder, draft_release_folder):
@@ -1007,7 +1007,7 @@ def testMetadataBuildDate(build_date, expected_build_date, status_code, server, 
         newParams,
         _user=user,
         _app=app_folder,
-        status_code=status_code
+        status_code=status_code,
     )
     if status_code != 200:
         return
@@ -1022,7 +1022,7 @@ def _createApplicationCheck(server, appName, appDescription, collId=None,
     params = {
         'name': appName,
         'app_description': appDescription,
-        'collection_description': collDescription
+        'collection_description': collDescription,
     }
     if not (collId or collName):
         collName = 'Applications'
@@ -1040,7 +1040,7 @@ def _createApplicationCheck(server, appName, appDescription, collId=None,
         path='/app',
         method='POST',
         user=_user,
-        params=params
+        params=params,
     )
     # Check if it has created the application
     assertStatusOk(resp)
@@ -1072,8 +1072,8 @@ def _createReleaseCheck(server, name, app_id, app_revision, desc='', _user=None)
         params={
             'name': name,
             'app_revision': app_revision,
-            'description': desc
-        }
+            'description': desc,
+        },
     )
     # Check if it has created the new release
     assertStatusOk(resp)
@@ -1091,7 +1091,7 @@ def _deleteRelease(server, identifier, _user=None, _app=None):
         app_id=_app['_id'],
         app_revision='001',
         desc='This is a new release',
-        _user=_user
+        _user=_user,
     )
     # Get the new release by name
     resp = server.request(
@@ -1109,7 +1109,7 @@ def _deleteRelease(server, identifier, _user=None, _app=None):
             'app_id': _app['_id'],
             'id_or_name': release[identifier]},
         method='DELETE',
-        user=_user
+        user=_user,
     )
     assertStatusOk(resp)
     assert resp.json['_id'] == release['_id']
@@ -1219,7 +1219,7 @@ def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=Non
         path='/app/%s/%s' % (_app['_id'], packageType),
         method='GET',
         user=_user,
-        params={'%s_id' % packageType: resp.json['_id']}
+        params={'%s_id' % packageType: resp.json['_id']},
     )
     assertStatusOk(resp)
 
@@ -1233,7 +1233,7 @@ def _deletePackages(server, packageType, pkg, _user=None, _app=None):
     resp = server.request(
         path='/app/%s/%s' % (_app['_id'], packageType),
         method='GET',
-        user=_user
+        user=_user,
     )
     assertStatusOk(resp)
     assert len(resp.json) == 1
@@ -1245,7 +1245,7 @@ def _deletePackages(server, packageType, pkg, _user=None, _app=None):
             'type': packageType,
             'pkg_id': pkg['_id']},
         method='DELETE',
-        user=_user
+        user=_user,
     )
     assertStatusOk(resp)
     assert resp.json['_id'] == pkg['_id']
@@ -1253,7 +1253,7 @@ def _deletePackages(server, packageType, pkg, _user=None, _app=None):
     resp = server.request(
         path='/app/%s/%s' % (_app['_id'], packageType),
         method='GET',
-        user=_user
+        user=_user,
     )
     assertStatusOk(resp)
     assert len(resp.json) == 0

@@ -97,12 +97,12 @@ def _onReleaseFolderNameUpdated(event):
             {'meta.app_id': {'$exists': True}},
             {'meta.os': {'$exists': True}},
             {'meta.arch': {'$exists': True}},
-            {'meta.revision': {'$exists': True}}]
+            {'meta.revision': {'$exists': True}}],
     }
     items = Folder().childItems(
         folder=release,
         filters=filters,
-        level=AccessType.READ
+        level=AccessType.READ,
     )
     for item in items:
         item_meta = item['meta']

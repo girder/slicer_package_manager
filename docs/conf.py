@@ -34,7 +34,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
-    'sphinx_issues'
+    'sphinx_issues',
 ]
 
 issues_github_path = 'girder/slicer_package_manager'
@@ -111,7 +111,7 @@ html_sidebars = {
     '**': [
         'relations.html',  # needs 'show_related': True theme option to display
         'searchbox.html',
-    ]
+    ],
 }
 
 
@@ -156,7 +156,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'slicerpackagemanager', 'Slicer Package Manager Documentation',
-     [author], 1)
+     [author], 1),
 ]
 
 

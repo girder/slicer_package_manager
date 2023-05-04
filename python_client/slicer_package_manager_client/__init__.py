@@ -88,7 +88,7 @@ class SlicerPackageClient(GirderClient):
             'collection_id': coll_id,
             'collection_name': coll_name,
             'collection_description': coll_desc,
-            'public': public
+            'public': public,
         })
 
     def listApp(self, name=None, coll_id=None):
@@ -103,7 +103,7 @@ class SlicerPackageClient(GirderClient):
         """
         apps = self.get('/app', parameters={
             'collection_id': coll_id,
-            'name': name
+            'name': name,
         })
         return apps
 
@@ -137,7 +137,7 @@ class SlicerPackageClient(GirderClient):
         return self.post('/app/%s/release' % app['_id'], parameters={
             'name': name,
             'app_revision': revision,
-            'description': desc
+            'description': desc,
         })
 
     def listRelease(self, app_name, name=None, coll_id=None):
@@ -195,7 +195,7 @@ class SlicerPackageClient(GirderClient):
         app = self._getApp(app_name=app_name, coll_id=coll_id)
         return self.get(
             '/app/%s/draft' % app['_id'],
-            parameters={'revision': revision, 'limit': limit, 'offset': offset}
+            parameters={'revision': revision, 'limit': limit, 'offset': offset},
         )
 
     def deleteDraftRelease(self, app_name, revision, coll_id=None):
@@ -325,7 +325,7 @@ class SlicerPackageClient(GirderClient):
                     self.delete('/file/%s' % oldFile['_id'])
                     # Change the name
                     self.put('/file/%s' % newFile['_id'], parameters={
-                        'name': os.path.basename(filepath)
+                        'name': os.path.basename(filepath),
                     })
                     return Constant.EXTENSION_NOW_UP_TO_DATE
             else:
@@ -397,7 +397,7 @@ class SlicerPackageClient(GirderClient):
             'q': query,
             'limit': limit,
             'sort': 'created',
-            'sortDir': -1
+            'sortDir': -1,
         })
         return extensions
 
@@ -456,7 +456,7 @@ class SlicerPackageClient(GirderClient):
                 'revision': revision,
                 'version': version,
                 'description': desc,
-                'pre_release': pre_release
+                'pre_release': pre_release,
             }
             if build_date is not None:
                 parameters['build_date'] = build_date
@@ -497,7 +497,7 @@ class SlicerPackageClient(GirderClient):
                 'repository_url': repo_url,
                 'revision': revision,
                 'version': version,
-                'description': desc
+                'description': desc,
             }
             if build_date is not None:
                 parameters['build_date'] = build_date
@@ -509,7 +509,7 @@ class SlicerPackageClient(GirderClient):
                 self.delete('/file/%s' % oldFile['_id'])
                 # Change the name
                 self.put('/file/%s' % newFile['_id'], parameters={
-                    'name': os.path.basename(filepath)
+                    'name': os.path.basename(filepath),
                 })
                 return Constant.PACKAGE_NOW_UP_TO_DATE
         return package
@@ -566,7 +566,7 @@ class SlicerPackageClient(GirderClient):
             'release_id_or_name': release,
             'limit': limit,
             'sort': 'created',
-            'sortDir': -1
+            'sortDir': -1,
         })
         return pkg
 

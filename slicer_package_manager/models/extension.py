@@ -45,7 +45,7 @@ class Extension(Item):
             name,
             creator,
             folder,
-            params.get('description')
+            params.get('description'),
         )
         return self.setMetadata(item, params)
 
@@ -73,7 +73,7 @@ class Extension(Item):
                     'name': meta,
                     'type': (str,),
                     'exception_msg': 'Extension field "{}" must be a non-empty string.'
-                                     .format(meta)
+                                     .format(meta),
                 })
             for spec in specs:
                 if doc['meta'].get(spec['name']) and not isinstance(
@@ -94,14 +94,14 @@ class Extension(Item):
                             'name': meta,
                             'type': bool,
                             'exception_msg': 'Extension field "{}" must be a boolean.'
-                                             .format(meta)
+                                             .format(meta),
                         })
                     else:
                         specs.append({
                             'name': meta,
                             'type': (str,),
                             'exception_msg': 'Extension field "{}" must be a non-empty string.'
-                                             .format(meta)
+                                             .format(meta),
                         })
                 for spec in specs:
                     if doc['meta'].get(spec['name']) and not isinstance(
@@ -111,7 +111,7 @@ class Extension(Item):
                 'name': doc['name'],
                 'os': doc['meta']['os'],
                 'arch': doc['meta']['arch'],
-                'app_revision': doc['meta']['app_revision']
+                'app_revision': doc['meta']['app_revision'],
             }
             if '_id' in doc:
                 duplicateQuery['_id'] = {'$ne': doc['_id']}
