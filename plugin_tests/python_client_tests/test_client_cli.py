@@ -254,7 +254,7 @@ def testCreateAppCLI(server):
 
     def _create(app):
         cmd = list(CLI_COMMON_ARGS)
-        cmd.extend(['app', 'create', APPS[2]])
+        cmd.extend(['app', 'create', app])
         return _cli_runner_invoke(main, cmd)
 
     res = _create(APPS[2])
