@@ -74,11 +74,10 @@ def getOrCreateReleaseFolder(application, user, app_revision):
     # Find the release by metadata revision
     releases = Folder().childFolders(application, 'Folder', user=user)
     for folder in releases:
-        if 'meta' in folder:
-            if 'revision' in folder['meta']:
-                if folder['meta']['revision'] == app_revision:
-                    release_folder = folder
-                    break
+        revision = folder.get('meta', {}).get('revision', '')
+        if revision == app_revision:
+            release_folder = folder
+            break
     if not release_folder:
         # Only the draft release in the list
         release_folder = list(Folder().childFolders(
