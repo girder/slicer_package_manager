@@ -25,7 +25,7 @@ from .. import utilities
 
 class App(Resource):
     def __init__(self):
-        super(App, self).__init__()
+        super().__init__()
         self.resourceName = 'app'
         self._model = Folder()
 

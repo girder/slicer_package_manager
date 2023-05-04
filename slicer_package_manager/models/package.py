@@ -13,7 +13,7 @@ class Package(Item):
     """
 
     def initialize(self):
-        super(Package, self).initialize()
+        super().initialize()
         # To be able to upload within a Package the name has to stay as 'item'.
         self.name = 'item'
 
@@ -59,7 +59,7 @@ class Package(Item):
         :return: The package instance once validated
         """
         # Call Item validate method
-        doc = super(Package, self).validate(doc)
+        doc = super().validate(doc)
 
         if not isinstance(doc.get('created'), datetime.datetime):
             raise ValidationException(
