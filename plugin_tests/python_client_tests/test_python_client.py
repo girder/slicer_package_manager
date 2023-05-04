@@ -380,10 +380,10 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
     assert downloaded_pkg2['name'] == downloaded_pkg2_name
 
     # Compare downloaded files
-    with open('%s.txt' % downloaded_pkg1_name, 'r') as downloaded_f1, open(files[0], 'r') as f1:
+    with open('%s.txt' % downloaded_pkg1_name) as downloaded_f1, open(files[0]) as f1:
         assert downloaded_f1.read() == f1.read()
 
-    with open('%s.txt' % downloaded_pkg2_name, 'r') as downloaded_f2, open(files[1], 'r') as f2:
+    with open('%s.txt' % downloaded_pkg2_name) as downloaded_f2, open(files[1]) as f2:
         assert downloaded_f2.read() == f2.read()
 
     os.remove('%s.txt' % downloaded_pkg1_name)
@@ -410,7 +410,7 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
     assert downloaded_pkg1_bis['name'] == downloaded_pkg1_name_bis
 
     # Compare, the file should have changed
-    with open('%s.txt' % downloaded_pkg1_name_bis, 'r') as downloaded_f1_bis, open(files[1], 'r') as f1_bis:
+    with open('%s.txt' % downloaded_pkg1_name_bis) as downloaded_f1_bis, open(files[1]) as f1_bis:
         assert downloaded_f1_bis.read() == f1_bis.read()
 
     os.remove('%s.txt' % downloaded_pkg1_name_bis)
@@ -529,10 +529,10 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
     assert downloaded_ext2['name'] == downloaded_ext2_name
 
     # Compare downloaded files
-    with open('%s.txt' % downloaded_ext1_name, 'r') as downloaded_f1, open(files[0], 'r') as f1:
+    with open('%s.txt' % downloaded_ext1_name) as downloaded_f1, open(files[0]) as f1:
         assert downloaded_f1.read() == f1.read()
 
-    with open('../%s.txt' % downloaded_ext2_name, 'r') as downloaded_f2, open(files[1], 'r') as f2:
+    with open('../%s.txt' % downloaded_ext2_name) as downloaded_f2, open(files[1]) as f2:
         assert downloaded_f2.read() == f2.read()
 
     os.remove('%s.txt' % downloaded_ext1_name)
@@ -559,7 +559,7 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
     assert downloaded_ext1_bis['name'] != downloaded_ext1_name_bis
 
     # Compare, the file should have changed
-    with open('%s.txt' % downloaded_ext1_bis['name'], 'r') as downloaded_f1_bis, open(files[1], 'r') as f1_bis:
+    with open('%s.txt' % downloaded_ext1_bis['name']) as downloaded_f1_bis, open(files[1]) as f1_bis:
         assert downloaded_f1_bis.read() == f1_bis.read()
 
     os.remove('%s.txt' % downloaded_ext1_bis['name'])

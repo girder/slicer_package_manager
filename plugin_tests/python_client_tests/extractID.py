@@ -2,7 +2,7 @@ import re
 
 
 def extractID(file):
-    with open(file, 'r') as f:
+    with open(file) as f:
         res = re.search(r'\([a-z0-9]*\)', f.read())
         if res:
             id = res.group(0)
