@@ -174,6 +174,7 @@ def _cli_upload_extension(extension):
 @pytest.mark.vcr()
 @pytest.fixture(autouse=True)
 def _teardown(server):
+    assert server  # Fix warnings related to fixtures not explicitly used.
     yield
     for idx in range(len(APPS)):
         cmd = list(CLI_COMMON_ARGS)
@@ -184,6 +185,7 @@ def _teardown(server):
 @pytest.mark.vcr()
 @pytest.fixture
 def apps(server):
+    assert server  # Fix warnings related to fixtures not explicitly used.
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['app', 'create', APPS[0]])
     res = _cli_runner_invoke(main, cmd)
@@ -200,6 +202,7 @@ def apps(server):
 @pytest.mark.vcr()
 @pytest.fixture
 def releases(server):
+    assert server  # Fix warnings related to fixtures not explicitly used.
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'create', RELEASES[1]['app_name'], RELEASES[1]['name'], RELEASES[1]['revision']])
     res = _cli_runner_invoke(main, cmd)
@@ -211,6 +214,11 @@ def releases(server):
 @pytest.mark.vcr()
 @pytest.fixture
 def packages(server, apps, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert files
+
     res = _cli_upload_package(PACKAGES[0])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[0])), res.output)
@@ -232,6 +240,11 @@ def packages(server, apps, files):
 @pytest.mark.vcr()
 @pytest.fixture
 def extensions(server, apps, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert files
+
     res = _cli_upload_extension(EXTENSIONS[0])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[0])), res.output)
@@ -253,6 +266,7 @@ def extensions(server, apps, files):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateAppCLI(server):
+    assert server  # Fix warnings related to fixtures not explicitly used.
 
     def _create(app):
         cmd = list(CLI_COMMON_ARGS)
@@ -273,6 +287,10 @@ def testCreateAppCLI(server):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListAppCLI(server, apps):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['app', 'list'])
     res = _cli_runner_invoke(main, cmd)
@@ -284,6 +302,10 @@ def testListAppCLI(server, apps):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteAppCLI(server, apps):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['app', 'delete', APPS[0]])
     res = _cli_runner_invoke(main, cmd)
@@ -294,6 +316,9 @@ def testDeleteAppCLI(server, apps):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateReleaseCLI(server, apps):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
 
     def _create(release):
         cmd = list(CLI_COMMON_ARGS)
@@ -313,6 +338,11 @@ def testCreateReleaseCLI(server, apps):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListReleaseCLI(server, apps, releases):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert releases
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'list', RELEASES[1]['app_name']])
     res = _cli_runner_invoke(main, cmd)
@@ -323,6 +353,11 @@ def testListReleaseCLI(server, apps, releases):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteReleaseCLI(server, apps, releases):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert releases
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['release', 'delete', RELEASES[1]['app_name'], RELEASES[1]['name']])
     res = _cli_runner_invoke(main, cmd)
@@ -333,6 +368,10 @@ def testDeleteReleaseCLI(server, apps, releases):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testlistDraftCLI(server, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['draft', 'list', APPS[0]])
     res = _cli_runner_invoke(main, cmd)
@@ -343,6 +382,10 @@ def testlistDraftCLI(server, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListDraftWithLimitCLI(server, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['draft', 'list', APPS[0], '--limit', '1'])
     res = _cli_runner_invoke(main, cmd)
@@ -354,6 +397,10 @@ def testListDraftWithLimitCLI(server, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteDraftCLI(server, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['draft', 'delete', APPS[0], 'r002'])
     res = _cli_runner_invoke(main, cmd)
@@ -364,6 +411,11 @@ def testDeleteDraftCLI(server, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadPackagesCLI(server, apps, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert files
+
     res = _cli_upload_package(PACKAGES[0])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getAppPkgName(PACKAGES[0])), res.output)
@@ -390,6 +442,11 @@ def testUploadPackagesCLI(server, apps, files):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadPackagesWithBuildDateCLI(build_date, exit_code, server, apps, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert files
+
     package = PACKAGES[0].copy()
     package['build_date'] = build_date
     res = _cli_upload_package(package)
@@ -402,6 +459,10 @@ def testUploadPackagesWithBuildDateCLI(build_date, exit_code, server, apps, file
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListPackagesCLI(server, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['package', 'list', APPS[0]])
     res = _cli_runner_invoke(main, cmd)
@@ -423,6 +484,10 @@ def testListPackagesCLI(server, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeletePackagesCLI(server, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     cmd = list(CLI_COMMON_ARGS)
     name = getAppPkgName(PACKAGES[2])
     cmd.extend(['package', 'delete', PACKAGES[2]['app_name'], name])
@@ -434,6 +499,10 @@ def testDeletePackagesCLI(server, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDownloadPackagesCLI(server, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     cmd = list(CLI_COMMON_ARGS)
     name = getAppPkgName(PACKAGES[0])
     cmd.extend(['package', 'download', PACKAGES[0]['app_name'], name])
@@ -446,6 +515,11 @@ def testDownloadPackagesCLI(server, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadExtensionsCLI(server, apps, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert files
+
     res = _cli_upload_extension(EXTENSIONS[0])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[0])), res.output)
@@ -458,6 +532,10 @@ def testUploadExtensionsCLI(server, apps, files):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListExtensionsCLI(server, extensions):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert extensions
+
     cmd = list(CLI_COMMON_ARGS)
     cmd.extend(['extension', 'list', APPS[0], '--all'])
     res = _cli_runner_invoke(main, cmd)
@@ -479,6 +557,10 @@ def testListExtensionsCLI(server, extensions):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteExtensionsCLI(server, extensions):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert extensions
+
     cmd = list(CLI_COMMON_ARGS)
     name = getExtPkgName(EXTENSIONS[0])
     cmd.extend(['extension', 'delete', EXTENSIONS[0]['app_name'], name])
@@ -490,6 +572,10 @@ def testDeleteExtensionsCLI(server, extensions):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDownloadExtensionsCLI(server, extensions):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert extensions
+
     cmd = list(CLI_COMMON_ARGS)
     name = getExtPkgName(EXTENSIONS[0])
     cmd.extend(['extension', 'download', EXTENSIONS[0]['app_name'], name])

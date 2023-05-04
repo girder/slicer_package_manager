@@ -161,31 +161,31 @@ def main(ctx, username, password,
 
 @main.group(context_settings=_CONTEXT_SETTINGS)
 @click.pass_obj
-def app(sc):
+def app(_sc):
     pass
 
 
 @main.group(context_settings=_CONTEXT_SETTINGS)
 @click.pass_obj
-def release(sc):
+def release(_sc):
     pass
 
 
 @main.group(context_settings=_CONTEXT_SETTINGS)
 @click.pass_obj
-def draft(sc):
+def draft(_sc):
     pass
 
 
 @main.group(context_settings=_CONTEXT_SETTINGS)
 @click.pass_obj
-def extension(sc):
+def extension(_sc):
     pass
 
 
 @main.group(context_settings=_CONTEXT_SETTINGS)
 @click.pass_obj
-def package(sc):
+def package(_sc):
     pass
 
 
