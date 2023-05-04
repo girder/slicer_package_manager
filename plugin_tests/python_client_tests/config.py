@@ -13,7 +13,7 @@ if __name__ == "__main__":
         firstName='admin',
         lastName='admin',
         password=password,
-        admin=True
+        admin=True,
     )
     gc.authenticate(username=login, password=password)
 
@@ -21,12 +21,12 @@ if __name__ == "__main__":
     gc.post('assetstore', parameters={
         'name': 'TestAssetstore',
         'type': 0,
-        'root': '/home/circleci/project/assetstore'
+        'root': '/home/circleci/project/assetstore',
     })
 
     # Enable the 'slicer_package_manager' plugin
     gc.put('system/plugins', parameters={
-        "plugins": '["slicer_package_manager"]'
+        "plugins": '["slicer_package_manager"]',
     })
 
     # Restart the server

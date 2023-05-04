@@ -61,7 +61,7 @@ class App(Resource):
         .param('collection_description', 'Collection description.', required=False)
         .param('public', 'Whether the collection should be publicly visible.',
                required=False, dataType='boolean', default=True)
-        .errorResponse('Write permission denied on the application.', 403)
+        .errorResponse('Write permission denied on the application.', 403),
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def initApp(self, name, app_description, collection_id, collection_name,
@@ -148,8 +148,8 @@ class App(Resource):
             app,
             {
                 'applicationPackageNameTemplate': constants.APPLICATION_PACKAGE_TEMPLATE_NAME,
-                'extensionPackageNameTemplate': constants.EXTENSION_PACKAGE_TEMPLATE_NAME
-            }
+                'extensionPackageNameTemplate': constants.EXTENSION_PACKAGE_TEMPLATE_NAME,
+            },
         )
 
     @autoDescribeRoute(
@@ -161,7 +161,7 @@ class App(Resource):
         .param('text', 'Provide text search of the application.', required=False)
         .pagingParams(defaultSort='name')
         .errorResponse()
-        .errorResponse('Read permission denied on the application.', 403)
+        .errorResponse('Read permission denied on the application.', 403),
     )
     @access.public(scope=TokenScope.DATA_READ)
     def listApp(self, app_id, collection_id, name, text, limit, offset, sort):
@@ -198,7 +198,7 @@ class App(Resource):
                 filters = {}
                 if text:
                     filters['$text'] = {
-                        '$search': text
+                        '$search': text,
                     }
                 if name:
                     filters['name'] = name
@@ -215,7 +215,7 @@ class App(Resource):
         .param('progress', 'Whether to record progress on this task.',
                required=False, dataType='boolean', default=False)
         .errorResponse('ID was invalid.')
-        .errorResponse('Admin access was denied for the application.', 403)
+        .errorResponse('Admin access was denied for the application.', 403),
     )
     def deleteApp(self, app_folder, progress):
         """
@@ -236,7 +236,7 @@ class App(Resource):
         .param('description', "The application's description.", required=False)
         .param('public', 'Whether the release should be publicly visible.',
                required=False, dataType='boolean', default=True)
-        .errorResponse()
+        .errorResponse(),
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createNewRelease(self, name, app_id, app_revision, description, public):
@@ -274,7 +274,7 @@ class App(Resource):
         .param('release_id_or_name', "The release's ID or name.", required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
-        .errorResponse('Read permission denied on the application.', 403)
+        .errorResponse('Read permission denied on the application.', 403),
     )
     @access.public(scope=TokenScope.DATA_READ)
     def getReleases(self, app_id, release_id_or_name, limit, offset, sort):
@@ -304,7 +304,7 @@ class App(Resource):
             else:
                 return release_folder[0]
         filters = {
-            'name': {'$ne': constants.DRAFT_RELEASE_NAME}
+            'name': {'$ne': constants.DRAFT_RELEASE_NAME},
         }
         return list(self._model.childFolders(
             application,
@@ -322,7 +322,7 @@ class App(Resource):
         .param('revision', 'The revision of a draft release', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse('ID was invalid.')
-        .errorResponse('Read permission denied on the application.', 403)
+        .errorResponse('Read permission denied on the application.', 403),
     )
     @access.public(scope=TokenScope.DATA_READ)
     def getAllDraftReleases(self, app_id, revision, limit, offset, sort):
@@ -338,7 +338,7 @@ class App(Resource):
         application = self._model.load(app_id, user=user, level=AccessType.READ)
 
         filters = {
-            'name': constants.DRAFT_RELEASE_NAME
+            'name': constants.DRAFT_RELEASE_NAME,
         }
         release = list(self._model.childFolders(
             application,
@@ -369,7 +369,7 @@ class App(Resource):
         .param('progress', 'Whether to record progress on this task.',
                required=False, dataType='boolean', default=False)
         .errorResponse('ID was invalid.')
-        .errorResponse('Admin access was denied for the release.', 403)
+        .errorResponse('Admin access was denied for the release.', 403),
     )
     def deleteReleaseByIdOrName(self, app_folder, release_id_or_name, progress):
         """
@@ -402,7 +402,7 @@ class App(Resource):
                     release_folder[0],
                     'Folder',
                     user=user,
-                    filters={'lowerName': release_id_or_name.lower()}
+                    filters={'lowerName': release_id_or_name.lower()},
                 ))
                 if not revision_folder:
                     raise RestException("Couldn't find release %s" % release_id_or_name)
@@ -430,7 +430,7 @@ class App(Resource):
         .param('baseName', 'The baseName of the extension', required=False)
         .param('q', 'The search query.', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
-        .errorResponse()
+        .errorResponse(),
     )
     @access.public(scope=TokenScope.DATA_READ)
     def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
@@ -458,7 +458,7 @@ class App(Resource):
                 {'meta.app_id': {'$eq': app_id}},
                 {'meta.os': {'$exists': True}},
                 {'meta.arch': {'$exists': True}},
-                {'meta.app_revision': {'$exists': True}}]
+                {'meta.app_revision': {'$exists': True}}],
         }
         if extension_name:
             filters['lowerName'] = extension_name.lower()
@@ -477,7 +477,7 @@ class App(Resource):
             escaped_query = re.escape(q)
             filters['$or'] = [
                 {'meta.baseName': {'$regex': escaped_query, '$options': 'i'}},
-                {'meta.description': {'$regex': escaped_query, '$options': 'i'}}
+                {'meta.description': {'$regex': escaped_query, '$options': 'i'}},
             ]
         if ObjectId.is_valid(release_id):
             release = self._model.load(release_id, user=user, level=AccessType.READ)
@@ -569,7 +569,7 @@ class App(Resource):
                '(stable, active, etc).', required=False)
         .param('enabled', 'Boolean indicating if the extension should be automatically enabled '
                'after its installation.', required=False)
-        .errorResponse()
+        .errorResponse(),
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
@@ -629,7 +629,7 @@ class App(Resource):
             'repository_url': repository_url,
             'revision': revision,
             'app_revision': app_revision,
-            'description': description
+            'description': description,
         }
         if icon_url:
             params['icon_url'] = icon_url
@@ -655,7 +655,7 @@ class App(Resource):
             'meta.baseName': baseName,
             'meta.os': os,
             'meta.arch': arch,
-            'meta.app_revision': app_revision
+            'meta.app_revision': app_revision,
         }
         # Only one extensions should be in this list
         extensions = list(ExtensionModel().get(extensions_folder, filters=filters))
@@ -685,7 +685,7 @@ class App(Resource):
         .param('app_id', 'The ID of the App.', paramType='path')
         .modelParam('ext_id', destName='ext_model', model=ExtensionModel, level=AccessType.WRITE)
         .errorResponse('ID was invalid.')
-        .errorResponse('Admin access was denied for the extension.', 403)
+        .errorResponse('Admin access was denied for the extension.', 403),
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def deleteExtension(self, app_id, ext_model):
@@ -716,7 +716,7 @@ class App(Resource):
         .param('revision', 'The revision of the application.', required=False)
         .param('baseName', 'The baseName of the package', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
-        .errorResponse()
+        .errorResponse(),
     )
     @access.public(scope=TokenScope.DATA_READ)
     def getPackages(self, app_id, package_name, release_id_or_name, package_id, os, arch,
@@ -743,7 +743,7 @@ class App(Resource):
                 {'meta.os': {'$exists': True}},
                 {'meta.arch': {'$exists': True}},
                 {'meta.revision': {'$exists': True}},
-                {'meta.app_revision': {'$exists': False}}]
+                {'meta.app_revision': {'$exists': False}}],
         }
         if package_name:
             filters['lowerName'] = package_name.lower()
@@ -824,7 +824,7 @@ class App(Resource):
                dataType='boolean', required=False)
         .param('build_date', 'Build timestamp specified as a datetime string. Default set to current date and time.',
                required=False)
-        .errorResponse()
+        .errorResponse(),
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdatePackage(self, app_id, os, arch, baseName, repository_type, repository_url,
@@ -877,7 +877,7 @@ class App(Resource):
             'revision': revision,
             'version': version,
             'pre_release': pre_release,
-            'build_date': build_date
+            'build_date': build_date,
         }
 
         name = application['meta']['applicationPackageNameTemplate'].format(**params)
@@ -885,7 +885,7 @@ class App(Resource):
             'meta.baseName': baseName,
             'meta.os': os,
             'meta.arch': arch,
-            'meta.revision': revision
+            'meta.revision': revision,
         }
         # Only one package should be in this list
         package = list(PackageModel().get(release_folder, filters=filters))
@@ -915,7 +915,7 @@ class App(Resource):
         .param('app_id', 'The ID of the App.', paramType='path')
         .modelParam('pkg_id', destName='pkg_model', model=PackageModel, level=AccessType.WRITE)
         .errorResponse('ID was invalid.')
-        .errorResponse('Admin access was denied for the package.', 403)
+        .errorResponse('Admin access was denied for the package.', 403),
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def deletePackage(self, app_id, pkg_model):
@@ -933,7 +933,7 @@ class App(Resource):
         Description('Get download stats of application and extensions packages '
                     'within an application.')
         .param('app_id', 'The ID of the application.', paramType='path')
-        .errorResponse()
+        .errorResponse(),
     )
     @access.public(scope=TokenScope.DATA_READ)
     def getDownloadStats(self, app_id):

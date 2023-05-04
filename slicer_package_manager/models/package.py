@@ -46,7 +46,7 @@ class Package(Item):
             name,
             creator,
             folder,
-            description
+            description,
         )
         return self.setMetadata(item, params)
 
@@ -73,12 +73,12 @@ class Package(Item):
                 specs.append({
                     'name': meta,
                     'type': (str,),
-                    'exception_msg': 'Package field "%s" must be a non-empty string.' % meta
+                    'exception_msg': 'Package field "%s" must be a non-empty string.' % meta,
                 })
             specs.append({
                 'name': 'build_date ',
                 'type': datetime.datetime,
-                'exception_msg': 'Package field "%s" must be a datetime.' % 'build_date'
+                'exception_msg': 'Package field "%s" must be a datetime.' % 'build_date',
             })
             for spec in specs:
                 if doc['meta'].get(spec['name']) and not isinstance(
@@ -88,7 +88,7 @@ class Package(Item):
                 'name': doc['name'],
                 'os': doc['meta']['os'],
                 'arch': doc['meta']['arch'],
-                'revision': doc['meta']['revision']
+                'revision': doc['meta']['revision'],
             }
             if '_id' in doc:
                 duplicateQuery['_id'] = {'$ne': doc['_id']}

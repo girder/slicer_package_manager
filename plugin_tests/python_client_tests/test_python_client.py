@@ -32,18 +32,18 @@ RELEASES = [
         'revision': 'r001',
         'version': '2.0',
         'desc': 'random description 2',
-    }
+    },
 ]
 
 DRAFT_RELEASES = [
     {
         'revision': 'r002',
-        'version': '3.0'
+        'version': '3.0',
     },
     {
         'revision': 'r003',
-        'version': '3.0'
-    }
+        'version': '3.0',
+    },
 ]
 
 PACKAGES = [
@@ -56,7 +56,7 @@ PACKAGES = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:pkg1.git',
         'revision': DRAFT_RELEASES[0]['revision'],
-        'version': DRAFT_RELEASES[0]['version']
+        'version': DRAFT_RELEASES[0]['version'],
     },
     {
         'filepath': './file2.txt',
@@ -67,7 +67,7 @@ PACKAGES = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:pkg2.git',
         'revision': DRAFT_RELEASES[1]['revision'],
-        'version': DRAFT_RELEASES[1]['version']
+        'version': DRAFT_RELEASES[1]['version'],
     },
     {
         'filepath': './file3.txt',
@@ -78,8 +78,8 @@ PACKAGES = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:pkg3.git',
         'revision': RELEASES[0]['revision'],
-        'version': RELEASES[0]['version']
-    }
+        'version': RELEASES[0]['version'],
+    },
 ]
 
 EXTENSIONS = [
@@ -92,7 +92,7 @@ EXTENSIONS = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:ext1.git',
         'app_revision': DRAFT_RELEASES[0]['revision'],
-        'revision': 'r300'
+        'revision': 'r300',
     },
     {
         'filepath': './file2.txt',
@@ -103,7 +103,7 @@ EXTENSIONS = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:ext2.git',
         'app_revision': DRAFT_RELEASES[1]['revision'],
-        'revision': 'r301'
+        'revision': 'r301',
     },
     {
         'filepath': './file3.txt',
@@ -114,8 +114,8 @@ EXTENSIONS = [
         'repository_type': 'git',
         'repository_url': 'git@github.com:ext3.git',
         'app_revision': RELEASES[0]['revision'],
-        'revision': 'r302'
-    }
+        'revision': 'r302',
+    },
 ]
 
 
@@ -419,12 +419,12 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
 @pytest.mark.parametrize(
     'build_date,expectation', [
         ('2021-06-21T00:00:00+00:00', does_not_raise()),
-        ('abcdef', pytest.raises(HttpError, match="Parameter \\\\\"build_date\\\\\" is incorrectly formatted."))
+        ('abcdef', pytest.raises(HttpError, match="Parameter \\\\\"build_date\\\\\" is incorrectly formatted.")),
     ],
     ids=[
         'timezone',
-        'invalid'
-    ]
+        'invalid',
+    ],
 )
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')

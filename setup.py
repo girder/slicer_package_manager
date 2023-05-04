@@ -6,7 +6,7 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    'girder>=3.0.0a1'
+    'girder>=3.0.0a1',
 ]
 
 setup(
@@ -20,7 +20,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9'
+        'Programming Language :: Python :: 3.9',
     ],
     description='Manage Slicer application and extension packages.',
     install_requires=requirements,
@@ -38,7 +38,7 @@ setup(
     zip_safe=False,
     entry_points={
         'girder.plugin': [
-            'slicer_package_manager = slicer_package_manager:GirderPlugin'
-        ]
-    }
+            'slicer_package_manager = slicer_package_manager:GirderPlugin',
+        ],
+    },
 )
