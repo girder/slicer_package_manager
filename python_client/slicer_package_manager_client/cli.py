@@ -83,7 +83,7 @@ class _Group(click.Group):
         self.format_commands(ctx, formatter)
 
 
-_CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+_CONTEXT_SETTINGS = {'help_option_names': ['-h', '--help']}
 
 
 @click.group(context_settings=_CONTEXT_SETTINGS)
