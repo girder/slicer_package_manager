@@ -55,7 +55,7 @@ class SlicerPackageClient(GirderClient):
 
     def __init__(self, host=None, port=None, apiRoot=None, scheme=None, apiUrl=None,
                  progressReporterCls=None):
-        super(SlicerPackageClient, self).__init__(
+        super().__init__(
             host=host, port=port, apiRoot=apiRoot, scheme=scheme, apiUrl=apiUrl,
             progressReporterCls=progressReporterCls)
 

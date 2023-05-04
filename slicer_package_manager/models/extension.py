@@ -13,7 +13,7 @@ class Extension(Item):
     """
 
     def initialize(self):
-        super(Extension, self).initialize()
+        super().initialize()
         # To be able to upload within an Extension the name has to stay as 'item'.
         self.name = 'item'
 
@@ -58,7 +58,7 @@ class Extension(Item):
         :return: The extension instance once validated
         """
         # Call Item validate method
-        doc = super(Extension, self).validate(doc)
+        doc = super().validate(doc)
 
         if not isinstance(doc.get('created'), datetime.datetime):
             raise ValidationException(

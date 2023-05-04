@@ -47,8 +47,8 @@ class SlicerPackageCli(SlicerPackageClient):
             bar.show_pos = True
             return bar
 
-        super(SlicerPackageCli, self).__init__(host=host, port=port, apiRoot=apiRoot, scheme=scheme, apiUrl=apiUrl,
-                                               progressReporterCls=_progressBar)
+        super().__init__(host=host, port=port, apiRoot=apiRoot, scheme=scheme, apiUrl=apiUrl,
+                         progressReporterCls=_progressBar)
         interactive = password is None
         if apiKey:
             self.authenticate(apiKey=apiKey)
@@ -56,7 +56,7 @@ class SlicerPackageCli(SlicerPackageClient):
             self.authenticate(username, password, interactive=interactive)
 
     def _requestFunc(self, *args, **kwargs):
-        return super(SlicerPackageCli, self)._requestFunc(*args, **kwargs)
+        return super()._requestFunc(*args, **kwargs)
 
 
 class _HiddenOption(click.Option):
