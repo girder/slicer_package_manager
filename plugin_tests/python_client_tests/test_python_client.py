@@ -123,6 +123,7 @@ EXTENSIONS = [
 @pytest.mark.vcr()
 @pytest.fixture
 def spc(server):
+    assert server  # Fix warnings related to fixtures not explicitly used.
     spc = SlicerPackageClient(apiUrl='http://localhost:8080/api/v1')
     spc.authenticate('admin', 'password')
     return spc
@@ -131,6 +132,7 @@ def spc(server):
 @pytest.mark.vcr()
 @pytest.fixture
 def apps(server, spc):
+    assert server  # Fix warnings related to fixtures not explicitly used.
     app1 = spc.createApp(name=APPS[0], desc='random description 1')
     app2 = spc.createApp(name=APPS[1], desc='random description 2')
     return [app1, app2]
@@ -139,6 +141,7 @@ def apps(server, spc):
 @pytest.mark.vcr()
 @pytest.fixture
 def releases(server, spc):
+    assert server  # Fix warnings related to fixtures not explicitly used.
 
     def _create(release):
         return spc.createRelease(
@@ -153,6 +156,10 @@ def releases(server, spc):
 @pytest.mark.vcr()
 @pytest.fixture
 def packages(server, spc, releases, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert releases
+    assert files
 
     def _upload(package):
         pkg = spc.uploadApplicationPackage(
@@ -174,6 +181,10 @@ def packages(server, spc, releases, files):
 @pytest.mark.vcr()
 @pytest.fixture
 def extensions(server, spc, releases, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert releases
+    assert files
 
     def _upload(extension):
         ext = spc.uploadExtension(
@@ -195,6 +206,7 @@ def extensions(server, spc, releases, files):
 @pytest.mark.vcr()
 @pytest.fixture(autouse=True)
 def _teardown(server, spc):
+    assert server  # Fix warnings related to fixtures not explicitly used.
     yield
     for idx in range(len(APPS)):
         with contextlib.suppress(SlicerPackageManagerError):
@@ -204,6 +216,8 @@ def _teardown(server, spc):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateApp(server, spc):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     app1 = spc.createApp(name=APPS[2])
     assert app1['name'] == APPS[2]
 
@@ -216,6 +230,8 @@ def testCreateApp(server, spc):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListApp(server, spc, apps):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     # List all the app
     app_list = spc.listApp()
     assert len(app_list) == 2
@@ -231,6 +247,8 @@ def testListApp(server, spc, apps):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteApp(server, spc, apps):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     app_list = spc.listApp()
     assert len(app_list) == 2
 
@@ -249,6 +267,8 @@ def testDeleteApp(server, spc, apps):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testCreateRelease(server, spc, apps):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     release = spc.createRelease(
         app_name=apps[0]['name'], name=RELEASES[0]['name'], revision=RELEASES[0]['revision'])
     assert release['name'] == RELEASES[0]['name']
@@ -264,6 +284,8 @@ def testCreateRelease(server, spc, apps):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListRelease(server, spc, apps, releases):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     # List all the releases
     release_list = spc.listRelease(app_name=apps[0]['name'])
     assert len(release_list) == 2
@@ -278,6 +300,8 @@ def testListRelease(server, spc, apps, releases):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteRelease(server, spc, apps, releases):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     release_list = spc.listRelease(app_name=apps[0]['name'])
     assert len(release_list) == 2
 
@@ -296,6 +320,10 @@ def testDeleteRelease(server, spc, apps, releases):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListDraftRelease(server, spc, apps, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     # List all the draft releases
     draft_list = spc.listDraftRelease(app_name=apps[0]['name'])
     assert len(draft_list) == 2
@@ -314,6 +342,10 @@ def testListDraftRelease(server, spc, apps, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListDraftReleaseWithLimit(server, spc, apps, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     draft_list = spc.listDraftRelease(app_name=apps[0]['name'], limit=1)
     assert len(draft_list) == 1
 
@@ -321,6 +353,10 @@ def testListDraftReleaseWithLimit(server, spc, apps, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteDraftRelease(server, spc, apps, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert packages
+
     draft_list = spc.listDraftRelease(app_name=apps[0]['name'])
     assert len(draft_list) == 2
 
@@ -338,6 +374,10 @@ def testDeleteDraftRelease(server, spc, apps, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert releases
+
     # Upload
     pkg1 = spc.uploadApplicationPackage(
         filepath=PACKAGES[0]['filepath'],
@@ -428,6 +468,11 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadApplicationPackageWithBuildDate(build_date, expectation, server, spc, apps, releases, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert releases
+    assert files
+
     with expectation:
         pkg = spc.uploadApplicationPackage(
             filepath=PACKAGES[0]['filepath'],
@@ -446,6 +491,10 @@ def testUploadApplicationPackageWithBuildDate(build_date, expectation, server, s
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListApplicationPackage(server, spc, apps, releases, packages):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert releases
+
     # List all the application packages
     pkg_list = spc.listApplicationPackage(app_name=apps[0]['name'])
     assert len(pkg_list) == 3
@@ -464,6 +513,8 @@ def testListApplicationPackage(server, spc, apps, releases, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeletePackage(server, spc, apps, packages):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     pkg_list = spc.listApplicationPackage(app_name=apps[0]['name'])
     assert len(pkg_list) == 3
 
@@ -483,6 +534,8 @@ def testDeletePackage(server, spc, apps, packages):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testUploadAndDownloadExtension(server, spc, apps, releases, files):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     # Upload
     ext1 = spc.uploadExtension(
         filepath=EXTENSIONS[0]['filepath'],
@@ -567,6 +620,8 @@ def testUploadAndDownloadExtension(server, spc, apps, releases, files):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testListExtension(server, spc, apps, extensions):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     # List all the extension packages from draft release
     ext_list = spc.listExtension(app_name=apps[0]['name'])
     assert len(ext_list) == 2
@@ -589,6 +644,8 @@ def testListExtension(server, spc, apps, extensions):
 @pytest.mark.vcr()
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteExtension(server, spc, apps, extensions):
+    assert server  # Fix warnings related to fixtures not explicitly used.
+
     ext_list = spc.listExtension(app_name=apps[0]['name'])
     assert len(ext_list) == 2
 

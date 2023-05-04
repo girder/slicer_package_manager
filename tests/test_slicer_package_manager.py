@@ -118,6 +118,9 @@ def fixture_release_folder(user, app_folder):
 
 @pytest.fixture(name='release_extensions')
 def fixture_release_extensions(server, user, app_folder, release_folder, tmpdir, fsAssetstore):
+    # Fix warnings related to fixtures not explicitly used.
+    assert fsAssetstore
+
     downloadExternals(
         [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in RELEASE_EXTENSIONS],
         tmpdir,
@@ -141,6 +144,10 @@ def fixture_release_extensions(server, user, app_folder, release_folder, tmpdir,
 
 @pytest.fixture(name='draft_extensions')
 def fixture_draft_extensions(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
+    # Fix warnings related to fixtures not explicitly used.
+    assert draft_release_folder
+    assert fsAssetstore
+
     downloadExternals(
         [os.path.join(FIXTURE_DIR, extension['filepath']) for extension in DRAFT_EXTENSIONS],
         tmpdir,
@@ -170,6 +177,9 @@ def fixture_extensions(release_extensions, draft_extensions):
 
 @pytest.fixture(name='release_packages')
 def fixture_release_packages(server, user, app_folder, release_folder, tmpdir, fsAssetstore):
+    # Fix warnings related to fixtures not explicitly used.
+    assert fsAssetstore
+
     downloadExternals(
         [os.path.join(FIXTURE_DIR, package['filepath']) for package in RELEASE_PACKAGES],
         tmpdir,
@@ -192,6 +202,10 @@ def fixture_release_packages(server, user, app_folder, release_folder, tmpdir, f
 
 @pytest.fixture(name='draft_packages')
 def fixture_draft_packages(server, user, app_folder, release_folder, draft_release_folder, tmpdir, fsAssetstore):
+    # Fix warnings related to fixtures not explicitly used.
+    assert draft_release_folder
+    assert fsAssetstore
+
     downloadExternals(
         [os.path.join(FIXTURE_DIR, package['filepath']) for package in DRAFT_PACKAGES],
         tmpdir,
@@ -476,6 +490,10 @@ def testDeleteReleaseByName(server, user, app_folder):
 
 @pytest.mark.plugin('slicer_package_manager')
 def testDeleteRevisionRelease(server, user, app_folder, packages, extensions):
+    # Fix warnings related to fixtures not explicitly used.
+    assert packages
+    assert extensions
+
     resp = server.request(
         path='/app/%s/draft' % app_folder['_id'],
         method='GET',
@@ -770,6 +788,9 @@ def testDeleteApplicationPackages(server, user, app_folder, release_folder):
 
 @pytest.mark.plugin('slicer_package_manager')
 def testDownloadStats(server, user, app_folder, draft_release_revision_folder, packages, extensions):
+    # Fix warnings related to fixtures not explicitly used.
+    assert packages
+
     # Get the downloadStats
     expectedStats = expectedDownloadStats
     resp = server.request(
@@ -843,6 +864,9 @@ def testDownloadStats(server, user, app_folder, draft_release_revision_folder, p
 
 @pytest.mark.plugin('slicer_package_manager')
 def testGetReleaseFolder(server, user, release_folder, packages, extensions):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+
     # Release package
     release_package = packages[0]
     assert utilities.getReleaseFolder(release_package)['_id'] == release_folder['_id']
@@ -864,6 +888,9 @@ def testGetReleaseFolder(server, user, release_folder, packages, extensions):
 
 @pytest.mark.plugin('slicer_package_manager')
 def testIsApplicationFolder(server, app_folder, release_folder, draft_release_folder, draft_release_revision_folder):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+
     assert utilities.isApplicationFolder(app_folder)
     assert not utilities.isApplicationFolder(release_folder)
     assert not utilities.isApplicationFolder(draft_release_folder)
@@ -872,6 +899,9 @@ def testIsApplicationFolder(server, app_folder, release_folder, draft_release_fo
 
 @pytest.mark.plugin('slicer_package_manager')
 def testIsReleaseFolder(server, app_folder, release_folder, draft_release_folder, draft_release_revision_folder):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+
     assert not utilities.isReleaseFolder(app_folder)
     assert utilities.isReleaseFolder(release_folder)
     assert not utilities.isReleaseFolder(draft_release_folder)
@@ -880,6 +910,9 @@ def testIsReleaseFolder(server, app_folder, release_folder, draft_release_folder
 
 @pytest.mark.plugin('slicer_package_manager')
 def testIsDraftReleaseFolder(server, app_folder, release_folder, draft_release_folder, draft_release_revision_folder):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+
     assert not utilities.isDraftReleaseFolder(app_folder)
     assert not utilities.isDraftReleaseFolder(release_folder)
     assert not utilities.isDraftReleaseFolder(draft_release_folder)
@@ -998,6 +1031,9 @@ def testApplicationPackageMetadataAutoUpdate(
 )
 @pytest.mark.plugin('slicer_package_manager')
 def testMetadataBuildDate(build_date, expected_build_date, status_code, server, user, app_folder, draft_release_folder):
+    # Fix warnings related to fixtures not explicitly used.
+    assert draft_release_folder
+
     newParams = PACKAGES[0]['meta'].copy()
     if build_date is not None:
         newParams['build_date'] = build_date
