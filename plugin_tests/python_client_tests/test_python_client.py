@@ -125,7 +125,7 @@ EXTENSIONS = [
 def spc(server):
     spc = SlicerPackageClient(apiUrl='http://localhost:8080/api/v1')
     spc.authenticate('admin', 'password')
-    yield spc
+    return spc
 
 
 @pytest.mark.vcr()
@@ -133,7 +133,7 @@ def spc(server):
 def apps(server, spc):
     app1 = spc.createApp(name=APPS[0], desc='random description 1')
     app2 = spc.createApp(name=APPS[1], desc='random description 2')
-    yield [app1, app2]
+    return [app1, app2]
 
 
 @pytest.mark.vcr()
@@ -147,7 +147,7 @@ def releases(server, spc):
             revision=release['revision'],
             desc=release['desc'])
 
-    yield [_create(RELEASES[0]), _create(RELEASES[1])]
+    return [_create(RELEASES[0]), _create(RELEASES[1])]
 
 
 @pytest.mark.vcr()
@@ -168,7 +168,7 @@ def packages(server, spc, releases, files):
         time.sleep(0.1)
         return pkg
 
-    yield [_upload(PACKAGES[0]), _upload(PACKAGES[1]), _upload(PACKAGES[2])]
+    return [_upload(PACKAGES[0]), _upload(PACKAGES[1]), _upload(PACKAGES[2])]
 
 
 @pytest.mark.vcr()
@@ -189,7 +189,7 @@ def extensions(server, spc, releases, files):
         time.sleep(0.1)
         return ext
 
-    yield [_upload(EXTENSIONS[0]), _upload(EXTENSIONS[1]), _upload(EXTENSIONS[2])]
+    return [_upload(EXTENSIONS[0]), _upload(EXTENSIONS[1]), _upload(EXTENSIONS[2])]
 
 
 @pytest.mark.vcr()

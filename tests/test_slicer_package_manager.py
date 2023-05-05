@@ -34,12 +34,12 @@ from . import (
 
 @pytest.fixture(name='user')
 def fixture_user():
-    yield User().createUser('usr0', 'passwd', 'tst', 'usr', 'u@u.com')
+    return User().createUser('usr0', 'passwd', 'tst', 'usr', 'u@u.com')
 
 
 @pytest.fixture(name='collection')
 def fixture_collection(user):
-    yield Collection().createCollection(
+    return Collection().createCollection(
         'testCollection',
         creator=user,
         description='Contain applications',
@@ -48,7 +48,7 @@ def fixture_collection(user):
 
 @pytest.fixture(name='packages_folder')
 def fixture_packages_folder(user, collection):
-    yield Folder().createFolder(
+    return Folder().createFolder(
         parent=collection,
         name=constants.TOP_LEVEL_FOLDER_NAME,
         parentType='Collection',
@@ -74,12 +74,12 @@ def fixture_app_folder(user, packages_folder):
             'extensionPackageNameTemplate': constants.EXTENSION_PACKAGE_TEMPLATE_NAME,
         },
     )
-    yield folder
+    return folder
 
 
 @pytest.fixture(name='draft_release_folder')
 def fixture_draft_release_folder(user, app_folder):
-    yield Folder().createFolder(
+    return Folder().createFolder(
         parent=app_folder,
         name=constants.DRAFT_RELEASE_NAME,
         description='Uploaded each night, always up-to-date',
@@ -99,7 +99,7 @@ def fixture_draft_release_revision_folder(user, draft_release_folder):
         creator=user,
     )
     folder = Folder().setMetadata(folder, {'revision': DRAFT_RELEASES[0]['revision']})
-    yield folder
+    return folder
 
 
 @pytest.fixture(name='release_folder')
@@ -113,7 +113,7 @@ def fixture_release_folder(user, app_folder):
         creator=user,
     )
     folder = Folder().setMetadata(folder, {'revision': RELEASES[0]['revision']})
-    yield folder
+    return folder
 
 
 @pytest.fixture(name='release_extensions')
@@ -136,7 +136,7 @@ def fixture_release_extensions(server, user, app_folder, release_folder, tmpdir,
         extensions_folder = Folder().load(extension['folderId'], user=user)
         assert ObjectId(extensions_folder['parentId']) == release_folder['_id']
 
-    yield extensions
+    return extensions
 
 
 @pytest.fixture(name='draft_extensions')
@@ -157,7 +157,7 @@ def fixture_draft_extensions(server, user, app_folder, release_folder, draft_rel
         isRelease = DRAFT_EXTENSIONS[index]['meta']['app_revision'] == release_folder['meta']['revision']
         assert not isRelease
 
-    yield extensions
+    return extensions
 
 
 @pytest.fixture(name='extensions')
@@ -165,7 +165,7 @@ def fixture_extensions(release_extensions, draft_extensions):
     extensions = []
     extensions.extend(release_extensions)
     extensions.extend(draft_extensions)
-    yield extensions
+    return extensions
 
 
 @pytest.fixture(name='release_packages')
@@ -187,7 +187,7 @@ def fixture_release_packages(server, user, app_folder, release_folder, tmpdir, f
         assert ObjectId(package['folderId']) == release_folder['_id']
         assert package['meta']['release'] == release_folder['name']
 
-    yield packages
+    return packages
 
 
 @pytest.fixture(name='draft_packages')
@@ -208,7 +208,7 @@ def fixture_draft_packages(server, user, app_folder, release_folder, draft_relea
         assert not isRelease
         assert 'release' not in package['meta']
 
-    yield packages
+    return packages
 
 
 @pytest.fixture(name='packages')
@@ -216,7 +216,7 @@ def fixture_packages(release_packages, draft_packages):
     packages = []
     packages.extend(release_packages)
     packages.extend(draft_packages)
-    yield packages
+    return packages
 
 
 @pytest.mark.plugin('slicer_package_manager')

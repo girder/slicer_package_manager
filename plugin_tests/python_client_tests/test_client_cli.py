@@ -194,7 +194,7 @@ def apps(server):
     res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"\w{24} \(%s\) CREATED" % re.escape(APPS[1]), res.output)
-    yield
+    return
 
 
 @pytest.mark.vcr()
@@ -205,7 +205,7 @@ def releases(server):
     res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) CREATED" % (RELEASES[1]['name'], RELEASES[1]['revision']), res.output)
-    yield
+    return
 
 
 @pytest.mark.vcr()
