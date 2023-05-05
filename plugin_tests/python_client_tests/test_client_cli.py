@@ -194,7 +194,7 @@ def apps(server):
     res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"\w{24} \(%s\) CREATED" % re.escape(APPS[1]), res.output)
-    return
+    return [APPS[0], APPS[1]]
 
 
 @pytest.mark.vcr()
@@ -205,7 +205,7 @@ def releases(server):
     res = _cli_runner_invoke(main, cmd)
     assert res.exit_code == 0
     assert re.match(r"%s %s \(\w{24}\) CREATED" % (RELEASES[1]['name'], RELEASES[1]['revision']), res.output)
-    return
+    return [RELEASES[1]]
 
 
 @pytest.mark.vcr()
@@ -227,6 +227,7 @@ def packages(server, apps, files):
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[3])), res.output)
 
+    return [PACKAGES[0], PACKAGES[1], PACKAGES[2], PACKAGES[3]]
 
 @pytest.mark.vcr()
 @pytest.fixture
@@ -246,6 +247,7 @@ def extensions(server, apps, files):
     res = _cli_upload_extension(EXTENSIONS[3])
     assert res.exit_code == 0
     assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[3])), res.output)
+    return [EXTENSIONS[0], EXTENSIONS[1], EXTENSIONS[2], EXTENSIONS[3]]
 
 
 @pytest.mark.vcr()
