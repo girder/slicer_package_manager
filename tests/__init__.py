@@ -224,9 +224,9 @@ def computeContentChecksum(algo, content):
         msg = f"unsupported hashing algorithm {algo}"
         raise ValueError(msg)
 
-    hash = hashlib.new(algo)
-    hash.update(content)
-    return hash.hexdigest()
+    digest = hashlib.new(algo)
+    digest.update(content)
+    return digest.hexdigest()
 
 
 def computeFileChecksum(algo, filePath):
@@ -245,13 +245,13 @@ def computeFileChecksum(algo, filePath):
         raise ValueError(msg)
 
     with open(filePath, 'rb') as content:
-        hash = hashlib.new(algo)
+        digest = hashlib.new(algo)
         while True:
             chunk = content.read(8192)
             if not chunk:
                 break
-            hash.update(chunk)
-        return hash.hexdigest()
+            digest.update(chunk)
+        return digest.hexdigest()
 
 
 class ExternalData:
