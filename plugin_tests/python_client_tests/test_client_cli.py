@@ -186,16 +186,16 @@ def _teardown(server):
 @pytest.fixture
 def apps(server):
     assert server  # Fix warnings related to fixtures not explicitly used.
-    cmd = list(CLI_COMMON_ARGS)
-    cmd.extend(['app', 'create', APPS[0]])
-    res = _cli_runner_invoke(main, cmd)
-    assert res.exit_code == 0
-    assert re.match(r"\w{24} \(%s\) CREATED" % re.escape(APPS[0]), res.output)
-    cmd = list(CLI_COMMON_ARGS)
-    cmd.extend(['app', 'create', APPS[1]])
-    res = _cli_runner_invoke(main, cmd)
-    assert res.exit_code == 0
-    assert re.match(r"\w{24} \(%s\) CREATED" % re.escape(APPS[1]), res.output)
+
+    def _create(app_name):
+        cmd = list(CLI_COMMON_ARGS)
+        cmd.extend(['app', 'create', app_name])
+        res = _cli_runner_invoke(main, cmd)
+        assert res.exit_code == 0
+        assert re.match(r"\w{24} \(%s\) CREATED" % re.escape(app_name), res.output)
+        return app_name
+
+    return [_create(APPS[0]), _create(APPS[1])]
     return [APPS[0], APPS[1]]
 
 
@@ -203,11 +203,16 @@ def apps(server):
 @pytest.fixture
 def releases(server):
     assert server  # Fix warnings related to fixtures not explicitly used.
-    cmd = list(CLI_COMMON_ARGS)
-    cmd.extend(['release', 'create', RELEASES[1]['app_name'], RELEASES[1]['name'], RELEASES[1]['revision']])
-    res = _cli_runner_invoke(main, cmd)
-    assert res.exit_code == 0
-    assert re.match(r"%s %s \(\w{24}\) CREATED" % (RELEASES[1]['name'], RELEASES[1]['revision']), res.output)
+
+    def _create(release):
+        cmd = list(CLI_COMMON_ARGS)
+        cmd.extend(['release', 'create', release['app_name'], release['name'], release['revision']])
+        res = _cli_runner_invoke(main, cmd)
+        assert res.exit_code == 0
+        assert re.match(r"%s %s \(\w{24}\) CREATED" % (release['name'], release['revision']), res.output)
+        return release
+
+    return [_create(RELEASES[1])]
     return [RELEASES[1]]
 
 
@@ -219,22 +224,13 @@ def packages(server, apps, files):
     assert apps
     assert files
 
-    res = _cli_upload_package(PACKAGES[0])
-    assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[0])), res.output)
+    def _upload(package):
+        res = _cli_upload_package(package)
+        assert res.exit_code == 0
+        assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(package)), res.output)
+        return package
 
-    res = _cli_upload_package(PACKAGES[1])
-    assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[1])), res.output)
-
-    res = _cli_upload_package(PACKAGES[2])
-    assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[2])), res.output)
-
-    res = _cli_upload_package(PACKAGES[3])
-    assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % (getAppPkgName(PACKAGES[3])), res.output)
-
+    return [_upload(PACKAGES[0]), _upload(PACKAGES[1]), _upload(PACKAGES[2]), _upload(PACKAGES[3])]
     return [PACKAGES[0], PACKAGES[1], PACKAGES[2], PACKAGES[3]]
 
 @pytest.mark.vcr()
@@ -245,21 +241,13 @@ def extensions(server, apps, files):
     assert apps
     assert files
 
-    res = _cli_upload_extension(EXTENSIONS[0])
-    assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[0])), res.output)
+    def _upload(extension):
+        res = _cli_upload_extension(extension)
+        assert res.exit_code == 0
+        assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(extension)), res.output)
+        return extension
 
-    res = _cli_upload_extension(EXTENSIONS[1])
-    assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[1])), res.output)
-
-    res = _cli_upload_extension(EXTENSIONS[2])
-    assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[2])), res.output)
-
-    res = _cli_upload_extension(EXTENSIONS[3])
-    assert res.exit_code == 0
-    assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(EXTENSIONS[3])), res.output)
+    return [_upload(EXTENSIONS[0]), _upload(EXTENSIONS[1]), _upload(EXTENSIONS[2]), _upload(EXTENSIONS[3])]
     return [EXTENSIONS[0], EXTENSIONS[1], EXTENSIONS[2], EXTENSIONS[3]]
 
 
