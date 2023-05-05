@@ -34,6 +34,8 @@ Internal
     image `girder/girder_test:latest <https://hub.docker.com/r/girder/girder_test/tags>`_  built from
     `girder/.circleci/Dockerfile <https://github.com/girder/girder/blob/d994d93a00257a17eeeab7e0b6fa4a54f5658550/.circleci/Dockerfile>`_.
 
+* Re-factor and simlify code based on the newly introduced pre-commit hooks and ruff checks (``codespell``, ``pyupgrade`` and ``ruff``).
+
 Tests
 -----
 
@@ -43,6 +45,35 @@ Tests
 
   * Add `pyupgrade <https://github.com/asottile/pyupgrade>`_ pre-commit hook specifying "--py36-plus"
     and updates codes accordingly.
+
+  * Add `ruff <https://beta.ruff.rs/docs/usage/#pre-commit>`_ pre-commit hook enabling the following checks:
+    ::
+
+      "A",           # flake8-builtins
+      "ARG",         # flake8-unused-arguments
+      "B",           # flake8-bugbear
+      "BLE",         # flake8-blind-except
+      "C4",          # flake8-comprehensions
+      "COM",         # flake8-commas
+      "D",           # pydocstyle (aka flake8-docstrings)
+      "E", "F", "W", # flake8
+      "EXE",         # flake8-executable
+      "EM",          # flake8-errmsg
+      "G",           # flake8-logging-format
+      "ICN",         # flake8-import-conventions
+      "ISC",         # flake8-implicit-str-concat
+      "N",           # pep8-naming
+      "PIE",         # flake8-pie
+      "PGH",         # pygrep-hooks
+      "PL",          # pylint
+      "PT",          # flake8-pytest-style
+      "Q",           # flake8-quotes
+      "RSE",         # flake8-raise
+      "RUF",         # Ruff-specific
+      "S",           # flake8-bandit
+      "SIM",         # flake8-simplify
+      "SLF",         # flake8-self
+      "YTT",         # flake8-2020
 
 
 0.7.1
