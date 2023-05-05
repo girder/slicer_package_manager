@@ -17,9 +17,11 @@ select = [
   "PGH",         # pygrep-hooks
   "PL",          # pylint
   "Q",           # flake8-quotes
+  "RSE",         # flake8-raise
   "RUF",         # Ruff-specific
   "S",           # flake8-bandit
   "SIM",         # flake8-simplify
+  "SLF",         # flake8-self
   "YTT",         # flake8-2020
 ]
 extend-exclude = [
