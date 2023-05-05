@@ -173,7 +173,7 @@ def _cli_upload_extension(extension):
 
 @pytest.mark.vcr()
 @pytest.fixture(autouse=True)
-def TearDown(server):
+def _teardown(server):
     yield
     for idx in range(len(APPS)):
         cmd = list(CLI_COMMON_ARGS)
