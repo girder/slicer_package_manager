@@ -418,7 +418,7 @@ def testUploadPackagesCLI(server, apps, files):
 
 
 @pytest.mark.parametrize(
-    'build_date,exit_code', [
+    ('build_date', 'exit_code'), [
         ('2021-06-21T00:00:00+00:00', 0),
         ('abcdef', 1),
     ],

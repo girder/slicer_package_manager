@@ -920,7 +920,7 @@ def testIsDraftReleaseFolder(server, app_folder, release_folder, draft_release_f
 
 
 @pytest.mark.parametrize(
-    "action,method,src_folder,dest_folder,items,release_before,release_after",
+    ('action', 'method', 'src_folder', 'dest_folder', 'items', 'release_before', 'release_after'),
     [
         (
             'copy',
@@ -1010,7 +1010,7 @@ def testApplicationPackageMetadataAutoUpdate(
 
 
 @pytest.mark.parametrize(
-    'build_date,expected_build_date,status_code', [
+    ('build_date', 'expected_build_date', 'status_code'), [
         (None, None, 200),
         ('2021-06-21 22:00:26', '2021-06-21T22:00:26+00:00', 200),
         ('2021-06-21T22:00:26+0000', '2021-06-21T22:00:26+00:00', 200),

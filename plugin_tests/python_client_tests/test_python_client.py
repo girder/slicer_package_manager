@@ -456,7 +456,7 @@ def testUploadAndDownloadApplicationPackage(server, spc, apps, releases, files):
 
 
 @pytest.mark.parametrize(
-    'build_date,expectation', [
+    ('build_date', 'expectation'), [
         ('2021-06-21T00:00:00+00:00', does_not_raise()),
         ('abcdef', pytest.raises(HttpError, match="Parameter \\\\\"build_date\\\\\" is incorrectly formatted.")),
     ],
