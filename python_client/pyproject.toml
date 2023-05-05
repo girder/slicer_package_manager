@@ -29,7 +29,9 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
+    "pytest",
     "pytest-vcr",
+    "pytest-girder",
 ]
 
 [project.urls]

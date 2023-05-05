@@ -10,6 +10,12 @@ Next Release
 
 Bug fixes
 ---------
+
+Python Client
+^^^^^^^^^^^^^
+
+* Fix python client test requirements adding "pytest" and "pytest-girder".
+
 Server
 ^^^^^^
 
