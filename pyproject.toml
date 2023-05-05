@@ -17,6 +17,7 @@ select = [
   "PIE",         # flake8-pie
   "PGH",         # pygrep-hooks
   "PL",          # pylint
+  "PT",          # flake8-pytest-style
   "Q",           # flake8-quotes
   "RSE",         # flake8-raise
   "RUF",         # Ruff-specific
@@ -62,6 +63,9 @@ line-length = 120
 
 [tool.ruff.flake8-builtins]
 builtins-ignorelist = ["copyright", "license"]
+
+[tool.ruff.flake8-pytest-style]
+fixture-parentheses = false
 
 [tool.ruff.flake8-unused-arguments]
 ignore-variadic-names = true
