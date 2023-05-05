@@ -5,8 +5,8 @@ def extractID(file):
     with open(file) as f:
         res = re.search(r'\([a-z0-9]*\)', f.read())
         if res:
-            id = res.group(0)
-            return id[1:-1]
+            _id = res.group(0)
+            return _id[1:-1]
 
 
 if __name__ == '__main__':

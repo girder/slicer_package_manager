@@ -1173,9 +1173,9 @@ def _deleteRelease(server, identifier, _user=None, _app=None):
 #     return uploadedFile
 
 
-def _downloadFile(server, id, _user=None):
+def _downloadFile(server, _id, _user=None):
     resp = server.request(
-        path='/file/%s/download' % id,
+        path="/file/%s/download" % _id,
         method='GET',
         user=_user,
         isJson=False)

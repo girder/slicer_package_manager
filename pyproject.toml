@@ -1,5 +1,6 @@
 [tool.ruff]
 select = [
+  "A",           # flake8-builtins
   "B",           # flake8-bugbear
   "BLE",         # flake8-blind-except
   "C4",          # flake8-comprehensions
@@ -55,3 +56,9 @@ extend-ignore = [
 ]
 target-version = "py37"
 line-length = 120
+
+[tool.ruff.flake8-builtins]
+builtins-ignorelist = ["copyright", "license"]
+
+[tool.ruff.per-file-ignores]
+"python_client/slicer_package_manager_client/__init__.py" = ["A002"]  # Argument `all` is shadowing a python builtin
