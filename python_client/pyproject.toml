@@ -19,7 +19,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.7"
 dynamic = ["version"]
 dependencies = [
     "click>=6.7",
