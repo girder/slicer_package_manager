@@ -222,9 +222,9 @@ def testCreateApp(server, spc):
     assert app1['name'] == APPS[2]
 
     # Try to create the same application
-    with pytest.raises(Exception) as excinfo:
+    expected_msg = f'The Application "{APPS[2]}" already exist.'
+    with pytest.raises(SlicerPackageManagerError, match=expected_msg):
         spc.createApp(name=APPS[2])
-    assert 'The Application "%s" already exist.' % APPS[2] in str(excinfo.value)
 
 
 @pytest.mark.vcr()
@@ -259,9 +259,9 @@ def testDeleteApp(server, spc, apps):
     assert deleted_app['_id'] == apps[1]['_id']
 
     # Try to delete the same deleted app
-    with pytest.raises(Exception) as excinfo:
+    expected_msg = f'The Application "{apps[1]["name"]}" doesn\'t exist.'
+    with pytest.raises(SlicerPackageManagerError, match=expected_msg):
         spc.deleteApp(name=apps[1]['name'])
-    assert 'The Application "%s" doesn\'t exist.' % apps[1]['name'] in str(excinfo.value)
 
 
 @pytest.mark.vcr()
@@ -275,10 +275,10 @@ def testCreateRelease(server, spc, apps):
     assert release['meta']['revision'] == RELEASES[0]['revision']
 
     # Try to create the same release
-    with pytest.raises(Exception) as excinfo:
+    expected_msg = f'The release "{RELEASES[0]["name"]}" already exist.'
+    with pytest.raises(SlicerPackageManagerError, match=expected_msg):
         spc.createRelease(
             app_name=apps[0]['name'], name=RELEASES[0]['name'], revision=RELEASES[0]['revision'])
-    assert 'The release "%s" already exist.' % RELEASES[0]['name'] in str(excinfo.value)
 
 
 @pytest.mark.vcr()
@@ -312,9 +312,9 @@ def testDeleteRelease(server, spc, apps, releases):
     assert deleted_release['_id'] == releases[1]['_id']
 
     # Try to delete the same deleted release
-    with pytest.raises(Exception) as excinfo:
+    expected_msg=f'The release "{releases[1]["name"]}" doesn\'t exist.'
+    with pytest.raises(SlicerPackageManagerError, match=expected_msg):
         spc.deleteRelease(app_name=apps[0]['name'], name=releases[1]['name'])
-    assert 'The release "%s" doesn\'t exist.' % releases[1]['name'] in str(excinfo.value)
 
 
 @pytest.mark.vcr()
@@ -366,9 +366,10 @@ def testDeleteDraftRelease(server, spc, apps, packages):
     assert deleted_draft['meta']['revision'] == DRAFT_RELEASES[1]['revision']
 
     # Try to delete the same deleted draft release
-    with pytest.raises(Exception) as excinfo:
+    msg=f'The release with the revision "{DRAFT_RELEASES[1]["revision"]}" doesn\'t exist.'
+    with pytest.raises(SlicerPackageManagerError, match=msg):
         spc.deleteDraftRelease(app_name=apps[0]['name'], revision=DRAFT_RELEASES[1]['revision'])
-    assert 'The release with the revision "%s" doesn\'t exist.' % DRAFT_RELEASES[1]['revision'] in str(excinfo.value)
+
 
 
 @pytest.mark.vcr()
@@ -525,10 +526,10 @@ def testDeletePackage(server, spc, apps, packages):
     assert deleted_pkg['_id'] == packages[0]['_id']
 
     # Try to delete the same deleted package
-    with pytest.raises(Exception) as excinfo:
+    expected_msg = f'The package "{packages[0]["name"]}" doesn\'t exist.'
+    with pytest.raises(SlicerPackageManagerError, match=expected_msg):
         spc.deleteApplicationPackage(
             app_name=apps[0]['name'], id_or_name=packages[0]['name'])
-    assert 'The package "%s" doesn\'t exist.' % packages[0]['name'] in str(excinfo.value)
 
 
 @pytest.mark.vcr()
@@ -656,7 +657,7 @@ def testDeleteExtension(server, spc, apps, extensions):
     assert deleted_ext['_id'] == extensions[0]['_id']
 
     # Try to delete the same deleted extension
-    with pytest.raises(Exception) as excinfo:
+    expected_msg = f'The extension "{extensions[0]["name"]}" doesn\'t exist.'
+    with pytest.raises(SlicerPackageManagerError, match=expected_msg):
         spc.deleteExtension(
             app_name=apps[0]['name'], id_or_name=extensions[0]['name'])
-    assert 'The extension "%s" doesn\'t exist.' % extensions[0]['name'] in str(excinfo.value)
