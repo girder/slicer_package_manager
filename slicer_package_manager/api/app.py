@@ -224,7 +224,8 @@ class App(Resource):
         :param app_folder: Application folder loaded using ``app_id`` route parameter.
         :return: Confirmation message with the deleted application name
         """
-        return utilities.deleteFolder(app_folder, progress, self.getCurrentUser())
+        utilities.deleteFolder(app_folder, progress, self.getCurrentUser())
+        return {'message': 'Deleted application %s.' % app_folder['name']}
 
     @autoDescribeRoute(
         Description('Create a new release.')
@@ -412,7 +413,8 @@ class App(Resource):
             else:
                 release = release_folder[0]
 
-        return utilities.deleteFolder(release, progress, self.getCurrentUser())
+        utilities.deleteFolder(release, progress, self.getCurrentUser())
+        return {'message': 'Deleted release %s.' % release['name']}
 
     @autoDescribeRoute(
         Description('List or search available extensions.')

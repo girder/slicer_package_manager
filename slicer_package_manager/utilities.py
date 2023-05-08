@@ -172,7 +172,6 @@ def deleteFolder(folder, progress, user):
         if progress:
             ctx.update(total=Folder().subtreeCount(folder))
         Folder().remove(folder, progress=ctx)
-    return folder
 
 
 def checkAccess(app_id, user):
