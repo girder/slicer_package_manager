@@ -361,7 +361,7 @@ def testDeleteApp(server, user):
         user=user,
     )
     assertStatusOk(resp)
-    assert resp.json['_id'] == app['_id']
+    assert resp.json['message'] == f"Deleted application {app['name']}."
     # Try to get the application should failed
     resp = server.request(
         path='/app',
@@ -1148,7 +1148,7 @@ def _deleteRelease(server, identifier, _user=None, _app=None):
         user=_user,
     )
     assertStatusOk(resp)
-    assert resp.json['_id'] == release['_id']
+    assert resp.json['message'] == f"Deleted release {release['name']}."
     # Try to get the release should failed
     resp = server.request(
         path='/app/%s/release' % _app['_id'],

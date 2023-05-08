@@ -21,7 +21,11 @@ Python Client
 Server
 ^^^^^^
 
-* Update extension & package delete endpoints to explicitly check that user can access the associated application folder.
+* Update extension & package delete endpoints
+
+  * Explicitly check that user can access the associated application folder.
+
+  * Return a confirmation message.
 
 Internal
 --------
