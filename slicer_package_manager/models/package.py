@@ -7,8 +7,8 @@ from girder.models.model_base import ValidationException
 
 class Package(Item):
     """
-    The ``Package`` class derive from the ``Item`` model in Girder and it uses to embedded
-    packages binary files.
+    The ``Package`` class derives from the ``Item`` model in Girder and it embeds
+    package binary files.
     """
 
     def initialize(self):

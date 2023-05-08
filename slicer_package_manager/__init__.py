@@ -53,6 +53,12 @@ def _onDownloadFileComplete(event):
 
 
 def _onItemSavedOrCopied(event):
+    """
+    Set or update "release" metadata when an application package item is
+    moved or copied into or out of a release folder.
+
+    See :func:`utilities.isSlicerPackages()` and :func:`utilities.getReleaseFolder()`.
+    """
     item = Item().load(event.info['_id'], force=True)
 
     if not utilities.isSlicerPackages(item):
@@ -84,6 +90,11 @@ def _onItemSavedOrCopied(event):
 
 
 def _onReleaseFolderNameUpdated(event):
+    """
+    Update "release" metadata on all application package items in a release folder when its name is changed.
+
+    See :func:`utilities.isReleaseFolder()`.
+    """
     folder = Folder().load(event.info['_id'], force=True)
     if not utilities.isReleaseFolder(folder):
         return
