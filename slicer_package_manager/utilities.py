@@ -6,6 +6,7 @@ from . import constants
 
 
 def isSlicerPackages(item):
+    """Return True if the item represents either an application or an extension package."""
     if 'meta' in item and all(k in item['meta'] for k in ('os', 'arch', 'baseName', 'revision')):
         return True
     return False
@@ -165,6 +166,16 @@ def getReleaseFolder(item, force=False):
 
 
 def deleteFolder(folder, progress, user):
+    """Recursively delete a folder by ID.
+
+    :param folder: The folder document to delete.
+    :type folder: dict
+    :param progress: A progress context to record progress on.
+    :type progress: girder.utility.progress.ProgressContext or None.
+    :param user: The user creating the progress.
+    :type user: dict
+    :return:
+    """
     with ProgressContext(progress, user=user,
                          title='Deleting folder %s' % folder['name'],
                          message='Calculating folder size...') as ctx:

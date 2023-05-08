@@ -7,7 +7,7 @@ from girder.models.model_base import ValidationException
 
 class Extension(Item):
     """
-    The ``Extension`` class derive from the ``Item`` model in Girder and it uses to embedded
+    The ``Extension`` class derives from the ``Item`` model in Girder and it embeds
     extension binary files.
     """
 
