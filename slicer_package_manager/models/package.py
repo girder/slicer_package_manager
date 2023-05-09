@@ -66,8 +66,15 @@ class Package(Item):
 
         # Validate the meta field
         if doc.get('meta'):
-            base_params = {'app_id', 'os', 'arch', 'repository_type', 'repository_url',
-                           'revision', 'baseName'}
+            base_params = {
+                'app_id',
+                'os',
+                'arch',
+                'repository_type',
+                'repository_url',
+                'revision',
+                'baseName',
+            }
             specs = []
             for meta in base_params:
                 specs.append({
