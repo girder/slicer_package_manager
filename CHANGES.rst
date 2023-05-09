@@ -8,6 +8,23 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+New Features
+------------
+
+Server
+^^^^^^
+
+* Associate application & extension package item with checksum.
+
+   * After uploading an application or extension package, the item metadata will include `sha512` metadata entry.
+
+   * After uploading additional files, the item metadata remains unchanged.
+
+   * After removing the second to last files, the `sha512` item metadata is updated to match the checksum of the
+     last file.
+
+   * After removing all the files, the `sha512` item metadata is set to an empty string.
+
 Bug fixes
 ---------
 
