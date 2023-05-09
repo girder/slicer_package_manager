@@ -25,6 +25,11 @@ Server
 
    * After removing all the files, the `sha512` item metadata is set to an empty string.
 
+Documentation
+-------------
+
+* Remove obsolete ``cleanNightly.sh`` script and update faq.
+
 Bug fixes
 ---------
 
