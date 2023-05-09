@@ -1,5 +1,6 @@
 from girder.constants import AccessType
 from girder.models.folder import Folder
+from girder.models.item import Item
 from girder.utility.progress import ProgressContext
 
 from . import constants
@@ -10,6 +11,15 @@ def isSlicerPackages(item):
     if 'meta' in item and all(k in item['meta'] for k in ('os', 'arch', 'baseName', 'revision')):
         return True
     return False
+
+
+def isChildOfSlicerPackages(file_item):
+    """
+    Return True if the file is included in an item corresponding to either an application or
+    an extension package.
+    """
+    parent_item = Item().load(file_item['itemId'], force=True)
+    return isSlicerPackages(parent_item)
 
 
 def isApplicationFolder(folder):
