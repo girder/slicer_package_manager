@@ -7,6 +7,7 @@ with open('README.rst') as readme_file:
 
 requirements = [
     'girder>=3.0.0a1',
+    'girder-hashsum-download>=3.0.0a1',
 ]
 
 setup(

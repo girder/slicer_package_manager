@@ -74,6 +74,7 @@ class Package(Item):
                 'repository_url',
                 'revision',
                 'baseName',
+                'sha512',
             }
             specs = []
             for meta in base_params:

@@ -75,6 +75,7 @@ class Extension(Item):
                 'app_revision',
                 'baseName',
                 'description',
+                'sha512',
             }
             specs = []
             for meta in base_params:

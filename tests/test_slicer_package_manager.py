@@ -8,6 +8,7 @@ from bson.objectid import ObjectId
 from girder.models.collection import Collection
 from girder.models.folder import Folder
 from girder.models.file import File
+from girder.models.item import Item
 from girder.models.user import User
 
 from pytest_girder.assertions import assertStatus, assertStatusOk
@@ -1009,6 +1010,105 @@ def testApplicationPackageMetadataAutoUpdate(
     assert item_after['meta'].get('release', None) == release_after
 
 
+@pytest.mark.plugin('slicer_package_manager')
+def testApplicationPackageMetadataChecksumUpdate_1(server, user, packages):
+    """Replace existing file and verify checksum is updated."""
+    item = Item().load(packages[0]['_id'], force=True)
+    file = list(Item().childFiles(item))[0]
+
+    # Replace file
+    updated_contents = "you've changed!"
+    _replaceFile(server, file["_id"], updated_contents, user)
+
+    # Confirm item checksum was updated
+    item_after = Item().load(item['_id'], force=True)
+    expected_checksum = computeContentChecksum("SHA512", updated_contents.encode("utf8"))
+    assert item_after["meta"]["sha512"] == expected_checksum
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testApplicationPackageMetadataChecksumUpdate_2(server, user, packages, tmpdir):
+    """Upload an additional file and verify checksum remains the same."""
+    item = Item().load(packages[1]['_id'], force=True)
+    assert Item().childFiles(item).count() == 1
+    item_first_file_sha512 = item["meta"]["sha512"]
+
+    # Upload additional file
+    filePath = tmpdir / "additional.tar.gz"
+    with open(filePath, "w") as content:
+        content.write("new file contents")
+    additional_file_sha512 = computeFileChecksum("SHA512", filePath)
+    assert item_first_file_sha512 != additional_file_sha512
+    with open(filePath) as content:
+        server.uploadFile(filePath, content.read(), user, item, parentType="item")
+
+    # Check the additional file was uploaded
+    item_after = Item().load(item['_id'], force=True)
+    assert Item().childFiles(item_after).count() == 2
+
+    # Confirm item checksum is unchanged
+    assert item_first_file_sha512 == item_after["meta"]["sha512"]
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testApplicationPackageMetadataChecksumUpdate_3(server, user, packages, tmpdir):
+    """Upload an additional file, remove the first one and verify the checksum matches
+    the one of the additional file.
+    """
+    item = Item().load(packages[2]['_id'], force=True)
+    assert Item().childFiles(item).count() == 1
+    item_first_file_sha512 = item["meta"]["sha512"]
+    item_first_file_id = list(Item().childFiles(item))[0]["_id"]
+
+    # Upload additional file
+    filePath = tmpdir / "additional.tar.gz"
+    with open(filePath, "w") as content:
+        content.write("new file contents")
+    additional_file_sha512 = computeFileChecksum("SHA512", filePath)
+    assert item_first_file_sha512 != additional_file_sha512
+    with open(filePath) as content:
+        server.uploadFile(filePath, content.read(), user, item, parentType="item")
+
+    # Check the additional file was uploaded
+    item_after = Item().load(item['_id'], force=True)
+    assert Item().childFiles(item_after).count() == 2
+
+    # Remove the first file
+    resp = server.request(
+        path='/file/%s' % item_first_file_id,
+        method='DELETE',
+        user=user,
+    )
+    assertStatusOk(resp)
+    item_after = Item().load(item['_id'], force=True)
+    assert Item().childFiles(item_after).count() == 1
+
+    # Confirm the item checksum was updated
+    assert item_after["meta"]["sha512"] != item_first_file_sha512
+    assert item_after["meta"]["sha512"] == additional_file_sha512
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testApplicationPackageMetadataChecksumUpdate_4(server, user, packages):
+    """Delete the last file and verify the checksum is set to an empty string."""
+    item = Item().load(packages[0]['_id'], force=True)
+    assert Item().childFiles(item).count() == 1
+    item_file_id = list(Item().childFiles(item))[0]["_id"]
+
+    # Remove the file
+    resp = server.request(
+        path='/file/%s' % item_file_id,
+        method='DELETE',
+        user=user,
+    )
+    assertStatusOk(resp)
+    item_after = Item().load(item['_id'], force=True)
+    assert Item().childFiles(item_after).count() == 0
+
+    # Confirm the item checksum was updated
+    assert not item_after["meta"]["sha512"]
+
+
 @pytest.mark.parametrize(
     ('build_date', 'expected_build_date', 'status_code'), [
         (None, None, 200),
@@ -1219,6 +1319,31 @@ def _downloadFile(server, _id, _user=None):
     return getResponseBody(resp, text=False)
 
 
+def _replaceFile(server, _id, contents, _user):
+
+    upload = server.request(
+        path='/file/%s/contents' % _id,
+        method='PUT',
+        user=_user,
+        params={
+            'size': len(contents),
+        })
+    assertStatusOk(upload)
+
+    resp = server.request(
+        path='/file/chunk',
+        method='POST',
+        user=_user,
+        body=contents,
+        params={
+            'uploadId': upload.json['_id'],
+            'offset': 0,
+        },
+        type='text/plain')
+    assertStatusOk(resp)
+    return getResponseBody(resp, text=False)
+
+
 def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=None, _app=None, status_code=200):
     resp = server.request(
         path='/app/%s/%s' % (_app['_id'], packageType),
@@ -1234,9 +1359,10 @@ def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=Non
         return {k: v for (k, v) in metadata.items() if k not in (
             'app_id',
             'build_date',
+            'sha512',
         )}
 
-    # assert every other field (besides unique ones) are identical
+    # assert every other fields (besides unique or computed ones) are identical
     assert _filtered(resp.json['meta']) == _filtered(params)
 
     if filePath:
@@ -1260,6 +1386,10 @@ def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=Non
     assertStatusOk(resp)
 
     assert len(resp.json) == 1
+
+    if filePath:
+        item = resp.json[0]
+        assert item['meta']['sha512'] == local_checksum
 
     return resp.json[0]
 
