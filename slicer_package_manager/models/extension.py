@@ -65,8 +65,17 @@ class Extension(Item):
 
         # Validate the meta field
         if doc.get('meta'):
-            base_params = {'app_id', 'os', 'arch', 'revision', 'repository_type', 'repository_url',
-                           'app_revision', 'baseName', 'description'}
+            base_params = {
+                'app_id',
+                'os',
+                'arch',
+                'revision',
+                'repository_type',
+                'repository_url',
+                'app_revision',
+                'baseName',
+                'description',
+            }
             specs = []
             for meta in base_params:
                 specs.append({
@@ -81,9 +90,17 @@ class Extension(Item):
                     raise ValidationException(msg)
             extraMeta = set(doc['meta'].keys()) - base_params
             if extraMeta:
-                extra_params = {'icon_url', 'development_status', 'category',
-                                'enabled', 'homepage', 'screenshots', 'contributors', 'dependency',
-                                'license'}
+                extra_params = {
+                    'icon_url',
+                    'development_status',
+                    'category',
+                    'enabled',
+                    'homepage',
+                    'screenshots',
+                    'contributors',
+                    'dependency',
+                    'license',
+                }
                 if extraMeta - extra_params:
                     msg = f'Extension has extra fields: {", ".join(sorted(extraMeta))}.'
                     raise ValidationException(msg)
