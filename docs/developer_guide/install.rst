@@ -35,17 +35,23 @@ Install from Git
 To easily develop the Slicer Package Manager, you will need to use some of Girder commands.
 So let's start by installing Girder::
 
-    $ git clone --branch 2.x-maintenance https://github.com/girder/girder.git
+    $ git clone https://github.com/girder/girder.git
     $ cd girder
-
-To run the server, you must install some external Python package dependencies::
-
     $ pip install -e .
+
+
+Then, let's install the Slicer Package Manager server plugin:
+
+    $ git clone https://github.com/girder/slicer_package_manager
+    $ cd slicer_package_manager
+    $ pip install -e .[test]
+
 
 This will provide you all the package needed to run the development environment. Then install
 the front-end web client development dependencies::
 
-    $ girder-install web --dev
+    $ girder build --dev
+
 
 Run
 ---
@@ -56,6 +62,6 @@ To run the server, first make sure the Mongo daemon is running. To manually star
 
 Then to run Girder itself, just use the following command::
 
-    $ girder-server
+    $ girder-server --dev
 
 The application should be accessible on http://localhost:8080/ in your web browser.
