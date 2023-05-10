@@ -62,6 +62,8 @@ Internal
 
 * Re-factor and simplify code based on the newly introduced pre-commit hooks and ruff checks (``codespell``, ``pyupgrade`` and ``ruff``).
 
+* Add type annotations to python client CLI.
+
 Tests
 -----
 

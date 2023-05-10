@@ -212,7 +212,7 @@ def package(_sc):
               show_default=False,
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_createApp(sc, *args, **kwargs):
+def _cli_createApp(sc: SlicerPackageClient, *args, **kwargs):
     """
     Create a new application.
     """
@@ -232,7 +232,7 @@ def _cli_createApp(sc, *args, **kwargs):
               help='Name of the application',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_listApp(sc, *args, **kwargs):
+def _cli_listApp(sc: SlicerPackageClient, *args, **kwargs):
     """
     List all the applications.
     """
@@ -253,7 +253,7 @@ def _cli_listApp(sc, *args, **kwargs):
               show_default=True,
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_deleteApp(sc, *args, **kwargs):
+def _cli_deleteApp(sc: SlicerPackageClient, *args, **kwargs):
     """
     Delete an application.
     """
@@ -276,7 +276,7 @@ def _cli_deleteApp(sc, *args, **kwargs):
               help='Description of the release',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_createRelease(sc, *args, **kwargs):
+def _cli_createRelease(sc: SlicerPackageClient, *args, **kwargs):
     """
     Create a new release.
     """
@@ -294,7 +294,7 @@ def _cli_createRelease(sc, *args, **kwargs):
               show_default=True,
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_listRelease(sc, *args, **kwargs):
+def _cli_listRelease(sc: SlicerPackageClient, *args, **kwargs):
     """
     List all the releases within an application.
     """
@@ -320,7 +320,7 @@ def _cli_listRelease(sc, *args, **kwargs):
               show_default=True,
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_deleteRelease(sc, *args, **kwargs):
+def _cli_deleteRelease(sc: SlicerPackageClient, *args, **kwargs):
     """
     Delete a release.
     """
@@ -347,7 +347,7 @@ def _cli_deleteRelease(sc, *args, **kwargs):
               help='Offset of the list',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_listDraftRelease(sc, *args, **kwargs):
+def _cli_listDraftRelease(sc: SlicerPackageClient, *args, **kwargs):
     """
     List all the revisions of the default preview within an application.
     """
@@ -373,7 +373,7 @@ def _cli_listDraftRelease(sc, *args, **kwargs):
               show_default=True,
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_deleteDraftRelease(sc, *args, **kwargs):
+def _cli_deleteDraftRelease(sc: SlicerPackageClient, *args, **kwargs):
     """
     Delete a specific revision within the Draft release.
     """
@@ -437,7 +437,7 @@ def _cli_deleteDraftRelease(sc, *args, **kwargs):
               help='Force the upload',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_uploadExtension(sc, *args, **kwargs):
+def _cli_uploadExtension(sc: SlicerPackageClient, *args, **kwargs):
     """
     Upload an extension.
     """
@@ -465,7 +465,7 @@ def _cli_uploadExtension(sc, *args, **kwargs):
               help='Path to the directory where will be downloaded the extension',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_downloadExtension(sc, *args, **kwargs):
+def _cli_downloadExtension(sc: SlicerPackageClient, *args, **kwargs):
     """
     Download an extension.
     """
@@ -505,7 +505,7 @@ def _cli_downloadExtension(sc, *args, **kwargs):
               help='List all the extension of the application',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_listExtension(sc, *args, **kwargs):
+def _cli_listExtension(sc: SlicerPackageClient, *args, **kwargs):
     """
     List all the extensions within an application.
     """
@@ -539,7 +539,7 @@ def _cli_listExtension(sc, *args, **kwargs):
               show_default=True,
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_deleteExtension(sc, *args, **kwargs):
+def _cli_deleteExtension(sc: SlicerPackageClient, *args, **kwargs):
     """
     Delete an extension by ID or Name.
     """
@@ -588,7 +588,7 @@ def _cli_deleteExtension(sc, *args, **kwargs):
               help='Boolean to specify if the package is ready to be distributed',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_uploadApplicationPackage(sc, *args, **kwargs):
+def _cli_uploadApplicationPackage(sc: SlicerPackageClient, *args, **kwargs):
     """
     Upload an application package.
     """
@@ -614,7 +614,7 @@ def _cli_uploadApplicationPackage(sc, *args, **kwargs):
               help='Path to the directory where will be downloaded the package',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_downloadApplicationPackage(sc, *args, **kwargs):
+def _cli_downloadApplicationPackage(sc: SlicerPackageClient, *args, **kwargs):
     """
     Download an application package.
     """
@@ -650,7 +650,7 @@ def _cli_downloadApplicationPackage(sc, *args, **kwargs):
               help='The limit number of listed packages ',
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_listApplicationPackage(sc, *args, **kwargs):
+def _cli_listApplicationPackage(sc: SlicerPackageClient, *args, **kwargs):
     """
     List all the application packages within an application.
     """
@@ -683,7 +683,7 @@ def _cli_listApplicationPackage(sc, *args, **kwargs):
               show_default=True,
               cls=_AdvancedOption)
 @click.pass_obj
-def _cli_deleteApplicationPackage(sc, *args, **kwargs):
+def _cli_deleteApplicationPackage(sc: SlicerPackageClient, *args, **kwargs):
     """
     Delete an application package by ID or Name.
     """
