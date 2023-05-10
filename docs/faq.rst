@@ -103,7 +103,7 @@ How to clean up the Draft release folder?
 Since a large number of draft packages may be uploaded on a regular basis. Older draft packages may be removed
 applying this process:
 
-The command: ``slicer_package_manager_client draft list <APP_NAME> --offset <N>`` allows to list the oldest draft subfolders
+The command ``slicer_package_manager_client draft list <APP_NAME> --offset <N>`` allows to list the oldest draft subfolders
 related to old application revision. Using this command, you will be able to get a list of ``revision`` and then use the
 command ``slicer_package_manager_client draft delete <APP_NAME> <REVISION>`` in a loop to delete them all.
 
