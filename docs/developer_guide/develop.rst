@@ -7,7 +7,7 @@ process to perform automatic fast rebuilds of your code whenever you make change
 
 If you are front-end development of Slicer package manager plugin, use::
 
-    $ girder-install web --watch-plugin slicer_package_manager
+    $ girder build --watch-plugin slicer_package_manager
 
 
 Server side development

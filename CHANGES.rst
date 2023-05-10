@@ -30,6 +30,8 @@ Documentation
 
 * Remove obsolete ``cleanNightly.sh`` script and update faq.
 
+* Update developer installation instructions to use Girder 3.x commands.
+
 Bug fixes
 ---------
 
