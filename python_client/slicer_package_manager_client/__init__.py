@@ -36,8 +36,8 @@ class SlicerPackageManagerError(Exception):
 
 class SlicerPackageClient(GirderClient):
     """
-    The SlicerPackageClient allows to use the slicer_package_manager plugin of Girder.
-    This allow to manage 5 top level entities:
+    The SlicerPackageClient allows to use the slicer_package_manager plugin of Girder,
+    which allows you to manage the following top-level entities:
 
         * Application
         * Release
@@ -45,12 +45,12 @@ class SlicerPackageClient(GirderClient):
         * Package
         * Extension
 
-    It's now possible to choose the collection within create the application. It's also
-    possible to get an existing collection by ID for creating the application inside.
+    You may also choose the collection in which to create the application. It's also
+    possible to provide a collection ID to use as the parent collection for creating the application.
 
-    In this case, you must provide the ``coll_id`` argument to be able to use all the
-    commands on these application. By default all the command look for application
-    which are under the *Applications* collection.
+    In this case, you must provide the ``coll_id`` argument to use all the
+    commands on these applications. By default, all commands look for applications
+    that are under a collection named ``Applications``.
     """
 
     def __init__(self, host=None, port=None, apiRoot=None, scheme=None, apiUrl=None,
