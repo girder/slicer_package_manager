@@ -40,7 +40,7 @@ So let's start by installing Girder::
     $ pip install -e .
 
 
-Then, let's install the Slicer Package Manager server plugin:
+Then, let's install the Slicer Package Manager server plugin::
 
     $ git clone https://github.com/girder/slicer_package_manager
     $ cd slicer_package_manager
