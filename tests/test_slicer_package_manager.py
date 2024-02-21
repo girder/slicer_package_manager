@@ -1010,10 +1010,14 @@ def testApplicationPackageMetadataAutoUpdate(
     assert item_after['meta'].get('release', None) == release_after
 
 
+@pytest.mark.parametrize("items", [
+    pytest.lazy_fixture('packages'),
+    pytest.lazy_fixture('extensions'),
+])
 @pytest.mark.plugin('slicer_package_manager')
-def testApplicationPackageMetadataChecksumUpdate_1(server, user, packages):
+def testPackageMetadataChecksumUpdate_1(server, user, items):
     """Replace existing file and verify checksum is updated."""
-    item = Item().load(packages[0]['_id'], force=True)
+    item = Item().load(items[0]['_id'], force=True)
     file = list(Item().childFiles(item))[0]
 
     # Replace file
@@ -1026,10 +1030,14 @@ def testApplicationPackageMetadataChecksumUpdate_1(server, user, packages):
     assert item_after["meta"]["sha512"] == expected_checksum
 
 
+@pytest.mark.parametrize("items", [
+    pytest.lazy_fixture('packages'),
+    pytest.lazy_fixture('extensions'),
+])
 @pytest.mark.plugin('slicer_package_manager')
-def testApplicationPackageMetadataChecksumUpdate_2(server, user, packages, tmpdir):
+def testPackageMetadataChecksumUpdate_2(server, user, items, tmpdir):
     """Upload an additional file and verify checksum remains the same."""
-    item = Item().load(packages[1]['_id'], force=True)
+    item = Item().load(items[1]['_id'], force=True)
     assert Item().childFiles(item).count() == 1
     item_first_file_sha512 = item["meta"]["sha512"]
 
@@ -1050,12 +1058,16 @@ def testApplicationPackageMetadataChecksumUpdate_2(server, user, packages, tmpdi
     assert item_first_file_sha512 == item_after["meta"]["sha512"]
 
 
+@pytest.mark.parametrize("items", [
+    pytest.lazy_fixture('packages'),
+    pytest.lazy_fixture('extensions'),
+])
 @pytest.mark.plugin('slicer_package_manager')
-def testApplicationPackageMetadataChecksumUpdate_3(server, user, packages, tmpdir):
+def testPackageMetadataChecksumUpdate_3(server, user, items, tmpdir):
     """Upload an additional file, remove the first one and verify the checksum matches
     the one of the additional file.
     """
-    item = Item().load(packages[2]['_id'], force=True)
+    item = Item().load(items[2]['_id'], force=True)
     assert Item().childFiles(item).count() == 1
     item_first_file_sha512 = item["meta"]["sha512"]
     item_first_file_id = list(Item().childFiles(item))[0]["_id"]
@@ -1088,10 +1100,14 @@ def testApplicationPackageMetadataChecksumUpdate_3(server, user, packages, tmpdi
     assert item_after["meta"]["sha512"] == additional_file_sha512
 
 
+@pytest.mark.parametrize("items", [
+    pytest.lazy_fixture('packages'),
+    pytest.lazy_fixture('extensions'),
+])
 @pytest.mark.plugin('slicer_package_manager')
-def testApplicationPackageMetadataChecksumUpdate_4(server, user, packages):
+def testPackageMetadataChecksumUpdate_4(server, user, items):
     """Delete the last file and verify the checksum is set to an empty string."""
-    item = Item().load(packages[0]['_id'], force=True)
+    item = Item().load(items[0]['_id'], force=True)
     assert Item().childFiles(item).count() == 1
     item_file_id = list(Item().childFiles(item))[0]["_id"]
 

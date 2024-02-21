@@ -5,7 +5,6 @@ from girder.models.item import Item
 from girder.models.folder import Folder
 from .api.app import App
 from . import constants, utilities
-from .models.extension import Extension as ExtensionModel
 from .models.package import Package as PackageModel
 
 from girder_hashsum_download import SUPPORTED_ALGORITHMS
@@ -109,9 +108,6 @@ def _onFileEvent(event):
     if not all(meta in item.get('meta', {}) for meta in ['app_id', 'os', 'arch', 'revision']):
         return
 
-    # ... but only extension packages have "app_revision"
-    is_extension_package = 'app_revision' in item
-
     if event.name == "model.file.save.after":
         if Item().childFiles(item).count() > 1:
             # If the update is not related to the first file, ignore
@@ -142,10 +138,7 @@ def _onFileEvent(event):
     # Update metadata overwriting existing checksum values if any
     meta = {**item['meta'], **checksums}
 
-    if is_extension_package:
-        ExtensionModel().setMetadata(item, meta)
-    else:
-        PackageModel().setMetadata(item, meta)
+    Item().setMetadata(item, meta)
 
 
 def _onReleaseFolderNameUpdated(event):
