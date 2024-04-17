@@ -8,6 +8,12 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Server
+^^^^^^
+
+* Pin version of `girder` and `girder-hashsum-download` to have a reproducible setup.
+
+
 0.8.0
 =====
 

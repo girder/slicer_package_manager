@@ -1,5 +1,5 @@
-girder
-girder_client
+girder==3.1.20
+girder_client==3.1.20
 sphinx
 sphinx-issues
 sphinx_rtd_theme
