@@ -1,5 +1,5 @@
 pip>=9
-pytest
+pytest~=7.4.0 # See https://github.com/TvoroG/pytest-lazy-fixture/issues/63
 pytest-lazy-fixture
 tox
 virtualenv
