@@ -26,6 +26,10 @@ Internal
 
 * Switch server plugin Python wheel build-system to `pyproject.toml`.
 
+* Require Python ``>= 3.8`` for the server and update Girder test Docker to use image
+  `girder/girder_test:py38-node14 <https://hub.docker.com/r/girder/girder_test/tags>`_ built
+  from `girder/.circleci/Dockerfile <https://github.com/girder/girder/blob/v3.2.3/.circleci/Dockerfile>`_.
+
 
 0.8.0
 =====

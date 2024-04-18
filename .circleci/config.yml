@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: girder/girder_test:latest
+      - image: girder/girder_test:py38-node14
       # Use the oldest supported MongoDB
       # This is equivalent to the deprecated circleci/mongo:<version>-ram image
       - image: mongo:3.6
