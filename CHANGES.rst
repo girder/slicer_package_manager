@@ -11,15 +11,14 @@ Next Release
 Bug fixes
 ---------
 
-Server
-^^^^^^
-
-* Pin version of `girder` and `girder-hashsum-download` to have a reproducible setup.
+* Prevent incompatibility pinning version of `girder`, `girder-hashsum-download`,
+  `girder_client` and `pytest-girder` to be `>=3.1.20` and `<3.2`.
 
 Tests
 -----
 
 * Improve PackageMetadataChecksumUpdate tests to check extensions package.
+
 
 0.8.0
 =====

@@ -6,8 +6,8 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    'girder==3.1.20',
-    'girder-hashsum-download==3.1.20',
+    'girder~=3.1.20',
+    'girder-hashsum-download~=3.1.20',
 ]
 
 setup(
