@@ -26,11 +26,8 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dynamic = ["version"]
 dependencies = [
     "girder~=3.1.20",
@@ -136,7 +133,7 @@ extend-ignore = [
   "S105",  # hardcoded-password-string
   "S310",  # Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected.
 ]
-target-version = "py37"
+target-version = "py38"
 line-length = 120
 
 [tool.ruff.flake8-builtins]
