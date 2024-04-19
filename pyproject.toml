@@ -4,6 +4,7 @@ requires = [
     # Required to support dynmamic version
     "girder~=3.1.20",
     "girder-hashsum-download~=3.1.20",
+    "html-sanitizer>=2.4.1",
     'tomli; python_version<"3.11"',
     "versioneer",
 ]
@@ -32,6 +33,7 @@ dynamic = ["version"]
 dependencies = [
     "girder~=3.1.20",
     "girder-hashsum-download~=3.1.20",
+    "html-sanitizer>=2.4.1",
 ]
 
 [project.entry-points."girder.plugin"]

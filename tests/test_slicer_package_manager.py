@@ -531,13 +531,21 @@ def testUpdateExtensions(server, user, app_folder, extensions):
     newParams.update({
         'revision': '0000',
         'repository_type': 'gitlab',
-        'description': 'Extension for Slicer 4 new version 2',
+        'description': (
+            'Extension for Slicer 4 new version 2<br>'
+            'with a new line and no script tag here:<script>alert(\'test\');</script>'
+        ),
     })
     updatedExtension = _createOrUpdatePackage(server, 'extension', newParams, _user=user, _app=app_folder)
     # Check the same extension has different metadata
     assert updatedExtension['_id'] == extensions[1]['_id']
     assert updatedExtension['name'] == constants.EXTENSION_PACKAGE_TEMPLATE_NAME.format(**newParams)
     assert updatedExtension['meta'] != extensions[1]['meta']
+
+    updatedExtensionMetadata = updatedExtension['meta']
+    assert updatedExtensionMetadata['description'] == (
+        'Extension for Slicer 4 new version 2<br>with a new line and no script tag here:'
+    )
 
 
 @pytest.mark.plugin('slicer_package_manager')
@@ -1375,10 +1383,11 @@ def _createOrUpdatePackage(server, packageType, params, filePath=None, _user=Non
         return {k: v for (k, v) in metadata.items() if k not in (
             'app_id',
             'build_date',
+            'description',
             'sha512',
         )}
 
-    # assert every other fields (besides unique or computed ones) are identical
+    # assert every other fields (besides unique, computed or sanitized ones) are identical
     assert _filtered(resp.json['meta']) == _filtered(params)
 
     if filePath:
