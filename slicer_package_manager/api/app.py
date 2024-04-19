@@ -7,6 +7,7 @@ import datetime
 import re
 
 from bson.objectid import ObjectId
+from html_sanitizer import Sanitizer
 
 from girder.api import access
 from girder.constants import TokenScope, AccessType, SortDir
@@ -623,6 +624,9 @@ class App(Resource):
                 creator=creator)
         else:
             extensions_folder = extensions_folder[0]
+
+        sanitizer = Sanitizer()
+        description = sanitizer.sanitize(description)
 
         params = {
             'app_id': app_id,

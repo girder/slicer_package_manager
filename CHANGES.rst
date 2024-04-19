@@ -8,6 +8,14 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+New Features
+------------
+
+Server
+^^^^^^
+
+* Sanitize description field for new or updated extension to ensure only a subset of HTML tags and attributes can be used. See html-sanitizer `default settings <https://github.com/matthiask/html-sanitizer/tree/main#settings>`_.
+
 Bug fixes
 ---------
 
