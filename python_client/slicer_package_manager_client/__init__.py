@@ -217,7 +217,7 @@ class SlicerPackageClient(GirderClient):
 
     def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url,
                         revision, app_revision, desc='', icon_url='',
-                        category=None, homepage='', screenshots=None, contributors=None,
+                        category=None, tier=None, homepage='', screenshots=None, contributors=None,
                         dependency=None, coll_id=None, force=False):
         """
         Upload an extension by providing a path to the file. It can also be used to update an
@@ -236,6 +236,7 @@ class SlicerPackageClient(GirderClient):
         :param desc: The description of the extension
         :param icon_url: Url of the extension's logo
         :param category: Category of the extension
+        :param tier: Tier of the extension.
         :param homepage: Url of the extension's homepage
         :param screenshots: Space-separate list of URLs of screenshots for the extension.
         :param contributors: List of contributors of the extension.
@@ -268,6 +269,7 @@ class SlicerPackageClient(GirderClient):
                 'description': desc,
                 'icon_url': icon_url,
                 'category': category,
+                'tier': tier,
                 'homepage': homepage,
                 'screenshots': screenshots,
                 'contributors': contributors,
@@ -313,6 +315,7 @@ class SlicerPackageClient(GirderClient):
                     'description': desc,
                     'icon_url': icon_url,
                     'category': category,
+                    'tier': tier,
                     'homepage': homepage,
                     'screenshots': screenshots,
                     'contributors': contributors,
