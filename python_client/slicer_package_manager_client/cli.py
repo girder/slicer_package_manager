@@ -417,6 +417,9 @@ def _cli_deleteDraftRelease(sc: SlicerPackageClient, *args, **kwargs):
 @click.option('--category', default=None,
               help='Category of the extension',
               cls=_AdvancedOption)
+@click.option('--tier', default=5,
+              help='Tier of the extension',
+              cls=_AdvancedOption)
 @click.option('--homepage', default='',
               help='Url of the extension homepage',
               cls=_AdvancedOption)
