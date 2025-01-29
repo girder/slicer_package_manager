@@ -3,15 +3,18 @@ version: '3'
 services:
   mongo:
     image: mongo:4.2
-    ports:
-      - 27017:27017
+    # MongoDB does not need to be exposed outside the local machine
+    # ports:
+    #   - 27017:27017
     volumes:
       - ~/slicer_package_manager/db:/data/db
 
   girder:
     build: .
+    # Restrict Girder service to localhost only
     ports:
-      - 8080:8080
+      - 127.0.0.1:8080:8080
+      - '[::1]:8080:8080'
     depends_on:
       - mongo
     volumes:
