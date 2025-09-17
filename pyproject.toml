@@ -1,9 +1,9 @@
 [build-system]
 requires = [
     "setuptools>=42",
-    # Required to support dynmamic version
-    "girder~=3.1.20",
-    "girder-hashsum-download~=3.1.20",
+    # Required to support dynamic version
+    "girder~=3.2.8",
+    "girder-hashsum-download~=3.2.8",
     "html-sanitizer>=2.4.1",
     'tomli; python_version<"3.11"',
     "versioneer",
@@ -31,8 +31,8 @@ classifiers = [
 requires-python = ">=3.8"
 dynamic = ["version"]
 dependencies = [
-    "girder~=3.1.20",
-    "girder-hashsum-download~=3.1.20",
+    "girder~=3.2.8",
+    "girder-hashsum-download~=3.2.8",
     "html-sanitizer>=2.4.1",
 ]
 
@@ -42,7 +42,7 @@ slicer_package_manager = "slicer_package_manager:GirderPlugin"
 [project.optional-dependencies]
 test = [
     "pytest~=7.4.0", # See https://github.com/TvoroG/pytest-lazy-fixture/issues/63
-    "pytest-girder~=3.1.20",
+    "pytest-girder~=3.2.8",
     "pytest-lazy-fixture",
     "tox",
     "virtualenv",

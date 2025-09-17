@@ -23,7 +23,7 @@ requires-python = ">=3.8"
 dynamic = ["version"]
 dependencies = [
     "click>=6.7",
-    "girder_client~=3.1.20",
+    "girder_client~=3.2.8",
     "tabulate",
 ]
 
@@ -31,7 +31,7 @@ dependencies = [
 test = [
     "pytest",
     "pytest-vcr",
-    "pytest-girder~=3.1.20",
+    "pytest-girder~=3.2.8",
 ]
 
 [project.urls]

@@ -8,6 +8,11 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+Internal
+--------
+
+* Update `girder`, `girder-hashsum-download`, `girder_client` and `pytest-girder` version from `~3.1.20` to `~3.2.8`.
+
 0.9.0
 =====
 
