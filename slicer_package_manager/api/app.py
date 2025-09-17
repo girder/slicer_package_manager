@@ -434,12 +434,15 @@ class App(Resource):
         .param('app_revision', 'The revision of the application.', required=False)
         .param('baseName', 'The baseName of the extension', required=False)
         .param('q', 'The search query.', required=False)
+        .param('tier', 'Tier of the extension.', required=False, enum=[1, 3, 5])
+        .param('tier_compare', 'Comparison type for the tier.',
+               required=False, enum=['exact', 'lte'], default='lte')
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
         .errorResponse(),
     )
     @access.public(scope=TokenScope.DATA_READ)
     def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
-                      app_revision, baseName, q, limit, sort, offset=0):
+                      app_revision, baseName, q, tier, tier_compare, limit, sort, offset=0):
         """
         Get a list of extension which is filtered by some optional parameters. If the ``release_id``
         provided correspond to the draft release, then you must provide the app_revision to use
@@ -454,6 +457,8 @@ class App(Resource):
         :param app_revision: The revision of the application
         :param baseName: The baseName of the extension
         :param q: Text expected to be found in the extension name or description
+        :param tier: Tier of the extension.
+        :param tier_compare: Comparison type for the tier specified as "exact" or "lte" (less than or equal to).
         :return: The list of extensions
         """
         user = self.getCurrentUser()
@@ -484,6 +489,12 @@ class App(Resource):
                 {'meta.baseName': {'$regex': escaped_query, '$options': 'i'}},
                 {'meta.description': {'$regex': escaped_query, '$options': 'i'}},
             ]
+        if tier:
+            if tier_compare == 'lte':
+                filters['meta.tier'] = {'$lte': tier}
+            else:
+                # Provide an exact match base on tier
+                filters['meta.tier'] = tier
         if ObjectId.is_valid(release_id):
             release = self._model.load(release_id, user=user, level=AccessType.READ)
             if release['name'] == constants.DRAFT_RELEASE_NAME:
@@ -563,7 +574,7 @@ class App(Resource):
         .param('category', 'Category under which to place the extension. Subcategories should be '
                'delimited by character. If none is passed, will render under '
                'the Miscellaneous category..', required=False)
-
+        .param('tier', 'Tier of the extension.', required=False, dataType='integer')
         .param('homepage', 'The url of the extension homepage.', required=False)
         .param('screenshots', 'Space-separate list of URLs of screenshots for the extension.',
                required=False)
@@ -579,7 +590,7 @@ class App(Resource):
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
                                 revision, app_revision, description,
-                                icon_url, development_status, category, enabled, homepage,
+                                icon_url, development_status, category, tier, enabled, homepage,
                                 screenshots, contributors, dependency, license):
         """
         Create or update an extension item.
@@ -600,6 +611,7 @@ class App(Resource):
         :param revision: The revision of the extension.
         :param app_revision: The revision of the application.
         :param description: The description of the extension.
+        :param tier: Tier of the extension.
         :return: The created/updated extension.
         """
         creator = self.getCurrentUser()
@@ -645,6 +657,8 @@ class App(Resource):
             params['development_status'] = development_status
         if category:
             params['category'] = category
+        if tier:
+            params['tier'] = tier
         if enabled:
             params['enabled'] = enabled
         if homepage:

@@ -95,6 +95,7 @@ class Extension(Item):
                     'icon_url',
                     'development_status',
                     'category',
+                    'tier',
                     'enabled',
                     'homepage',
                     'screenshots',
@@ -107,7 +108,13 @@ class Extension(Item):
                     raise ValidationException(msg)
                 specs = []
                 for meta in extra_params:
-                    if meta == 'enabled':
+                    if meta == 'tier':
+                        specs.append({
+                            'name': meta,
+                            'type': int,
+                            'exception_msg': f'Extension field "{meta}" must be an integer.',
+                        })
+                    elif meta == 'enabled':
                         specs.append({
                             'name': meta,
                             'type': bool,

@@ -149,3 +149,6 @@ ignore-variadic-names = true
 
 [tool.ruff.per-file-ignores]
 "python_client/slicer_package_manager_client/__init__.py" = ["A002"]  # Argument `all` is shadowing a python builtin
+
+[tool.ruff.pylint]
+max-statements = 60
