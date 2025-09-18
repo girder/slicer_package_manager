@@ -12,9 +12,13 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Display Python & Tox versions
+          name: Upgrade pip
+          command: python -m pip install --upgrade pip
+      - run:
+          name: Display Python, Pip & Tox versions
           command: |
             python --version
+            pip --version
             tox --version
       - run:
           name: Run server tests
@@ -29,6 +33,14 @@ jobs:
         command: bash -c "mkdir /dev/shm/mongo && mongod --storageEngine ephemeralForTest --nojournal --dbpath=/dev/shm/mongo --noauth --bind_ip_all"
     steps:
       - checkout
+      - run:
+          name: Upgrade pip
+          command: python -m pip install --upgrade pip
+      - run:
+          name: Display Python & Pip versions
+          command: |
+            python --version
+            pip --version
       - run:
           name: Install server plugin
           command: pip install .[test]
