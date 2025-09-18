@@ -13,9 +13,10 @@ maintainers = [
     {name = "Jean-Christophe Fillion-Robin", email = "jchris.fillionr@kitware.com"},
 ]
 readme = "README.rst"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 classifiers = [
     "Environment :: Console",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
 ]
@@ -23,7 +24,7 @@ requires-python = ">=3.8"
 dynamic = ["version"]
 dependencies = [
     "click>=6.7",
-    "girder_client~=3.1.20",
+    "girder_client~=3.2.8",
     "tabulate",
 ]
 
@@ -31,7 +32,7 @@ dependencies = [
 test = [
     "pytest",
     "pytest-vcr",
-    "pytest-girder~=3.1.20",
+    "pytest-girder~=3.2.8",
 ]
 
 [project.urls]

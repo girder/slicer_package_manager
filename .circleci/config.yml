@@ -3,18 +3,22 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: girder/girder_test:py38-node14
+      - image: girder/girder_test:py39-node14
       # Use the oldest supported MongoDB
       # This is equivalent to the deprecated circleci/mongo:<version>-ram image
-      - image: mongo:3.6
+      - image: mongo:4.2
         command: bash -c "mkdir /dev/shm/mongo && mongod --storageEngine ephemeralForTest --nojournal --dbpath=/dev/shm/mongo --noauth --bind_ip_all"
 
     steps:
       - checkout
       - run:
-          name: Display Python & Tox versions
+          name: Upgrade pip
+          command: python -m pip install --upgrade pip
+      - run:
+          name: Display Python, Pip & Tox versions
           command: |
             python --version
+            pip --version
             tox --version
       - run:
           name: Run server tests
@@ -22,13 +26,21 @@ jobs:
 
   test-cli:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.9
       # Use the oldest supported MongoDB
       # This is equivalent to the deprecated circleci/mongo:<version>-ram image
-      - image: mongo:3.6
+      - image: mongo:4.2
         command: bash -c "mkdir /dev/shm/mongo && mongod --storageEngine ephemeralForTest --nojournal --dbpath=/dev/shm/mongo --noauth --bind_ip_all"
     steps:
       - checkout
+      - run:
+          name: Upgrade pip
+          command: python -m pip install --upgrade pip
+      - run:
+          name: Display Python & Pip versions
+          command: |
+            python --version
+            pip --version
       - run:
           name: Install server plugin
           command: pip install .[test]
