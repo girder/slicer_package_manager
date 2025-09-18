@@ -22,9 +22,10 @@ maintainers = [
 ]
 readme = "README.rst"
 keywords = ["girder-plugin", "slicer_package_manager"]
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
 ]
