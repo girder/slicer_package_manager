@@ -217,8 +217,9 @@ class SlicerPackageClient(GirderClient):
 
     def uploadExtension(self, filepath, app_name, ext_os, arch, name, repo_type, repo_url,
                         revision, app_revision, desc='', icon_url='',
-                        category=None, homepage='', screenshots=None, contributors=None,
-                        dependency=None, coll_id=None, force=False):
+                        category=None, tier=None, homepage='', screenshots=None, contributors=None,
+                        dependency=None, recommends=None, dicom_support_rule=None, keywords=None,
+                        coll_id=None, force=False):
         """
         Upload an extension by providing a path to the file. It can also be used to update an
         existing one, in this case the upload is done only if the extension has a different
@@ -236,10 +237,14 @@ class SlicerPackageClient(GirderClient):
         :param desc: The description of the extension
         :param icon_url: Url of the extension's logo
         :param category: Category of the extension
+        :param tier: Tier of the extension.
         :param homepage: Url of the extension's homepage
         :param screenshots: Space-separate list of URLs of screenshots for the extension.
         :param contributors: List of contributors of the extension.
         :param dependency: List of the required extensions to use this one.
+        :param recommends: List of the recommended extensions to use this one.
+        :param dicom_support_rule: Rule engine expression string to determine DICOM support level.
+        :param keywords: Space-separated list of keywords to help when searching for extensions.
         :param coll_id: Collection ID
         :param force: To force update the binary file
         :return: The uploaded extension
@@ -268,10 +273,14 @@ class SlicerPackageClient(GirderClient):
                 'description': desc,
                 'icon_url': icon_url,
                 'category': category,
+                'tier': tier,
                 'homepage': homepage,
                 'screenshots': screenshots,
                 'contributors': contributors,
                 'dependency': dependency,
+                'recommends': recommends,
+                'dicom_support_rule': dicom_support_rule,
+                'keywords': keywords,
             })
 
             # Upload the extension
@@ -313,10 +322,14 @@ class SlicerPackageClient(GirderClient):
                     'description': desc,
                     'icon_url': icon_url,
                     'category': category,
+                    'tier': tier,
                     'homepage': homepage,
                     'screenshots': screenshots,
                     'contributors': contributors,
                     'dependency': dependency,
+                    'recommends': recommends,
+                    'dicom_support_rule': dicom_support_rule,
+                    'keywords': keywords,
                 })
 
                 files = list(self.listFile(extension['_id']))

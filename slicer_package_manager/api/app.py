@@ -417,47 +417,9 @@ class App(Resource):
         utilities.deleteFolder(release, progress, self.getCurrentUser())
         return {'message': 'Deleted release %s.' % release['name']}
 
-    @autoDescribeRoute(
-        Description('List or search available extensions.')
-        .notes('If the "release_id" provided correspond to the "draft" release,'
-               ' then you must provide the "app_revision" to use this parameters. '
-               'If not, it will just be ignored.')
-        .responseClass('Extension')
-        .param('app_id', 'The ID of the application.', paramType='path')
-        .param('extension_name', 'The name of the extension.', required=False)
-        .param('release_id', 'The release id.', required=False)
-        .param('extension_id', 'The extension id.', required=False)
-        .param('os', 'The target operating system of the package.',
-               required=False, enum=['linux', 'win', 'macosx'])
-        .param('arch', 'The os chip architecture.',
-               required=False, enum=['i386', 'amd64'])
-        .param('app_revision', 'The revision of the application.', required=False)
-        .param('baseName', 'The baseName of the extension', required=False)
-        .param('q', 'The search query.', required=False)
-        .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
-        .errorResponse(),
-    )
-    @access.public(scope=TokenScope.DATA_READ)
-    def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
-                      app_revision, baseName, q, limit, sort, offset=0):
-        """
-        Get a list of extension which is filtered by some optional parameters. If the ``release_id``
-        provided correspond to the draft release, then you must provide the app_revision to use
-        this parameters. If not, it will just be ignored.
-
-        :param app_id: Application ID
-        :param extension_name: Extension name
-        :param release_id: Release ID
-        :param extension_id: Extension ID
-        :param os: The operation system used for the extension.
-        :param arch: The architecture compatible with the extension.
-        :param app_revision: The revision of the application
-        :param baseName: The baseName of the extension
-        :param q: Text expected to be found in the extension name or description
-        :return: The list of extensions
-        """
-        user = self.getCurrentUser()
-        utilities.checkAccess(app_id, user)
+    def _build_extension_filters(self, app_id, extension_name, extension_id, os, arch,
+                                 app_revision, baseName, q, tier, tier_compare):
+        """Build query filters for extension search."""
         filters = {
             '$and': [
                 {'meta.app_id': {'$eq': app_id}},
@@ -476,75 +438,158 @@ class App(Resource):
         if app_revision:
             filters['meta.app_revision'] = app_revision
         if baseName:
-            # Provide a exact match base on baseName
             filters['meta.baseName'] = baseName
         if q:
             escaped_query = re.escape(q)
             filters['$or'] = [
                 {'meta.baseName': {'$regex': escaped_query, '$options': 'i'}},
                 {'meta.description': {'$regex': escaped_query, '$options': 'i'}},
+                {'meta.keywords': {'$regex': escaped_query, '$options': 'i'}},
             ]
-        if ObjectId.is_valid(release_id):
-            release = self._model.load(release_id, user=user, level=AccessType.READ)
-            if release['name'] == constants.DRAFT_RELEASE_NAME:
-                if app_revision:
-                    revisions = list(self._model.childFolders(
-                        release,
-                        'Folder',
-                        user=user,
-                        filters={'meta.revision': app_revision}))
-                    if revisions:
-                        extensions_folder = list(self._model.childFolders(
-                            revisions[0],
-                            'Folder',
-                            user=user,
-                            filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
-                        if extensions_folder:
-                            filters['folderId'] = ObjectId(extensions_folder[0]['_id'])
-                else:
-                    revisions = self._model.childFolders(
-                        release,
-                        'Folder',
-                        user=user,
-                        sort=sort)
-                    extensions = []
-                    limit_tmp = limit
-                    for revision in revisions:
-                        extensions_folder = list(self._model.childFolders(
-                            revision,
-                            'Folder',
-                            user=user,
-                            filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
-                        # If the 'extensions' directory is not here, there are no extensions to list
-                        if not extensions_folder:
-                            continue
-                        extensions_folder = extensions_folder[0]
-                        filters['folderId'] = ObjectId(extensions_folder['_id'])
-                        extensions += list(ExtensionModel().find(
-                            query=filters,
-                            limit=limit_tmp,
-                            offset=offset,
-                            sort=sort))
-                        limit_tmp = limit - len(extensions)
-                        if limit_tmp <= 0:
-                            break
-                    return extensions
+        if tier is not None:
+            try:
+                tier_value = int(tier)
+            except (TypeError, ValueError):
+                msg = "Invalid tier value; expected an integer."
+                raise RestException(msg)
+            if tier_compare == 'lte':
+                filters['meta.tier'] = {'$lte': tier_value}
+            elif tier_compare == 'gte':
+                filters['meta.tier'] = {'$gte': tier_value}
             else:
-                extensions_folder = list(self._model.childFolders(
-                    release,
-                    'Folder',
-                    user=user,
-                    filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
-                # If the 'extensions' directory is not here, there are no extensions to list
-                if not extensions_folder:
-                    return []
-                extensions_folder = extensions_folder[0]
-                filters['folderId'] = ObjectId(extensions_folder['_id'])
+                filters['meta.tier'] = tier_value
+        return filters
+
+    def _find_extensions(self, filters, limit, offset, sort):
+        """Execute extension query with given filters."""
         return list(ExtensionModel().find(
             query=filters,
             limit=limit,
             offset=offset,
             sort=sort))
+
+    def _get_release_extensions_folder_id(self, release, user):
+        """Get extensions folder ID from a non-draft release."""
+        extensions_folder = list(self._model.childFolders(
+            release,
+            'Folder',
+            user=user,
+            filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
+        if extensions_folder:
+            return ObjectId(extensions_folder[0]['_id'])
+        return None
+
+    def _get_draft_revision_extensions_folder_id(self, release, user, app_revision):
+        """Get extensions folder ID for a specific draft revision."""
+        revisions = list(self._model.childFolders(
+            release,
+            'Folder',
+            user=user,
+            filters={'meta.revision': app_revision}))
+        if not revisions:
+            return None
+        extensions_folder = list(self._model.childFolders(
+            revisions[0],
+            'Folder',
+            user=user,
+            filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
+        if extensions_folder:
+            return ObjectId(extensions_folder[0]['_id'])
+        return None
+
+    def _find_extensions_across_draft_revisions(
+            self, release, user, filters, limit, offset, sort):
+        """Find extensions across all revisions in a draft release."""
+        revisions = self._model.childFolders(release, 'Folder', user=user, sort=sort)
+        extensions = []
+        limit_tmp = limit
+        offset_tmp = offset
+        for revision in revisions:
+            extensions_folder = list(self._model.childFolders(
+                revision,
+                'Folder',
+                user=user,
+                filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
+            if not extensions_folder:
+                continue
+            filters['folderId'] = ObjectId(extensions_folder[0]['_id'])
+            batch = self._find_extensions(filters, limit_tmp + offset_tmp, 0, sort)
+            skipped = min(offset_tmp, len(batch))
+            offset_tmp -= skipped
+            extensions += batch[skipped:skipped + limit_tmp]
+            limit_tmp = limit - len(extensions)
+            if limit_tmp <= 0:
+                break
+        return extensions
+
+    @autoDescribeRoute(
+        Description('List or search available extensions.')
+        .notes('If the "release_id" provided correspond to the "draft" release,'
+               ' then you must provide the "app_revision" to use this parameters. '
+               'If not, it will just be ignored.')
+        .responseClass('Extension')
+        .param('app_id', 'The ID of the application.', paramType='path')
+        .param('extension_name', 'The name of the extension.', required=False)
+        .param('release_id', 'The release id.', required=False)
+        .param('extension_id', 'The extension id.', required=False)
+        .param('os', 'The target operating system of the package.',
+               required=False, enum=['linux', 'win', 'macosx'])
+        .param('arch', 'The os chip architecture.',
+               required=False, enum=['i386', 'amd64'])
+        .param('app_revision', 'The revision of the application.', required=False)
+        .param('baseName', 'The baseName of the extension', required=False)
+        .param('q', 'The search query.', required=False)
+        .param('tier', 'Tier of the extension.', required=False, dataType='integer')
+        .param('tier_compare', 'Comparison type for the tier.',
+               required=False, enum=['exact', 'lte', 'gte'], default='lte')
+        .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
+        .errorResponse(),
+    )
+    @access.public(scope=TokenScope.DATA_READ)
+    def getExtensions(self, app_id, extension_name, release_id, extension_id, os, arch,
+                      app_revision, baseName, q, tier, tier_compare, limit, sort, offset=0):
+        """
+        Get a list of extension which is filtered by some optional parameters. If the ``release_id``
+        provided correspond to the draft release, then you must provide the app_revision to use
+        this parameters. If not, it will just be ignored.
+
+        :param app_id: Application ID
+        :param extension_name: Extension name
+        :param release_id: Release ID
+        :param extension_id: Extension ID
+        :param os: The operation system used for the extension.
+        :param arch: The architecture compatible with the extension.
+        :param app_revision: The revision of the application
+        :param baseName: The baseName of the extension
+        :param q: Text expected to be found in the extension name or description
+        :param tier: Tier of the extension.
+        :param tier_compare: Comparison type for the tier specified as "exact", "lte" (<=), or "gte" (>=).
+        :return: The list of extensions
+        """
+        user = self.getCurrentUser()
+        utilities.checkAccess(app_id, user)
+        filters = self._build_extension_filters(
+            app_id, extension_name, extension_id, os, arch,
+            app_revision, baseName, q, tier, tier_compare)
+
+        if ObjectId.is_valid(release_id):
+            release = self._model.load(release_id, user=user, level=AccessType.READ)
+            if release['name'] == constants.DRAFT_RELEASE_NAME:
+                if app_revision:
+                    folder_id = self._get_draft_revision_extensions_folder_id(
+                        release, user, app_revision)
+                    if folder_id:
+                        filters['folderId'] = folder_id
+                else:
+                    return self._find_extensions_across_draft_revisions(
+                        release, user, filters, limit, offset, sort)
+            else:
+                folder_id = self._get_release_extensions_folder_id(release, user)
+                if not folder_id:
+                    return []
+                filters['folderId'] = folder_id
+
+        return self._find_extensions(filters, limit, offset, sort)
 
     @autoDescribeRoute(
         Description('Create or Update an extension package.')
@@ -563,24 +608,30 @@ class App(Resource):
         .param('category', 'Category under which to place the extension. Subcategories should be '
                'delimited by character. If none is passed, will render under '
                'the Miscellaneous category..', required=False)
-
+        .param('tier', 'Tier of the extension.', required=False, dataType='integer')
         .param('homepage', 'The url of the extension homepage.', required=False)
         .param('screenshots', 'Space-separate list of URLs of screenshots for the extension.',
                required=False)
         .param('contributors', 'List of contributors of the extension.', required=False)
         .param('dependency', 'List of the required extensions to use this one.', required=False)
+        .param('recommends', 'List of the recommended extensions to use this one.', required=False)
         .param('license', 'The license short description of the extension.', required=False)
         .param('development_status', 'Arbitrary description of the status of the extension '
                '(stable, active, etc).', required=False)
         .param('enabled', 'Boolean indicating if the extension should be automatically enabled '
                'after its installation.', required=False)
+        .param('dicom_support_rule', 'Rule engine expression to determine DICOM '
+                   'support level of the extension.', required=False)
+        .param('keywords', 'Space-separated list of keywords to help when searching for extensions.',
+               required=False)
         .errorResponse(),
     )
     @access.user(scope=TokenScope.DATA_WRITE)
     def createOrUpdateExtension(self, app_id, os, arch, baseName, repository_type, repository_url,
                                 revision, app_revision, description,
-                                icon_url, development_status, category, enabled, homepage,
-                                screenshots, contributors, dependency, license):
+                                icon_url, development_status, category, tier, enabled, homepage,
+                                screenshots, contributors, dependency, recommends, license, dicom_support_rule,
+                                keywords):
         """
         Create or update an extension item.
 
@@ -600,6 +651,9 @@ class App(Resource):
         :param revision: The revision of the extension.
         :param app_revision: The revision of the application.
         :param description: The description of the extension.
+        :param tier: Tier of the extension.
+        :param dicom_support_rule: Rule engine expression string to determine DICOM support level.
+        :param keywords: Space-separated list of keywords to help when searching for extensions.
         :return: The created/updated extension.
         """
         creator = self.getCurrentUser()
@@ -608,26 +662,51 @@ class App(Resource):
             application=application,
             user=creator,
             app_revision=app_revision)
+        extensions_folder = self._get_or_create_extensions_folder(release_folder, creator)
 
+        sanitizer = Sanitizer()
+        description = sanitizer.sanitize(description)
+
+        params = self._build_extension_params(
+            app_id, baseName, os, arch, repository_type, repository_url,
+            revision, app_revision, description, icon_url, development_status,
+            category, tier, enabled, homepage, screenshots, contributors,
+            dependency, recommends, license, dicom_support_rule, keywords)
+
+        name = application['meta']['extensionPackageNameTemplate'].format(**params)
+        filters = {
+            'meta.baseName': baseName,
+            'meta.os': os,
+            'meta.arch': arch,
+            'meta.app_revision': app_revision,
+        }
+        extension = self._create_or_update_extension(
+            extensions_folder, creator, name, filters, params)
+        return extension
+
+    def _get_or_create_extensions_folder(self, release_folder, creator):
+        """Get or create the extensions folder within a release."""
         extensions_folder = list(self._model.childFolders(
             release_folder,
             'Folder',
             user=creator,
             filters={'name': constants.EXTENSIONS_FOLDER_NAME}))
         if not extensions_folder:
-            extensions_folder = self._model.createFolder(
+            return self._model.createFolder(
                 parent=release_folder,
                 name=constants.EXTENSIONS_FOLDER_NAME,
                 parentType='Folder',
                 public=release_folder['public'],
                 description='This directory contains all the extensions packages',
                 creator=creator)
-        else:
-            extensions_folder = extensions_folder[0]
+        return extensions_folder[0]
 
-        sanitizer = Sanitizer()
-        description = sanitizer.sanitize(description)
-
+    def _build_extension_params(
+            self, app_id, baseName, os, arch, repository_type, repository_url,
+            revision, app_revision, description, icon_url, development_status,
+            category, tier, enabled, homepage, screenshots, contributors,
+            dependency, recommends, license, dicom_support_rule, keywords):
+        """Build parameters dictionary for extension metadata."""
         params = {
             'app_id': app_id,
             'baseName': baseName,
@@ -645,6 +724,13 @@ class App(Resource):
             params['development_status'] = development_status
         if category:
             params['category'] = category
+        if tier is not None:
+            try:
+                tier_int = int(tier) if not isinstance(tier, int) else tier
+            except (TypeError, ValueError):
+                msg = "Invalid tier value; expected an integer."
+                raise RestException(msg)
+            params['tier'] = tier_int
         if enabled:
             params['enabled'] = enabled
         if homepage:
@@ -655,40 +741,32 @@ class App(Resource):
             params['contributors'] = contributors
         if dependency:
             params['dependency'] = dependency
+        if recommends is not None and len(recommends) > 0:
+            params['recommends'] = recommends
         if license:
             params['license'] = license
+        if dicom_support_rule is not None and len(dicom_support_rule) > 0:
+            params['dicom_support_rule'] = dicom_support_rule
+        if keywords is not None and len(keywords) > 0:
+            params['keywords'] = keywords
+        return params
 
-        name = application['meta']['extensionPackageNameTemplate'].format(**params)
-        filters = {
-            'meta.baseName': baseName,
-            'meta.os': os,
-            'meta.arch': arch,
-            'meta.app_revision': app_revision,
-        }
-        # Only one extensions should be in this list
+    def _create_or_update_extension(self, extensions_folder, creator, name, filters, params):
+        """Create a new extension or update an existing one."""
         extensions = list(ExtensionModel().get(extensions_folder, filters=filters))
         if not len(extensions):
-            # The extension doesn't exist yet:
-            extension = ExtensionModel().createExtension(name, creator, extensions_folder, params)
+            return ExtensionModel().createExtension(name, creator, extensions_folder, params)
         elif len(extensions) == 1:
-            # The extension already exist
             extension = extensions[0]
-            # Check the file inside the extension Item
             files = ExtensionModel().childFiles(extension)
             if not files.count():
-                # Extension empty
                 msg = "Extension existing without any binary file."
                 raise RestException(msg)
-
-            # Update the extension
             extension['name'] = name
-            extension = ExtensionModel().setMetadata(extension, params)
+            return ExtensionModel().setMetadata(extension, params)
         else:
             msg = f"Too many extensions found for the same name '{name}'."
             raise RestException(msg)
-
-        # Ready to upload the binary file
-        return extension
 
     @autoDescribeRoute(
         Description('Delete an Extension by ID.')

@@ -642,6 +642,217 @@ def testGetExtensions(server, user, app_folder, release_folder, extensions):
 
 
 @pytest.mark.plugin('slicer_package_manager')
+def testGetExtensionsDraftOffsetPagination(server, user, app_folder, extensions):
+    """Regression test: offset must be applied across all draft revisions combined,
+    not independently per revision.
+
+    Setup: 2 draft revisions with 1 and 3 extensions respectively (4 total).
+    With offset=1, the combined result set should skip 1 globally → 3 results.
+    The bug causes offset to be applied per-revision: skips 1 from revision-0 (0 left)
+    and 1 from revision-1 (2 left), returning only 2 results instead of 3.
+    """
+    # Fix warnings related to fixtures not explicitly used.
+    assert extensions
+
+    draftRelease = list(Folder().childFolders(
+        app_folder,
+        'Folder',
+        user=user,
+        filters={'name': constants.DRAFT_RELEASE_NAME}))
+    assert len(draftRelease) == 1
+
+    # Sanity check: no offset returns all 4 draft extensions
+    resp = server.request(
+        path='/app/%s/extension' % app_folder['_id'],
+        method='GET',
+        user=user,
+        params={'release_id': draftRelease[0]['_id']},
+    )
+    assertStatusOk(resp)
+    assert len(resp.json) == 4
+
+    # With offset=1, should skip 1 globally across revisions → 3 results
+    resp = server.request(
+        path='/app/%s/extension' % app_folder['_id'],
+        method='GET',
+        user=user,
+        params={'release_id': draftRelease[0]['_id'], 'offset': 1},
+    )
+    assertStatusOk(resp)
+    assert len(resp.json) == 3, (
+        "offset should be applied across all revisions combined, not per-revision"
+    )
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testGetExtensionsByTier(server, user, app_folder, draft_release_folder):
+    # Fix warnings related to fixtures not explicitly used.
+    assert draft_release_folder
+
+    base_meta = {
+        'os': 'linux',
+        'arch': 'amd64',
+        'repository_type': 'git',
+        'repository_url': 'http://slicer.com/extension/Ext',
+        'revision': '001',
+        'app_revision': DRAFT_RELEASES[0]['revision'],
+        'description': 'Test extension',
+    }
+
+    # Create three extensions with tier 1, 3, and 5
+    ext_tier1 = _createOrUpdatePackage(
+        server, 'extension',
+        dict(base_meta, baseName='TierExt1', revision='t01', tier=1),
+        _user=user, _app=app_folder,
+    )
+    ext_tier3 = _createOrUpdatePackage(
+        server, 'extension',
+        dict(base_meta, baseName='TierExt3', revision='t03', tier=3),
+        _user=user, _app=app_folder,
+    )
+    ext_tier5 = _createOrUpdatePackage(
+        server, 'extension',
+        dict(base_meta, baseName='TierExt5', revision='t05', tier=5),
+        _user=user, _app=app_folder,
+    )
+
+    assert ext_tier1['meta']['tier'] == 1
+    assert ext_tier3['meta']['tier'] == 3
+    assert ext_tier5['meta']['tier'] == 5
+
+    def get_extensions(params):
+        resp = server.request(
+            path='/app/%s/extension' % app_folder['_id'],
+            method='GET',
+            user=user,
+            params=params,
+        )
+        assertStatusOk(resp)
+        return {ext['_id'] for ext in resp.json}
+
+    # tier_compare='exact': only extensions matching that tier exactly
+    ids_exact_1 = get_extensions({'tier': 1, 'tier_compare': 'exact'})
+    assert ext_tier1['_id'] in ids_exact_1
+    assert ext_tier3['_id'] not in ids_exact_1
+    assert ext_tier5['_id'] not in ids_exact_1
+
+    ids_exact_3 = get_extensions({'tier': 3, 'tier_compare': 'exact'})
+    assert ext_tier1['_id'] not in ids_exact_3
+    assert ext_tier3['_id'] in ids_exact_3
+    assert ext_tier5['_id'] not in ids_exact_3
+
+    # tier_compare='lte': extensions with tier <= specified value
+    ids_lte_3 = get_extensions({'tier': 3, 'tier_compare': 'lte'})
+    assert ext_tier1['_id'] in ids_lte_3
+    assert ext_tier3['_id'] in ids_lte_3
+    assert ext_tier5['_id'] not in ids_lte_3
+
+    ids_lte_1 = get_extensions({'tier': 1, 'tier_compare': 'lte'})
+    assert ext_tier1['_id'] in ids_lte_1
+    assert ext_tier3['_id'] not in ids_lte_1
+    assert ext_tier5['_id'] not in ids_lte_1
+
+    # Default tier_compare is 'lte', so tier=5 should return all three
+    ids_lte_5_default = get_extensions({'tier': 5})
+    assert ext_tier1['_id'] in ids_lte_5_default
+    assert ext_tier3['_id'] in ids_lte_5_default
+    assert ext_tier5['_id'] in ids_lte_5_default
+
+    # tier_compare='gte': extensions with tier >= specified value
+    ids_gte_3 = get_extensions({'tier': 3, 'tier_compare': 'gte'})
+    assert ext_tier1['_id'] not in ids_gte_3
+    assert ext_tier3['_id'] in ids_gte_3
+    assert ext_tier5['_id'] in ids_gte_3
+
+    ids_gte_5 = get_extensions({'tier': 5, 'tier_compare': 'gte'})
+    assert ext_tier1['_id'] not in ids_gte_5
+    assert ext_tier3['_id'] not in ids_gte_5
+    assert ext_tier5['_id'] in ids_gte_5
+
+
+@pytest.mark.plugin('slicer_package_manager')
+def testGetExtensionsByQuery(server, user, app_folder, draft_release_folder):
+    # Fix warnings related to fixtures not explicitly used.
+    assert draft_release_folder
+
+    base_meta = {
+        'os': 'linux',
+        'arch': 'amd64',
+        'repository_type': 'git',
+        'repository_url': 'http://slicer.com/extension/Ext',
+        'revision': '001',
+        'app_revision': DRAFT_RELEASES[0]['revision'],
+    }
+
+    ext_name = _createOrUpdatePackage(
+        server, 'extension',
+        dict(base_meta, baseName='SegmentationTool', revision='q01',
+             description='A general purpose tool'),
+        _user=user, _app=app_folder,
+    )
+    ext_desc = _createOrUpdatePackage(
+        server, 'extension',
+        dict(base_meta, baseName='UnrelatedTool', revision='q02',
+             description='Useful for cardiac segmentation workflows'),
+        _user=user, _app=app_folder,
+    )
+    ext_keywords = _createOrUpdatePackage(
+        server, 'extension',
+        dict(base_meta, baseName='AnotherTool', revision='q03',
+             description='A general purpose tool', keywords='segmentation analysis'),
+        _user=user, _app=app_folder,
+    )
+    ext_nomatch = _createOrUpdatePackage(
+        server, 'extension',
+        dict(base_meta, baseName='IrrelevantTool', revision='q04',
+             description='Does something else entirely'),
+        _user=user, _app=app_folder,
+    )
+
+    def get_extensions(params):
+        resp = server.request(
+            path='/app/%s/extension' % app_folder['_id'],
+            method='GET',
+            user=user,
+            params=params,
+        )
+        assertStatusOk(resp)
+        return {ext['_id'] for ext in resp.json}
+
+    # Match by baseName
+    ids = get_extensions({'q': 'SegmentationTool'})
+    assert ext_name['_id'] in ids
+    assert ext_desc['_id'] not in ids
+    assert ext_keywords['_id'] not in ids
+    assert ext_nomatch['_id'] not in ids
+
+    # Match by description
+    ids = get_extensions({'q': 'cardiac'})
+    assert ext_name['_id'] not in ids
+    assert ext_desc['_id'] in ids
+    assert ext_keywords['_id'] not in ids
+    assert ext_nomatch['_id'] not in ids
+
+    # Match by keywords
+    ids = get_extensions({'q': 'analysis'})
+    assert ext_name['_id'] not in ids
+    assert ext_desc['_id'] not in ids
+    assert ext_keywords['_id'] in ids
+    assert ext_nomatch['_id'] not in ids
+
+    # Case-insensitive match across multiple extensions
+    ids = get_extensions({'q': 'segmentation'})
+    assert ext_name['_id'] in ids
+    assert ext_desc['_id'] in ids
+    assert ext_keywords['_id'] in ids
+    assert ext_nomatch['_id'] not in ids
+
+    # No match
+    ids = get_extensions({'q': 'zzznomatchzzz'})
+    assert len(ids) == 0
+
+
+@pytest.mark.plugin('slicer_package_manager')
 def testDeleteExtensionPackages(server, user, app_folder, release_folder):
     # Create a new extension in the release "_release"
     extension = _createOrUpdatePackage(

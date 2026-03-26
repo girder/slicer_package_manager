@@ -8,6 +8,19 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+New Features
+------------
+
+* Add support for uploading extension packages specifying the ``tier`` metadata. The ``tier``
+  metadata can be set as an integer value between ``1`` and ``5``.
+
+* Support listing extensions with the ``tier`` and introduces the ``tier_compare`` parameter, which can
+  be set as ``exact`` or ``lte`` (less than or equal to).
+  By default, the ``tier_compare`` parameter is set to ``lte`` and extensions with their tier less or
+  equal to ``5`` are listed.
+
+* Add support for additional extension metadata fields, including ``recommends``, ``dicom_support_rule``,
+  and ``keywords`` when uploading and managing extension packages.
 0.9.0
 =====
 
