@@ -417,6 +417,9 @@ def _cli_deleteDraftRelease(sc: SlicerPackageClient, *args, **kwargs):
 @click.option('--category', default=None,
               help='Category of the extension',
               cls=_AdvancedOption)
+@click.option('--tier', default=5, type=int,
+              help='Tier of the extension',
+              cls=_AdvancedOption)
 @click.option('--homepage', default='',
               help='Url of the extension homepage',
               cls=_AdvancedOption)
@@ -428,6 +431,15 @@ def _cli_deleteDraftRelease(sc: SlicerPackageClient, *args, **kwargs):
               cls=_AdvancedOption)
 @click.option('--dependency', default=None,
               help='List of the required extensions to use this one.',
+              cls=_AdvancedOption)
+@click.option('--recommends', default=None,
+              help='List of the recommended extensions to use this one.',
+              cls=_AdvancedOption)
+@click.option('--dicom_support_rule', default=None,
+              help='Rule engine expression to determine DICOM support level.',
+              cls=_AdvancedOption)
+@click.option('--keywords', default=None,
+              help='Space-separated list of keywords to help when searching for extensions.',
               cls=_AdvancedOption)
 @click.option('--coll_id', default=None, envvar='COLLECTION_ID',
               help='ID of an existing collection',

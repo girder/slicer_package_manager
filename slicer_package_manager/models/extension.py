@@ -95,19 +95,30 @@ class Extension(Item):
                     'icon_url',
                     'development_status',
                     'category',
+                    'tier',
                     'enabled',
                     'homepage',
                     'screenshots',
                     'contributors',
                     'dependency',
+                    'recommends',
                     'license',
+                    'dicom_support_rule',
+                    'keywords',
                 }
-                if extraMeta - extra_params:
-                    msg = f'Extension has extra fields: {", ".join(sorted(extraMeta))}.'
+                disallowed_meta = extraMeta - extra_params
+                if disallowed_meta:
+                    msg = f'Extension has extra fields: {", ".join(sorted(disallowed_meta))}.'
                     raise ValidationException(msg)
                 specs = []
                 for meta in extra_params:
-                    if meta == 'enabled':
+                    if meta == 'tier':
+                        specs.append({
+                            'name': meta,
+                            'type': int,
+                            'exception_msg': f'Extension field "{meta}" must be an integer.',
+                        })
+                    elif meta == 'enabled':
                         specs.append({
                             'name': meta,
                             'type': bool,
