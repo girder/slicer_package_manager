@@ -21,6 +21,8 @@ New Features
 
 * Add support for additional extension metadata fields, including ``recommends``, ``dicom_support_rule``,
   and ``keywords`` when uploading and managing extension packages.
+
+* Fixed build with newer Python
 0.9.0
 =====
 

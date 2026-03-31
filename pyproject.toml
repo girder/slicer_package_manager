@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools>=42",
+    "setuptools>=42,<78",
     # Required to support dynmamic version
     "girder~=3.1.20",
     "girder-hashsum-download~=3.1.20",
