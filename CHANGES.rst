@@ -8,6 +8,8 @@ details, see the commit logs at https://github.com/girder/slicer_package_manager
 Next Release
 ============
 
+* Fixed client build with newer Python
+
 0.10.0
 ============
 
