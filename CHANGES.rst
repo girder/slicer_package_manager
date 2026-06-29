@@ -9,6 +9,7 @@ Next Release
 ============
 
 * Fixed client build with newer Python
+* Fix extension uploads to replace files in the release matching the application revision.
 
 0.10.0
 ============

@@ -253,53 +253,68 @@ class SlicerPackageClient(GirderClient):
             pass
 
         app = self._getApp(app_name=app_name, coll_id=coll_id)
+        parameters = {
+            'os': ext_os,
+            'arch': arch,
+            'baseName': name,
+            'repository_type': repo_type,
+            'repository_url': repo_url,
+            'revision': revision,
+            'app_revision': app_revision,
+            'description': desc,
+            'icon_url': icon_url,
+            'category': category,
+            'tier': tier,
+            'homepage': homepage,
+            'screenshots': screenshots,
+            'contributors': contributors,
+            'dependency': dependency,
+            'recommends': recommends,
+            'dicom_support_rule': dicom_support_rule,
+            'keywords': keywords,
+        }
         # Get potential existing extension
         extensions = self.listExtension(
             app_name,
+            coll_id=coll_id,
             name=name,
             ext_os=ext_os,
             arch=arch,
             app_revision=app_revision)
         if not extensions:
             # Create the extension into Girder hierarchy
-            extension = self.post('/app/%s/extension' % app['_id'], parameters={
-                'os': ext_os,
-                'arch': arch,
-                'baseName': name,
-                'repository_type': repo_type,
-                'repository_url': repo_url,
-                'revision': revision,
-                'app_revision': app_revision,
-                'description': desc,
-                'icon_url': icon_url,
-                'category': category,
-                'tier': tier,
-                'homepage': homepage,
-                'screenshots': screenshots,
-                'contributors': contributors,
-                'dependency': dependency,
-                'recommends': recommends,
-                'dicom_support_rule': dicom_support_rule,
-                'keywords': keywords,
-            })
+            extension = self.post('/app/%s/extension' % app['_id'], parameters=parameters)
+
+            files = []
+            if extension.get('size', 0):
+                files = list(self.listFile(extension['_id']))
+            filename = 'new_file' if files else None
 
             # Upload the extension
-            self.uploadFileToItem(
+            newFile = self.uploadFileToItem(
                 extension['_id'],
                 filepath,
                 reference='',
+                filename=filename,
                 mimeType='application/octet-stream',
                 progressCallback=_displayProgress)
+
+            if files:
+                for oldFile in files:
+                    if oldFile['_id'] != newFile['_id']:
+                        # Remove the old file
+                        self.delete('/file/%s' % oldFile['_id'])
+                # Change the name
+                self.put('/file/%s' % newFile['_id'], parameters={
+                    'name': os.path.basename(filepath),
+                })
+                return Constant.EXTENSION_NOW_UP_TO_DATE
         else:
             extension = extensions[0]
             # Revision different or force upload
             if revision != extension['meta']['revision'] or force:
                 files = list(self.listFile(extension['_id']))
-                if files:
-                    oldFile = files[0]
-                    filename = 'new_file'
-                else:
-                    filename = None
+                filename = 'new_file' if files else None
 
                 # Upload the extension
                 newFile = self.uploadFileToItem(
@@ -311,31 +326,12 @@ class SlicerPackageClient(GirderClient):
                     progressCallback=_displayProgress)
 
                 # Update the extension into Girder hierarchy
-                extension = self.post('/app/%s/extension' % app['_id'], parameters={
-                    'os': ext_os,
-                    'arch': arch,
-                    'baseName': name,
-                    'repository_type': repo_type,
-                    'repository_url': repo_url,
-                    'revision': revision,
-                    'app_revision': app_revision,
-                    'description': desc,
-                    'icon_url': icon_url,
-                    'category': category,
-                    'tier': tier,
-                    'homepage': homepage,
-                    'screenshots': screenshots,
-                    'contributors': contributors,
-                    'dependency': dependency,
-                    'recommends': recommends,
-                    'dicom_support_rule': dicom_support_rule,
-                    'keywords': keywords,
-                })
+                extension = self.post('/app/%s/extension' % app['_id'], parameters=parameters)
 
-                files = list(self.listFile(extension['_id']))
-                if len(files) == 2:
-                    # Remove the oldFIle
-                    self.delete('/file/%s' % oldFile['_id'])
+                if files:
+                    for oldFile in files:
+                        # Remove the old file
+                        self.delete('/file/%s' % oldFile['_id'])
                     # Change the name
                     self.put('/file/%s' % newFile['_id'], parameters={
                         'name': os.path.basename(filepath),
