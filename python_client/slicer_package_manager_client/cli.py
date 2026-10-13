@@ -499,7 +499,7 @@ def _cli_downloadExtension(sc: SlicerPackageClient, *args, **kwargs):
               help='The baseName of the extension',
               cls=_AdvancedOption)
 @click.option('--os', 'ext_os', type=click.Choice(['win', 'linux', 'macosx']))
-@click.option('--arch', type=click.Choice(['amd64', 'i386']))
+@click.option('--arch', type=click.Choice(['amd64', 'i386', 'arm64']))
 @click.option('--app_revision', default=None,
               help='The revision of the application',
               cls=_AdvancedOption)
@@ -648,7 +648,7 @@ def _cli_downloadApplicationPackage(sc: SlicerPackageClient, *args, **kwargs):
               help='The baseName of the package',
               cls=_AdvancedOption)
 @click.option('--os', 'pkg_os', type=click.Choice(['win', 'linux', 'macosx']))
-@click.option('--arch', type=click.Choice(['amd64', 'i386']))
+@click.option('--arch', type=click.Choice(['amd64', 'i386', 'arm64']))
 @click.option('--revision', default=None,
               help='The revision of the application',
               cls=_AdvancedOption)

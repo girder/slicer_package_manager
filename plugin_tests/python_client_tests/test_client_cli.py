@@ -573,6 +573,53 @@ def testDownloadExtensionsCLI(server, extensions):
     os.remove('%s.txt' % name)
 
 
+@pytest.mark.vcr()
+@pytest.mark.plugin('slicer_package_manager')
+def testListPackagesByArchCLI(server, apps, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert files
+
+    arm64_package = dict(PACKAGES[1], arch='arm64')
+
+    for package in [PACKAGES[1], arm64_package]:
+        res = _cli_upload_package(package)
+        assert res.exit_code == 0
+        assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getAppPkgName(package)), res.output)
+
+    cmd = list(CLI_COMMON_ARGS)
+    cmd.extend(['package', 'list', APPS[0], '--arch', 'arm64'])
+    res = _cli_runner_invoke(main, cmd)
+    assert res.exit_code == 0
+    assert re.search(r"%s *draft *\w{24}" % re.escape(getAppPkgName(arm64_package)), res.output)
+    assert getAppPkgName(PACKAGES[1]) not in res.output
+
+
+@pytest.mark.vcr()
+@pytest.mark.plugin('slicer_package_manager')
+def testListExtensionsByArchCLI(server, apps, files):
+    # Fix warnings related to fixtures not explicitly used.
+    assert server
+    assert apps
+    assert files
+
+    arm64_extension = dict(EXTENSIONS[1], arch='arm64')
+
+    for extension in [EXTENSIONS[1], arm64_extension]:
+        res = _cli_upload_extension(extension)
+        assert res.exit_code == 0
+        assert re.search(r"%s \(\w{24}\) UPLOADED" % re.escape(getExtPkgName(extension)), res.output)
+
+    cmd = list(CLI_COMMON_ARGS)
+    cmd.extend(['extension', 'list', APPS[0], '--all', '--arch', 'arm64'])
+    res = _cli_runner_invoke(main, cmd)
+    assert res.exit_code == 0
+    assert re.search(r"%s *draft *%s *\w{24}" % (
+        re.escape(getExtPkgName(arm64_extension)), arm64_extension['app_revision']), res.output)
+    assert getExtPkgName(EXTENSIONS[1]) not in res.output
+
+
 def getAppPkgName(package):
     return "{baseName}_{os}_{arch}_{revision}".format(**package)
 
