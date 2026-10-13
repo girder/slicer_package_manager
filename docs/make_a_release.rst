@@ -138,7 +138,7 @@ Setting up environment
     $ pipx run build ./python_client
 
 
-8. Publish the both release tag and the main branch
+9. Publish both the release tag and the main branch
 
   .. code::
 
@@ -146,7 +146,7 @@ Setting up environment
       git push origin main
 
 
-9. Upload the distributions on `PyPI`_
+10. Upload the distributions on `PyPI`_
 
   .. code::
 
@@ -161,7 +161,7 @@ Setting up environment
         $ pipx run twine upload -r pypitest python_client/dist/*
 
 
-10. Create a clean testing environment to test the installation
+11. Create a clean testing environment to test the installation
 
   .. code::
 
