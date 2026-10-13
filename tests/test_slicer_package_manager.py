@@ -853,6 +853,67 @@ def testGetExtensionsByQuery(server, user, app_folder, draft_release_folder):
 
 
 @pytest.mark.plugin('slicer_package_manager')
+@pytest.mark.parametrize('packageType', ['extension', 'package'])
+def testArm64Architecture(server, user, app_folder, draft_release_folder, packageType):
+    # Fix warnings related to fixtures not explicitly used.
+    assert draft_release_folder
+
+    if packageType == 'extension':
+        base_meta = {
+            'os': 'macosx',
+            'repository_type': 'git',
+            'repository_url': 'http://slicer.com/extension/Ext',
+            'revision': '001',
+            'app_revision': DRAFT_RELEASES[0]['revision'],
+            'description': 'Test extension',
+        }
+    else:
+        base_meta = dict(DRAFT_PACKAGES[0]['meta'], os='macosx')
+        del base_meta['arch']
+
+    # Create one arm64 and one amd64 item
+    item_arm64 = _createOrUpdatePackage(
+        server, packageType,
+        dict(base_meta, arch='arm64', baseName='Arm64Pkg'),
+        _user=user, _app=app_folder,
+    )
+    item_amd64 = _createOrUpdatePackage(
+        server, packageType,
+        dict(base_meta, arch='amd64', baseName='Amd64Pkg'),
+        _user=user, _app=app_folder,
+    )
+    assert item_arm64['meta']['arch'] == 'arm64'
+
+    def get_items(params):
+        resp = server.request(
+            path='/app/%s/%s' % (app_folder['_id'], packageType),
+            method='GET',
+            user=user,
+            params=params,
+        )
+        return resp
+
+    # Filtering by arm64 returns only the arm64 item
+    resp = get_items({'arch': 'arm64'})
+    assertStatusOk(resp)
+    assert [item['_id'] for item in resp.json] == [item_arm64['_id']]
+
+    # Filtering by amd64 does not return the arm64 item
+    resp = get_items({'arch': 'amd64'})
+    assertStatusOk(resp)
+    assert [item['_id'] for item in resp.json] == [item_amd64['_id']]
+
+    # Unsupported architectures are still rejected
+    resp = get_items({'arch': 'sparc'})
+    assertStatus(resp, 400)
+    _createOrUpdatePackage(
+        server, packageType,
+        dict(base_meta, arch='sparc', baseName='SparcPkg'),
+        _user=user, _app=app_folder, status_code=400,
+    )
+
+
+@pytest.mark.plugin('slicer_package_manager')
 def testDeleteExtensionPackages(server, user, app_folder, release_folder):
     # Create a new extension in the release "_release"
     extension = _createOrUpdatePackage(

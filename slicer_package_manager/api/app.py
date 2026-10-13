@@ -535,7 +535,7 @@ class App(Resource):
         .param('os', 'The target operating system of the package.',
                required=False, enum=['linux', 'win', 'macosx'])
         .param('arch', 'The os chip architecture.',
-               required=False, enum=['i386', 'amd64'])
+               required=False, enum=['i386', 'amd64', 'arm64'])
         .param('app_revision', 'The revision of the application.', required=False)
         .param('baseName', 'The baseName of the extension', required=False)
         .param('q', 'The search query.', required=False)
@@ -596,7 +596,7 @@ class App(Resource):
         .param('app_id', 'The ID of the App.', paramType='path')
         .param('os', 'The target operating system of the package.',
                enum=['linux', 'win', 'macosx'])
-        .param('arch', 'The os chip architecture.', enum=['i386', 'amd64'])
+        .param('arch', 'The os chip architecture.', enum=['i386', 'amd64', 'arm64'])
         .param('baseName', 'The baseName of the package (ie installer baseName).')
         .param('repository_type', 'The type of the repository (svn, git).')
         .param('repository_url', 'The url of the repository.')
@@ -802,7 +802,7 @@ class App(Resource):
         .param('os', 'The target operating system of the package.',
                required=False, enum=['linux', 'win', 'macosx'])
         .param('arch', 'The os chip architecture.',
-               required=False, enum=['i386', 'amd64'])
+               required=False, enum=['i386', 'amd64', 'arm64'])
         .param('revision', 'The revision of the application.', required=False)
         .param('baseName', 'The baseName of the package', required=False)
         .pagingParams(defaultSort='created', defaultSortDir=SortDir.DESCENDING)
@@ -903,7 +903,7 @@ class App(Resource):
         .param('app_id', 'The ID of the App.', paramType='path')
         .param('os', 'The target operating system of the package.',
                enum=['linux', 'win', 'macosx'])
-        .param('arch', 'The os chip architecture.', enum=['i386', 'amd64'])
+        .param('arch', 'The os chip architecture.', enum=['i386', 'amd64', 'arm64'])
         .param('baseName', 'The baseName of the package (ie installer baseName).')
         .param('repository_type', 'The type of the repository (svn, git).')
         .param('repository_url', 'The url of the repository.')

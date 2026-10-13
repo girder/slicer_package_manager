@@ -10,6 +10,7 @@ Next Release
 
 * Fixed client build with newer Python
 * Fix extension uploads to replace files in the release matching the application revision.
+* Add ``arm64`` to the list of supported architectures.
 
 0.10.0
 ============
